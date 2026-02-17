@@ -46,9 +46,11 @@ From the root of a project, run:
 curl -fsSL https://raw.githubusercontent.com/Kieirra/al1x-ai-agents/main/install.sh | bash
 ```
 
-This will:
-1. Download all agents into `.claude/agents/`
-2. Download all commands into `.claude/commands/`
+This will install each agent in two locations:
+- **`.claude/commands/`** — as skills, invokable via `/dev-react`, `/scrum-master`, etc.
+- **`.claude/agents/`** — as subagents, automatically delegated by Claude when relevant
+
+It also installs utility commands (`/workflow`, `/list-us`, `/update-agents`) in `.claude/commands/`.
 
 ## Updating
 

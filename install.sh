@@ -5,8 +5,8 @@ REPO="Kieirra/al1x-ai-agents"
 BRANCH="main"
 API_URL="https://api.github.com/repos/${REPO}/contents/agents?ref=${BRANCH}"
 RAW_URL="https://raw.githubusercontent.com/${REPO}/${BRANCH}"
-AGENTS_DIR=".claude/agents"
 COMMANDS_DIR=".claude/commands"
+AGENTS_DIR=".claude/agents"
 
 # Couleurs
 GREEN='\033[0;32m'
@@ -24,8 +24,8 @@ command -v curl >/dev/null 2>&1 || error "curl est requis mais non installé."
 info "Installation des agents al1x-ai-agents..."
 
 # Créer les dossiers
-mkdir -p "$AGENTS_DIR"
 mkdir -p "$COMMANDS_DIR"
+mkdir -p "$AGENTS_DIR"
 
 # Récupérer la liste des agents depuis l'API GitHub
 info "Récupération de la liste des agents..."
@@ -38,17 +38,28 @@ if [ -z "$AGENT_FILES" ]; then
     error "Aucun agent trouvé dans le repo."
 fi
 
-# Télécharger chaque agent
+# Télécharger chaque agent dans commands/ et agents/
 COUNT=0
 for FILE in $AGENT_FILES; do
+    NAME="${FILE%.md}"
     info "Téléchargement de $FILE..."
-    curl -fsSL "${RAW_URL}/agents/${FILE}" -o "${AGENTS_DIR}/${FILE}" \
+
+    # Télécharger le fichier une seule fois
+    CONTENT=$(curl -fsSL "${RAW_URL}/agents/${FILE}") \
         || { echo -e "${RED}[ERREUR]${NC} Échec du téléchargement de $FILE"; continue; }
-    success "$FILE installé"
+
+    # Installer comme skill dans commands/ (invocable via /nom)
+    echo "$CONTENT" > "${COMMANDS_DIR}/${FILE}"
+
+    # Installer comme subagent dans agents/nom/SKILL.md (auto-délégation)
+    mkdir -p "${AGENTS_DIR}/${NAME}"
+    echo "$CONTENT" > "${AGENTS_DIR}/${NAME}/SKILL.md"
+
+    success "$NAME installé (skill + subagent)"
     COUNT=$((COUNT + 1))
 done
 
-# Télécharger les commandes
+# Télécharger les commandes (workflow, list-us, update-agents)
 info "Installation des commandes..."
 COMMANDS_API_URL="https://api.github.com/repos/${REPO}/contents/commands?ref=${BRANCH}"
 COMMANDS_JSON=$(curl -fsSL "$COMMANDS_API_URL") || error "Impossible de récupérer les commandes."
@@ -61,5 +72,7 @@ for FILE in $COMMAND_FILES; do
 done
 
 echo ""
-success "Installation terminée ! ${COUNT} agent(s) installé(s) dans ${AGENTS_DIR}/"
-info "Utilise /update-agents dans Claude Code pour mettre à jour les agents."
+success "Installation terminée ! ${COUNT} agent(s) installé(s)"
+info "Skills (slash commands) : ${COMMANDS_DIR}/"
+info "Subagents (auto-délégation) : ${AGENTS_DIR}/"
+info "Utilise /update-agents dans Claude Code pour mettre à jour."
