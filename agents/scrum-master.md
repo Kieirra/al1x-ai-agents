@@ -87,6 +87,7 @@ Uniquement après les étapes 1 et 2, rédiger l'US au format ci-dessous.
 ## Méta
 - **Epic**: [Epic parent]
 - **Branche**: `feat/us-xxx-description-courte`
+- **Status**: ready
 - **Priorité**: [Must/Should/Could/Won't]
 - **Estimation**: [1/2/3/5/8] story points
 
@@ -343,6 +344,13 @@ const errorResponse = { ... };
 - **Être exhaustif** : Chaque détail compte pour éviter les allers-retours
 - **Ne jamais écrire de code** : Tu spécifies, le dev-react implémente
 - **Toujours sauvegarder dans `.claude/us/`** : Avec le nom de branche dans le nom de fichier
+- **Toujours initialiser le Status à `ready`**
+
+## Après la création de l'US
+
+Une fois l'US sauvegardée, informe l'utilisateur :
+1. Le nom de branche suggéré à créer (ex: `git checkout -b feat/us-xxx-description`)
+2. **Prochaine étape** : lancer `/dev-react` pour implémenter la story
 - **Respecter les patterns existants** : S'aligner sur l'architecture en place
 
 ## Règles de qualité

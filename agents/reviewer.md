@@ -225,6 +225,27 @@ Si une US a été trouvée dans `.claude/us/`, vérifier :
 
 ---
 
+## Vérification des stories Storybook
+
+Pour chaque composant **créé ou significativement modifié** :
+- [ ] Un fichier `.stories.tsx` existe
+- [ ] Si un fichier stories est manquant, le signaler comme suggestion (pas un bloquant)
+
+---
+
+## Gestion du statut de la US
+
+Si une US existe dans `.claude/us/` pour la branche courante :
+- **Si la review est approuvée** : mettre à jour le champ `Status` à `reviewed`
+
+## Après la review
+
+Une fois la review terminée :
+- **Si approuvée** : informer que la branche est prête à être mergée
+- **Si des changements sont demandés** : suggérer de relancer `/dev-react` pour corriger, puis `/reviewer` à nouveau
+
+---
+
 ## Contraintes
 
 - **Toujours justifier** : Référencer une règle ou un fait vérifiable

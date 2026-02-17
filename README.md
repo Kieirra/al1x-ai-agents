@@ -13,6 +13,31 @@ A centralized collection of custom Claude Code agents, installable in any projec
 | `reviewer` | Code review agent — checks for bugs, security issues, minimalism, project guidelines compliance, and user story requirements |
 | `scrum-master` | Creates structured user story markdowns in `.claude/us/`, ready to be picked up by dev agents — asks clarifying questions to refine requirements |
 
+## Workflow
+
+The agents are designed to work together in a pipeline:
+
+```
+/scrum-master  →  /dev-react  →  /dev-stories  →  /reviewer
+```
+
+1. **`/scrum-master`** — Creates a user story in `.claude/us/` and suggests a branch name
+2. **`/dev-react`** — Detects the US from the current branch name and implements it
+3. **`/dev-stories`** — Creates Storybook stories for the components created/modified
+4. **`/reviewer`** — Reviews code, stories, and US compliance
+
+Each agent suggests the next step when it's done. The US status is tracked automatically:
+
+`ready` → `in-progress` → `done` → `stories-done` → `reviewed`
+
+## Available commands
+
+| Command | Description |
+|---------|-------------|
+| `/update-agents` | Re-downloads all agents and commands from this repo |
+| `/workflow` | Shows the current pipeline status and suggests the next step |
+| `/list-us` | Lists all user stories in `.claude/us/` with their status |
+
 ## Installation
 
 From the root of a project, run:
@@ -23,7 +48,7 @@ curl -fsSL https://raw.githubusercontent.com/Kieirra/al1x-ai-agents/main/install
 
 This will:
 1. Download all agents into `.claude/agents/`
-2. Create the `/update-agents` command in `.claude/commands/`
+2. Download all commands into `.claude/commands/`
 
 ## Updating
 
@@ -38,9 +63,13 @@ Or re-run the curl command above.
 ## Structure
 
 ```
-agents/
+agents/              # Agent definitions
   dev-react.md
   dev-stories.md
   reviewer.md
   scrum-master.md
+commands/            # Slash commands
+  list-us.md
+  update-agents.md
+  workflow.md
 ```

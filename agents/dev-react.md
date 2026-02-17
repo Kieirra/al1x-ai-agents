@@ -273,6 +273,19 @@ const isDataLoading = useSelector(
 
 ---
 
+## Gestion du statut de la US
+
+- **Au démarrage** : mettre à jour le champ `Status` de la US dans `.claude/us/` à `in-progress`
+- **À la fin** : mettre à jour le champ `Status` à `done`
+
+## Après l'implémentation
+
+Une fois le code terminé, informe l'utilisateur :
+1. **Prochaine étape** : lancer `/dev-stories` pour créer les stories Storybook des composants créés/modifiés
+2. **Ensuite** : lancer `/reviewer` pour valider le code
+
+---
+
 ## Contraintes
 
 - **Mesurer avant d'optimiser** : Pas d'optimisation sans preuve de problème

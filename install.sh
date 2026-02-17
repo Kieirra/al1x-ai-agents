@@ -48,19 +48,17 @@ for FILE in $AGENT_FILES; do
     COUNT=$((COUNT + 1))
 done
 
-# Créer la commande /update-agents
-cat > "${COMMANDS_DIR}/update-agents.md" << 'COMMAND'
-Met à jour tous les agents al1x-ai-agents vers leur dernière version.
+# Télécharger les commandes
+info "Installation des commandes..."
+COMMANDS_API_URL="https://api.github.com/repos/${REPO}/contents/commands?ref=${BRANCH}"
+COMMANDS_JSON=$(curl -fsSL "$COMMANDS_API_URL") || error "Impossible de récupérer les commandes."
+COMMAND_FILES=$(echo "$COMMANDS_JSON" | grep -oP '"name"\s*:\s*"\K[^"]+\.md' || true)
 
-Exécute la commande suivante :
-```bash
-curl -fsSL https://raw.githubusercontent.com/Kieirra/al1x-ai-agents/main/install.sh | bash
-```
-
-Après l'exécution, confirme à l'utilisateur quels agents ont été mis à jour.
-COMMAND
-
-success "Commande /update-agents créée"
+for FILE in $COMMAND_FILES; do
+    curl -fsSL "${RAW_URL}/commands/${FILE}" -o "${COMMANDS_DIR}/${FILE}" \
+        || { echo -e "${RED}[ERREUR]${NC} Échec du téléchargement de $FILE"; continue; }
+    success "Commande /${FILE%.md} installée"
+done
 
 echo ""
 success "Installation terminée ! ${COUNT} agent(s) installé(s) dans ${AGENTS_DIR}/"

@@ -207,6 +207,18 @@ export const DropdownOpen: Story = {
 
 ---
 
+## Gestion du statut de la US
+
+Si une US existe dans `.claude/us/` pour la branche courante :
+- **À la fin** : mettre à jour le champ `Status` de la US à `stories-done`
+
+## Après la création des stories
+
+Une fois les stories terminées, informe l'utilisateur :
+1. **Prochaine étape** : lancer `/reviewer` pour valider le code et les stories
+
+---
+
 ## Contraintes
 
 - **Explorer avant d'écrire** : Toujours lire le composant, ses dépendances ET les stories existantes du projet
