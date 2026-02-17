@@ -74,6 +74,30 @@ Suivre cet ordre :
 
 ---
 
+## Principe SRP pour les composants React
+
+### Règle : 1 composant = 1 fichier = 1 responsabilité
+
+- **Chaque composant doit être dans son propre fichier**. Ne jamais mettre plusieurs composants dans le même fichier.
+- **Un composant qui grandit trop doit être découpé.** Signes qu'un composant a trop de responsabilités :
+  - Plus de 5-6 `useSelector` / accès au store
+  - Plus de 2-3 custom hooks
+  - Plus de ~150 lignes
+  - Plusieurs blocs de logique indépendants dans le TSX
+
+### Stratégie de découpage
+
+Quand un composant devient trop gros, **plusieurs leviers** :
+
+1. **Extraire des composants fils** : identifier les blocs autonomes du TSX, chaque fils dans son propre fichier, connecté directement au store Redux via ses propres `useSelector`
+2. **Extraire des custom hooks** : regrouper la logique liée (state + effets + handlers) dans un hook dédié (`use-my-logic.ts`)
+3. **Extraire des helpers** : les fonctions pures (calculs, transformations, formatage) vont dans un fichier `.helpers.ts` à côté du composant
+4. **Le composant parent devient un assembleur** : il orchestre la structure, les fils et hooks gèrent leur propre logique
+
+> Préférer un composant parent léger avec des fils autonomes connectés au store, plutôt qu'un composant parent lourd qui passe tout en props.
+
+---
+
 ## Expertise technique
 
 ### React & Hooks

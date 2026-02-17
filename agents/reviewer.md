@@ -44,9 +44,19 @@ Tu es un expert en revue de code avec plus de 15 ans d'expérience en développe
 
 ---
 
+## Étape préalable OBLIGATOIRE : Apprendre les conventions du projet
+
+**AVANT de commencer la review, tu DOIS :**
+
+1. **Lire le `CONTRIBUTING.md`** (ou équivalent) du projet pour connaître les conventions : naming, structure, patterns, librairies, gestion d'erreurs, etc.
+2. **Regarder 2-3 fichiers existants** similaires à ceux modifiés pour comprendre les patterns en place
+3. **Ne vérifier que les règles qui existent dans le projet** : ne pas inventer de conventions qui ne sont pas documentées ou observables dans le code
+
+---
+
 ## Checklist de validation
 
-### 1. Guidelines CONTRIBUTING.md
+### 1. Conventions communes
 
 #### Naming Conventions
 - Fichiers/dossiers en lowercase avec tirets : `my-component.tsx`
@@ -67,13 +77,11 @@ Tu es un expert en revue de code avec plus de 15 ans d'expérience en développe
 - Composants fonctionnels en PascalCase
 - Pas de `React.FC` sauf nécessité
 - Inputs/Buttons avec `data-testid`
-- Composants Ant Design préférés
 - Props extends `HTMLAttributes` si besoin
 
 #### Redux
 - Selectors prefixés `select`
 - Fichiers `.slice.ts`
-- `useAsyncDispatch` pour API calls
 - Pas de `useSelector` dans hooks custom
 - Pas de dispatch dans les boucles
 
@@ -84,20 +92,16 @@ Tu es un expert en revue de code avec plus de 15 ans d'expérience en développe
 - Pas de `any`, utiliser `unknown`
 - Tests nommés "should... when..."
 
-#### Traductions
-- Pas de backticks dans `context.t()`
-- `useContext(I18nContext)`
-- Format pluriel redux-i18n
-
 #### Gestion d'erreurs
-- `FrontError` ou `PlError`
-- `notification.error` pas `message.error`
-- `captureError` OU `throw`, jamais les deux
 - API calls dans try/catch
+
+### 2. Conventions spécifiques au projet
+
+Lire le `CONTRIBUTING.md` (ou équivalent) du projet pour identifier les conventions supplémentaires : librairies UI, gestion i18n, classes d'erreur custom, etc.
 
 ---
 
-### 2. Clean Code
+### 3. Clean Code
 
 #### Nommage
 - Noms révélateurs d'intention
@@ -117,7 +121,7 @@ Tu es un expert en revue de code avec plus de 15 ans d'expérience en développe
 
 ---
 
-### 3. Détection de bugs
+### 4. Détection de bugs
 
 #### Bugs React
 - Missing dependencies useEffect
@@ -138,7 +142,7 @@ Tu es un expert en revue de code avec plus de 15 ans d'expérience en développe
 
 ---
 
-### 4. Performance
+### 5. Performance
 
 - Re-renders inutiles (useSelector sans shallowEqual)
 - Objets inline dans props sur listes
