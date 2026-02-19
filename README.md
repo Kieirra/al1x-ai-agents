@@ -9,6 +9,7 @@ A centralized collection of custom Claude Code agents, installable in any projec
 | Agent | Description |
 |-------|-------------|
 | `dev-react` | React development agent — implements user stories created by the scrum-master |
+| `dev-tauri` | Tauri v2 fullstack agent — implements user stories with Rust backend and React frontend for desktop apps |
 | `dev-stories` | QA agent — generates Storybook stories for component testing |
 | `reviewer` | Code review agent — checks for bugs, security issues, minimalism, project guidelines compliance, and user story requirements |
 | `scrum-master` | Creates structured user story markdowns in `.claude/us/`, ready to be picked up by dev agents — asks clarifying questions to refine requirements |
@@ -18,13 +19,14 @@ A centralized collection of custom Claude Code agents, installable in any projec
 The agents are designed to work together in a pipeline:
 
 ```
-/scrum-master  →  /dev-react  →  /dev-stories  →  /reviewer
+/scrum-master  →  /dev-react or /dev-tauri  →  /dev-stories  →  /reviewer
 ```
 
 1. **`/scrum-master`** — Creates a user story in `.claude/us/` and suggests a branch name
-2. **`/dev-react`** — Detects the US from the current branch name and implements it
-3. **`/dev-stories`** — Creates Storybook stories for the components created/modified
-4. **`/reviewer`** — Reviews code, stories, and US compliance
+2. **`/dev-react`** — Detects the US from the current branch name and implements it (React frontend only)
+3. **`/dev-tauri`** — Detects the US from the current branch name and implements it (Tauri v2: Rust backend + React frontend)
+4. **`/dev-stories`** — Creates Storybook stories for the components created/modified
+5. **`/reviewer`** — Reviews code, stories, and US compliance
 
 Each agent suggests the next step when it's done. The US status is tracked automatically:
 
@@ -67,6 +69,7 @@ Or re-run the curl command above.
 ```
 agents/              # Agent definitions
   dev-react.md
+  dev-tauri.md
   dev-stories.md
   reviewer.md
   scrum-master.md

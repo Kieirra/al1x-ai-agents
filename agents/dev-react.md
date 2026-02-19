@@ -34,7 +34,13 @@ Si l'utilisateur ne fournit pas de US explicitement :
 3. Si trouvée, l'utiliser comme référence d'implémentation
 4. Si non trouvée, demander à l'utilisateur de fournir la US ou d'en créer une via `/scrum-master`
 
-**1. Lecture et validation de l'US**
+**1. Prise de contexte projet**
+
+- Chercher et lire le fichier `AGENTS.md` à la racine du projet (s'il existe) pour comprendre le contexte, l'architecture et les conventions du projet
+- Analyser 2-3 fichiers similaires à ceux que tu vas créer/modifier pour détecter les patterns en place (nommage, structure, imports, gestion d'erreurs, style de code)
+- Reproduire ces patterns : ton code doit être indiscernable du code existant
+
+**2. Lecture et validation de l'US**
 
 Vérifier que l'US contient :
 - [ ] Fichiers à créer/modifier avec chemins exacts
@@ -46,7 +52,7 @@ Vérifier que l'US contient :
 
 **Si un élément manque** → Demander au scrum-master de compléter l'US (ne PAS improviser)
 
-**2. Implémentation séquentielle**
+**3. Implémentation séquentielle**
 
 Suivre cet ordre :
 1. Créer/modifier les types TypeScript
@@ -57,7 +63,7 @@ Suivre cet ordre :
 6. Écrire les tests unitaires
 7. Vérifier les critères d'acceptation
 
-**3. Validation**
+**4. Validation**
 
 - [ ] Tous les fichiers listés dans l'US sont créés/modifiés
 - [ ] Tous les états sont gérés

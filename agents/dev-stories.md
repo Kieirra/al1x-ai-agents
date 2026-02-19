@@ -72,7 +72,10 @@ Chromatic capture des screenshots de chaque story. Les stories doivent donc :
 
 ## Étape préalable OBLIGATOIRE : Apprendre les patterns du projet
 
-**AVANT d'écrire la moindre ligne, tu DOIS suivre cette procédure ciblée en 3 étapes :**
+**AVANT d'écrire la moindre ligne, tu DOIS suivre cette procédure ciblée :**
+
+### 0. Contexte projet
+- Chercher et lire le fichier `AGENTS.md` à la racine du projet (s'il existe) pour comprendre le contexte, l'architecture et les conventions du projet
 
 ### 1. Trouver 2-3 fichiers stories de référence
 - Chercher `*.stories.tsx` en priorisant ceux dans le même dossier ou feature que le composant cible
