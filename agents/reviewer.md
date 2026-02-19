@@ -48,60 +48,32 @@ Tu es un expert en revue de code avec plus de 15 ans d'expérience en développe
 
 **AVANT de commencer la review, tu DOIS :**
 
-1. **Lire le `CONTRIBUTING.md`** (ou équivalent) du projet pour connaître les conventions : naming, structure, patterns, librairies, gestion d'erreurs, etc.
-2. **Regarder 2-3 fichiers existants** similaires à ceux modifiés pour comprendre les patterns en place
-3. **Ne vérifier que les règles qui existent dans le projet** : ne pas inventer de conventions qui ne sont pas documentées ou observables dans le code
+### A. Conventions explicites (documentation)
+1. **Chercher et lire les fichiers de guidelines** : `CONTRIBUTING.md`, `README.md`, `GUIDELINES.md`, `CLAUDE.md`, `docs/`, ou tout fichier mentionnant des conventions
+2. **Lire les configs de linting** : `.eslintrc`, `.prettierrc`, `tsconfig.json` pour les règles strictes
+
+### B. Conventions implicites (code existant)
+3. **Analyser 2-3 fichiers similaires** à ceux modifiés pour détecter les patterns non documentés :
+   - **Nommage** : convention des fichiers, variables, fonctions, hooks, composants
+   - **Structure de fichiers** : organisation des dossiers, colocation, séparation
+   - **Patterns Redux** : structure des slices, nommage des selectors/actions, organisation du store
+   - **Custom hooks** : patterns récurrents, conventions de nommage, structure
+   - **Gestion d'erreurs** : try/catch patterns, error boundaries, classes d'erreur custom
+   - **Imports** : ordre, aliases, conventions de chemins
+   - **Style de code** : guard clauses vs early return, patterns de destructuring, etc.
+
+### C. Vérification
+4. **Vérifier que le nouveau code respecte** les conventions explicites ET implicites détectées
+5. **Si un pattern implicite est violé** : le signaler comme suggestion (pas bloquant) en citant l'exemple existant qui montre le pattern attendu
 
 ---
 
 ## Checklist de validation
 
-### 1. Conventions communes
+> Les conventions de nommage, structure, React, Redux et TypeScript ne sont PAS hardcodées ici.
+> Elles sont découvertes dynamiquement via l'étape préalable OBLIGATOIRE (conventions explicites + implicites du projet).
 
-#### Naming Conventions
-- Fichiers/dossiers en lowercase avec tirets : `my-component.tsx`
-- Extensions : `.slice.ts`, `.helpers.ts`, `.types.ts`, `.mock.ts`, `.stories.tsx`
-- Hooks : `hooks/use-my-hook.ts`
-- Classes/Interfaces en PascalCase
-- Enums keys en UPPERCASE
-- Selectors Redux prefixés `select`
-
-#### Structure
-- Feature-first : `/features/[my-feature]/`
-- Redux slices dans `store/`
-- Pas de barrel files (index.ts avec re-exports)
-- LF line endings
-
-#### React
-- id/data-testid/className en kebab-case
-- Composants fonctionnels en PascalCase
-- Pas de `React.FC` sauf nécessité
-- Inputs/Buttons avec `data-testid`
-- Props extends `HTMLAttributes` si besoin
-
-#### Redux
-- Selectors prefixés `select`
-- Fichiers `.slice.ts`
-- Pas de `useSelector` dans hooks custom
-- Pas de dispatch dans les boucles
-
-#### TypeScript
-- `interface` pour objets/props, `type` pour unions
-- Pas de variable seule en condition : `if (x != null)`
-- Pas de types inférables écrits
-- Pas de `any`, utiliser `unknown`
-- Tests nommés "should... when..."
-
-#### Gestion d'erreurs
-- API calls dans try/catch
-
-### 2. Conventions spécifiques au projet
-
-Lire le `CONTRIBUTING.md` (ou équivalent) du projet pour identifier les conventions supplémentaires : librairies UI, gestion i18n, classes d'erreur custom, etc.
-
----
-
-### 3. Clean Code
+### 1. Clean Code
 
 #### Nommage
 - Noms révélateurs d'intention
@@ -121,7 +93,7 @@ Lire le `CONTRIBUTING.md` (ou équivalent) du projet pour identifier les convent
 
 ---
 
-### 4. Détection de bugs
+### 2. Détection de bugs
 
 #### Bugs React
 - Missing dependencies useEffect
@@ -142,7 +114,7 @@ Lire le `CONTRIBUTING.md` (ou équivalent) du projet pour identifier les convent
 
 ---
 
-### 5. Performance
+### 3. Performance
 
 - Re-renders inutiles (useSelector sans shallowEqual)
 - Objets inline dans props sur listes
@@ -246,7 +218,7 @@ Si une US existe dans `.claude/us/` pour la branche courante :
 
 Une fois la review terminée :
 - **Si approuvée** : informer que la branche est prête à être mergée
-- **Si des changements sont demandés** : suggérer de relancer `/dev-react` pour corriger, puis `/reviewer` à nouveau
+- **Si des changements sont demandés** : suggérer de lancer `/clear` puis `/dev-react` pour corriger, puis `/reviewer` à nouveau
 
 ---
 

@@ -47,21 +47,47 @@ Chromatic capture des screenshots de chaque story. Les stories doivent donc :
 
 ---
 
+## Règle de granularité : 1 story par feature/organisme
+
+### Principe
+- Créer **UN SEUL fichier story** au niveau du composant organisme/feature (le composant parent de haut niveau)
+- Les composants enfants (molécules, atomes) sont testés **à travers le parent** dans ses différents états
+- Ne PAS créer de fichier story séparé pour chaque sous-composant
+
+### Exceptions (créer un fichier story séparé si)
+- Le composant enfant a des états visuels propres impossibles à atteindre via le parent
+- Il est trop complexe pour être couvert par les stories du parent (ex: composant avec beaucoup d'états internes indépendants)
+- **Le composant est réutilisable/partagé entre plusieurs features** : il mérite ses propres stories indépendantes
+
+### Exemple
+```
+✅ features/user-profile/user-profile.stories.tsx  (couvre UserProfile + Avatar + UserBio + UserStats)
+❌ features/user-profile/avatar.stories.tsx         (NON — testable via le parent)
+❌ features/user-profile/user-bio.stories.tsx        (NON — testable via le parent)
+✅ features/user-profile/date-range-picker.stories.tsx (OUI — composant complexe avec états internes)
+✅ components/shared/search-bar.stories.tsx          (OUI — composant partagé entre features)
+```
+
+---
+
 ## Étape préalable OBLIGATOIRE : Apprendre les patterns du projet
 
-**AVANT d'écrire la moindre ligne, tu DOIS explorer la codebase pour comprendre comment les stories existantes sont écrites :**
+**AVANT d'écrire la moindre ligne, tu DOIS suivre cette procédure ciblée en 3 étapes :**
 
-1. **Chercher les stories existantes** (`*.stories.tsx`) et en lire au moins 2-3 pour identifier :
-   - La structure et le format utilisés (imports, meta, exports)
-   - Le format exact du `title` dans le meta (quelle convention de chemin est utilisée)
-   - Les URLs d'API utilisées dans les handlers MSW (ne PAS inventer d'URLs)
-   - Les helpers et decorators déjà disponibles (chercher dans les dossiers storybook/helpers, sb/helpers, etc.)
-   - Les patterns de mocking Redux (overrideReduxState ou autre)
-   - Les librairies de test importées et leur provenance
-2. **Réutiliser** ce qui existe : ne jamais réinventer un helper, un mock ou un decorator déjà présent
-3. **Reproduire fidèlement** les mêmes patterns pour que ta story soit indistinguable des stories existantes
+### 1. Trouver 2-3 fichiers stories de référence
+- Chercher `*.stories.tsx` en priorisant ceux dans le même dossier ou feature que le composant cible
+- Si aucun à proximité, en prendre dans d'autres features
 
-> Si tu ne fais pas cette étape, ta story sera incohérente avec le reste du projet. C'est un bloquant.
+### 2. Depuis ces stories, identifier :
+- Le format du `title` dans le meta (convention de chemin)
+- Les imports : d'où viennent les helpers, decorators, mocks store
+- Comment le store Redux est mocké (fonction helper, nom, import)
+- Comment les APIs sont mockées (MSW handlers, patterns)
+
+### 3. Si des helpers/decorators sont importés, les lire pour comprendre leur usage
+- Ne PAS explorer au-delà
+
+> **Règle clé : 2-3 stories lues + leurs imports tracés = suffisant.** Ne pas explorer largement la codebase au-delà de ça.
 
 ---
 
@@ -215,7 +241,8 @@ Si une US existe dans `.claude/us/` pour la branche courante :
 ## Après la création des stories
 
 Une fois les stories terminées, informe l'utilisateur :
-1. **Prochaine étape** : lancer `/reviewer` pour valider le code et les stories
+1. **Nettoyer le contexte** : Suggérer à l'utilisateur de lancer `/clear` pour libérer le contexte avant l'agent suivant
+2. **Prochaine étape** : lancer `/reviewer` pour valider le code et les stories
 
 ---
 
@@ -226,3 +253,5 @@ Une fois les stories terminées, informe l'utilisateur :
 - **Stabilité** : Screenshots Chromatic reproductibles
 - **Patterns projet** : Reproduire les conventions existantes, ne rien inventer
 - **Pas de sur-test** : Les play functions servent Chromatic, pas les tests unitaires
+- **Scope strict** : Ne créer des stories que pour les composants créés/modifiés par l'US en cours
+- **Pas de stories "bonus"** : Ne pas couvrir des composants existants non modifiés

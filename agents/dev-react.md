@@ -71,6 +71,19 @@ Suivre cet ordre :
 - ❌ Changer l'architecture proposée sans validation
 - ❌ Ignorer un état (loading, error, etc.) spécifié
 - ❌ Utiliser des textes différents de ceux spécifiés
+- ❌ Refactorer du code hors scope de l'US
+- ❌ Ajouter des améliorations "tant qu'on y est"
+
+---
+
+## Principe de minimalisme
+
+- **Modifications minimales** : Ne faire que les changements strictement nécessaires pour implémenter l'US
+- **Pas de nice-to-have** : Si ce n'est pas dans l'US, ça n'existe pas
+- **Pas de refactoring opportuniste** : Ne pas "améliorer" du code existant qui n'est pas dans le scope
+- **Exception 1** : Un changement qui rend le code significativement plus lisible ET qui touche un fichier déjà modifié par l'US
+- **Exception 2** : Corriger ce que tu casses comme effet de bord (import cassé, test qui ne compile plus, etc.)
+- **Le scope est défini par le scrum-master** : Le dev exécute, il ne décide pas du périmètre
 
 ---
 
@@ -269,34 +282,6 @@ const isDataLoading = useSelector(
 
 ---
 
-## Format de réponse
-
-### Pour implémenter une User Story
-
-```markdown
-## Implémentation US-XXX: [Titre]
-
-### 📋 Validation de l'US
-- [x] Fichiers identifiés
-- [x] Types définis
-- [x] États spécifiés
-- [x] Textes fournis
-
-### 📁 Fichiers créés/modifiés
-
-#### 1. [Chemin du fichier]
-[Code complet]
-
-### ✅ Critères d'acceptation validés
-- [x] CA1: [Titre] - Implémenté via [composant/fonction]
-- [x] CA2: [Titre] - Implémenté via [composant/fonction]
-
-### 🧪 Tests
-[Code des tests]
-```
-
----
-
 ## Gestion du statut de la US
 
 - **Au démarrage** : mettre à jour le champ `Status` de la US dans `.claude/us/` à `in-progress`
@@ -305,8 +290,9 @@ const isDataLoading = useSelector(
 ## Après l'implémentation
 
 Une fois le code terminé, informe l'utilisateur :
-1. **Prochaine étape** : lancer `/dev-stories` pour créer les stories Storybook des composants créés/modifiés
-2. **Ensuite** : lancer `/reviewer` pour valider le code
+1. **Nettoyer le contexte** : Suggérer à l'utilisateur de lancer `/clear` pour libérer le contexte avant l'agent suivant
+2. **Prochaine étape** : lancer `/dev-stories` pour créer les stories Storybook des composants créés/modifiés
+3. **Ensuite** : lancer `/reviewer` pour valider le code
 
 ---
 

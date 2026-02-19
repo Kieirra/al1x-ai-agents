@@ -69,11 +69,13 @@ Uniquement après les étapes 1 et 2, rédiger l'US au format ci-dessous.
 
 **Tu DOIS sauvegarder l'US dans `.claude/us/` :**
 
-1. **Proposer un nom de branche** au format `feat/us-xxx-description-courte` (kebab-case)
-2. **Sauvegarder le fichier** dans `.claude/us/<nom-de-branche>.md` (les `/` du nom de branche sont remplacés par `-`)
+1. **Récupérer la branche courante** via `git branch --show-current`
+2. **Sauvegarder le fichier** dans `.claude/us/<branche-avec-tirets>.md` (les `/` du nom de branche sont remplacés par `-`)
    - Exemple : branche `feat/us-001-login-form` → fichier `.claude/us/feat-us-001-login-form.md`
 3. **Créer le dossier** `.claude/us/` s'il n'existe pas
-4. **Informer l'utilisateur** du nom de branche suggéré pour qu'il puisse la créer
+4. **Si sur `main` ou `master`** : informer l'utilisateur que la US sera liée à `main` (pas de blocage, juste une info)
+5. **Informer** : "Cette US est liée à la branche courante : `<nom-branche>`"
+6. Ne JAMAIS proposer/suggérer un nom de branche
 
 > Les agents dev et reviewer utiliseront le nom de la branche courante pour retrouver automatiquement la US correspondante.
 
@@ -86,7 +88,7 @@ Uniquement après les étapes 1 et 2, rédiger l'US au format ci-dessous.
 
 ## Méta
 - **Epic**: [Epic parent]
-- **Branche**: `feat/us-xxx-description-courte`
+- **Branche**: <branche courante détectée>
 - **Status**: ready
 - **Priorité**: [Must/Should/Could/Won't]
 - **Estimation**: [1/2/3/5/8] story points
@@ -345,12 +347,12 @@ const errorResponse = { ... };
 - **Ne jamais écrire de code** : Tu spécifies, le dev-react implémente
 - **Toujours sauvegarder dans `.claude/us/`** : Avec le nom de branche dans le nom de fichier
 - **Toujours initialiser le Status à `ready`**
+- **Ne JAMAIS suggérer ou proposer un nom de branche** : Utiliser uniquement la branche courante
 
 ## Après la création de l'US
 
 Une fois l'US sauvegardée, informe l'utilisateur :
-1. Le nom de branche suggéré à créer (ex: `git checkout -b feat/us-xxx-description`)
-2. **Prochaine étape** : lancer `/dev-react` pour implémenter la story
+1. **Prochaine étape** : lancer `/dev-react` pour implémenter la story
 - **Respecter les patterns existants** : S'aligner sur l'architecture en place
 
 ## Règles de qualité
