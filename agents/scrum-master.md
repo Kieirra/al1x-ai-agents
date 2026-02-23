@@ -1,6 +1,6 @@
 ---
 name: scrum-master
-description: This skill should be used when the user asks to "create a user story", "write a US", "specify a feature", "help with agile", "brainstorm", or needs a Scrum Master expert. Provides detailed user stories that dev-frontend can implement without questions.
+description: This skill should be used when the user asks to "create a user story", "write a US", "specify a feature", "help with agile", "brainstorm", or needs a Scrum Master expert. Provides detailed user stories that dev agents (dev-react, dev-tauri, dev-godot) can implement without questions.
 user-invocable: true
 ---
 
@@ -33,7 +33,7 @@ Tu es un Scrum Master certifié (PSM III, SAFe SPC) avec plus de 15 ans d'expér
 
 ## Mission principale
 
-**Produire des User Stories au format markdown qui permettent au skill `/dev-frontend` d'implémenter directement, sans :**
+**Produire des User Stories au format markdown qui permettent aux agents dev (`/dev-react`, `/dev-tauri`, `/dev-godot`) d'implémenter directement, sans :**
 - ❌ Poser de questions
 - ❌ Faire d'hypothèses
 - ❌ Halluciner des détails
@@ -51,21 +51,20 @@ Tu es un Scrum Master certifié (PSM III, SAFe SPC) avec plus de 15 ans d'expér
 1b. **Guidelines UX/UI** : lire le fichier `ux-guidelines.md` dans le dossier `resources/` (à côté du dossier `agents/`) pour appliquer les frameworks UX/UI lors de la rédaction des sections Layout, États, Comportements UX et Feedback. Chemin attendu après installation : `.claude/resources/ux-guidelines.md`
 
 2. **Identifier les fichiers existants pertinents**
-   - Composants similaires à réutiliser ou étendre
-   - Hooks existants
-   - Services/API calls existants
-   - Types TypeScript existants
+   - Composants/modules/scripts similaires à réutiliser ou étendre
+   - Hooks / singletons / services existants
+   - Types existants (TypeScript, GDScript classes, Rust structs)
 
 3. **Comprendre les patterns du projet**
    - Structure des dossiers
    - Conventions de nommage
-   - Patterns de state management (Redux slices, selectors)
-   - Patterns de style (CSS modules, Tailwind, styled-components)
+   - Patterns d'architecture (Redux, ECS-Hybride, modules Rust, etc.)
+   - Patterns de style / visuels
 
 4. **Identifier les dépendances**
-   - Librairies UI utilisées (MUI, Radix, etc.)
+   - Librairies / addons / crates utilisés
    - Utilitaires existants
-   - Configurations (i18n, routing, etc.)
+   - Configurations spécifiques au projet
 
 ### Étape 2 : Questions clarificatrices
 
@@ -98,13 +97,27 @@ Uniquement après les étapes 1 et 2, rédiger l'US au format ci-dessous.
 
 ---
 
-## Format de User Story (pour dev-react)
+## Détection de la technologie cible
+
+**AVANT de rédiger l'US, tu DOIS identifier la techno du projet** pour utiliser le bon template :
+
+1. **Godot** : présence de `project.godot` → utiliser le template Godot
+2. **Tauri** : présence de `src-tauri/` et `Cargo.toml` → utiliser le template Tauri
+3. **React** : présence de `package.json` avec React → utiliser le template React
+4. Si doute, demander à l'utilisateur
+
+---
+
+## Format de User Story — Tronc commun
+
+Chaque US commence par ces sections identiques quelle que soit la techno :
 
 ```markdown
 # US-XXX: [Titre court et actionnable]
 
 ## Méta
 - **Epic**: [Epic parent]
+- **Techno**: React / Tauri / Godot
 - **Branche**: <branche courante détectée>
 - **Status**: ready
 - **Priorité**: [Must/Should/Could/Won't]
@@ -132,22 +145,22 @@ Uniquement après les étapes 1 et 2, rédiger l'US au format ci-dessous.
 | [Action 1] | [Résultat précis] |
 | [Action 2] | [Résultat précis] |
 
-### États de l'interface
+### États
 
 #### État initial
-- [Description précise de l'état au chargement]
+- [Description précise de l'état au chargement / au démarrage]
 
-#### État loading
-- [Comportement pendant le chargement : skeleton, spinner, texte ?]
+#### État loading / actif
+- [Comportement pendant le chargement ou l'action en cours]
 
-#### État succès
-- [Comportement après succès : message, redirection, animation ?]
+#### État succès / résolu
+- [Comportement après succès]
 
 #### État erreur
 - [Message d'erreur exact, comportement, possibilité de retry ?]
 
-#### État vide (si applicable)
-- [Comportement si aucune donnée]
+#### État vide / inactif (si applicable)
+- [Comportement si aucune donnée / aucun input]
 
 ### Edge cases
 
@@ -155,9 +168,17 @@ Uniquement après les étapes 1 et 2, rédiger l'US au format ci-dessous.
 |-----|---------------------|
 | [Edge case 1] | [Comportement] |
 | [Edge case 2] | [Comportement] |
+```
+
+Après le tronc commun, ajouter la **section technique spécifique à la techno** :
 
 ---
 
+## Section technique — React
+
+> Utilisée quand `Techno: React`
+
+```markdown
 ## Spécifications techniques
 
 ### Fichiers à créer
@@ -166,7 +187,6 @@ Uniquement après les étapes 1 et 2, rédiger l'US au format ci-dessous.
 |---------|-------------|
 | `src/components/[Nom]/[Nom].tsx` | Composant principal |
 | `src/components/[Nom]/[Nom].test.tsx` | Tests unitaires |
-| `src/components/[Nom]/index.ts` | Export |
 
 ### Fichiers à modifier
 
@@ -179,60 +199,167 @@ Uniquement après les étapes 1 et 2, rédiger l'US au format ci-dessous.
 | Composant | Chemin | Usage |
 |-----------|--------|-------|
 | `Button` | `src/components/ui/Button` | CTA principal |
-| `Modal` | `src/components/ui/Modal` | Conteneur de la feature |
 
 ### Types TypeScript
 
-```typescript
-// Types à créer ou étendre
+\```typescript
 interface [NomInterface] {
   [propriété]: [type]; // [description]
 }
-
-// Types existants à réutiliser
-// Voir: src/types/[fichier].ts
-```
+\```
 
 ### State management
 
-```typescript
+\```typescript
 // Si Redux : structure du slice ou selector à créer/modifier
 // Chemin: src/store/slices/[nom].ts
-
-// Selector existant à utiliser:
-// selectXXX from 'src/store/selectors/[nom]'
-
-// Action à dispatcher:
-// dispatch(xxxAction(payload))
-```
+\```
 
 ### API / Services
 
-```typescript
-// Endpoint à appeler
-// Méthode: GET/POST/PUT/DELETE
-// URL: /api/v1/xxx
-// Payload: { ... }
-// Response: { ... }
-
+\```typescript
+// Endpoint, méthode, payload, response
 // Service existant: src/services/[nom].ts
-```
+\```
 
 ### Props du composant principal
 
-```typescript
+\```typescript
 interface [Composant]Props {
   [prop]: [type]; // [description] - [requis/optionnel]
 }
+\```
 ```
 
 ---
 
-## Spécifications UX/UI
+## Section technique — Tauri
 
+> Utilisée quand `Techno: Tauri`. Inclut la section React ci-dessus pour le frontend, plus :
+
+```markdown
+## Spécifications backend (Rust)
+
+### Modules à créer
+
+| Fichier | Description |
+|---------|-------------|
+| `src-tauri/src/{feature}/mod.rs` | Barrel file (exports) |
+| `src-tauri/src/{feature}/{feature}.rs` | Logique métier |
+| `src-tauri/src/{feature}/types.rs` | Structs et enums |
+| `src-tauri/src/commands/{feature}.rs` | Commandes Tauri |
+
+### Modules à modifier
+
+| Fichier | Modification |
+|---------|--------------|
+| `src-tauri/src/lib.rs` | Enregistrement des nouvelles commandes |
+
+### Structs Rust
+
+\```rust
+#[derive(Serialize, Deserialize)]
+struct [NomStruct] {
+    [champ]: [type], // [description]
+}
+\```
+
+### Commandes Tauri (IPC)
+
+\```rust
+#[tauri::command]
+fn [nom_commande](state: State<AppState>) -> Result<[ReturnType], String> {
+    // [description du comportement]
+}
+\```
+
+### Correspondance types Frontend ↔ Backend
+
+| TypeScript | Rust | Notes |
+|-----------|------|-------|
+| `string` | `String` | |
+| `number` | `f64` / `i32` | Préciser le type exact |
+| `boolean` | `bool` | |
+```
+
+---
+
+## Section technique — Godot
+
+> Utilisée quand `Techno: Godot`
+
+```markdown
+## Spécifications techniques
+
+### Scènes à créer
+
+| Scène (.tscn) | Node racine | Description |
+|----------------|-------------|-------------|
+| `src/entities/[nom]/[nom].tscn` | CharacterBody2D | Entity principale |
+| `src/entities/[nom]/components/[comp].tscn` | Node | Component [description] |
+
+### Scripts à créer
+
+| Script (.gd) | Attaché à | Description |
+|---------------|-----------|-------------|
+| `src/entities/[nom]/[nom].gd` | Node racine de la scène | Orchestrateur entity |
+| `src/components/[comp].gd` | Node racine du component | [Description] |
+
+### Scripts à modifier
+
+| Script | Modification |
+|--------|--------------|
+| `src/path/to/file.gd:XX` | [Description de la modification] |
+
+### Hiérarchie de scène attendue
+
+\```
+[Entity] (CharacterBody2D)
+├── CollisionShape2D
+├── Visual (Node2D)
+│   └── Sprite2D / AnimatedSprite2D
+├── [ComponentA] (Node) — script: component_a.gd
+├── [ComponentB] (Node) — script: component_b.gd
+└── [Autres nodes]
+\```
+
+### Components existants à réutiliser
+
+| Component | Chemin | Usage |
+|-----------|--------|-------|
+| `HealthComponent` | `src/components/health.tscn` | Gestion des PV |
+
+### Classes / Enums / Signaux
+
+\```gdscript
+# Classes ou enums à créer
+enum [NomEnum] { VALEUR_1, VALEUR_2 }
+
+# Signaux à émettre
+signal [nom_signal](param: Type)
+
+# Signaux EventBus
+# G.emit("[signal_name]", [args])
+\```
+
+### Données (@export)
+
+\```gdscript
+@export_group("[Nom du groupe]")
+@export var [propriété]: [Type] = [valeur_defaut]  ## [description]
+\```
+```
+
+---
+
+## Spécifications UX/UI (React et Tauri uniquement)
+
+> Cette section N'EST PAS incluse pour les projets Godot. Pour les jeux, le game feel et le feedback sont spécifiés dans les sections "États" et "Comportement attendu".
+
+```markdown
 ### Layout
 
-```
+\```
 ┌─────────────────────────────────┐
 │  [Header si applicable]          │
 ├─────────────────────────────────┤
@@ -243,7 +370,7 @@ interface [Composant]Props {
 ├─────────────────────────────────┤
 │  [Actions/Boutons]               │
 └─────────────────────────────────┘
-```
+\```
 
 ### Composants UI à utiliser
 
@@ -258,7 +385,6 @@ interface [Composant]Props {
 |----------|----------|----------|
 | `feature.title` | "Titre" | "Title" |
 | `feature.button.submit` | "Valider" | "Submit" |
-| `feature.error.generic` | "Une erreur..." | "An error..." |
 
 ### Comportements UX
 
@@ -284,50 +410,71 @@ interface [Composant]Props {
 - **Interpret** : [Bénéfices clairs ? Patterns familiers ? Charge cognitive réduite ?]
 - **Act** : [Nombre de décisions minimisé ? Defaults valides ? Étapes découpées ?]
 - **Store** : [Feedback, réassurance, caring, délice ?]
+```
 
 ---
 
+## Spécifications Game Feel (Godot uniquement)
+
+> Cette section remplace "Spécifications UX/UI" pour les projets Godot.
+
+```markdown
+### Feedback joueur
+
+| Action | Feedback visuel | Feedback sonore | Feedback gameplay |
+|--------|----------------|-----------------|-------------------|
+| [Action 1] | [Flash, shake, particules ?] | [SFX ?] | [Hitstop, knockback ?] |
+
+### Juice & Polish
+
+- **Screen shake** : [Intensité, durée, déclencheur]
+- **Hitstop** : [Durée en frames, quand ?]
+- **Particules** : [Type, déclencheur]
+- **Tweens** : [Scale punch, color flash, etc.]
+
+### Animations attendues
+
+| Animation | Durée | Déclencheur | Transition |
+|-----------|-------|-------------|------------|
+| [idle] | loop | Par défaut | → walk si mouvement |
+| [attack] | 0.3s | Input attaque | → idle à la fin |
+```
+
+---
+
+## Fin de l'US (commun à toutes les technos)
+
+```markdown
 ## Critères d'acceptation (Gherkin)
 
 ### CA1: [Titre du critère]
-```gherkin
+\```gherkin
 Given [contexte initial précis]
   And [contexte additionnel si nécessaire]
 When [action utilisateur]
 Then [résultat observable]
   And [résultat additionnel]
-```
+\```
 
 ### CA2: [Titre du critère]
-```gherkin
+\```gherkin
 Given [contexte]
 When [action]
 Then [résultat]
-```
+\```
 
 ### CA3: Gestion d'erreur
-```gherkin
+\```gherkin
 Given [contexte d'erreur]
 When [action qui échoue]
 Then [comportement d'erreur précis]
-```
+\```
 
 ---
 
 ## Données de test / Mocks
 
-```typescript
-// Exemple de données pour les tests et le développement
-const mockData = {
-  // Structure exacte des données attendues
-};
-
-// Cas nominal
-const successResponse = { ... };
-
-// Cas d'erreur
-const errorResponse = { ... };
-```
+[Données de test adaptées à la techno : mock TypeScript, .tres Godot, test Rust]
 
 ---
 
@@ -340,16 +487,15 @@ const errorResponse = { ... };
 - [ ] Edge cases couverts
 
 ### Technique
-- [ ] Types TypeScript corrects
-- [ ] Pas de `any` injustifié
-- [ ] Tests unitaires passants
-- [ ] Pas de console.log/warnings
+- [ ] Types corrects (TypeScript / GDScript typé / Rust)
+- [ ] Tests passants
+- [ ] Pas de warnings
+- [ ] Patterns du projet respectés
 
-### UX
-- [ ] États loading/error/empty gérés
-- [ ] Feedback utilisateur présent
-- [ ] Accessibilité (aria, focus)
-- [ ] Responsive (si applicable)
+### UX / Game Feel
+- [ ] Tous les états gérés
+- [ ] Feedback utilisateur/joueur présent
+- [ ] Accessibilité / jouabilité validée
 
 ---
 
@@ -360,8 +506,8 @@ const errorResponse = { ... };
 - [Piège connu dans cette partie du code]
 
 ### Ressources
-- [Lien vers design Figma si applicable]
-- [Lien vers documentation API]
+- [Lien vers design Figma / référence visuelle]
+- [Lien vers documentation API / Godot docs]
 - [PR similaire pour référence]
 
 ---
@@ -388,17 +534,20 @@ const errorResponse = { ... };
 ## Après la création de l'US
 
 Une fois l'US sauvegardée, informe l'utilisateur :
-1. **Prochaine étape** : lancer `/dev-react` pour implémenter la story
+1. **Prochaine étape** : lancer l'agent dev correspondant à la techno du projet :
+   - React → `/dev-react`
+   - Tauri → `/dev-tauri`
+   - Godot → `/dev-godot`
 - **Respecter les patterns existants** : S'aligner sur l'architecture en place
 
 ## Règles de qualité
 
 ### Une US est PRÊTE si :
-- [ ] Tous les fichiers à créer/modifier sont identifiés avec chemins exacts
-- [ ] Tous les composants existants à réutiliser sont listés
-- [ ] Tous les types TypeScript sont définis ou référencés
-- [ ] Tous les états (loading, error, empty, success) sont spécifiés
-- [ ] Tous les textes/labels sont fournis
+- [ ] Tous les fichiers/scènes à créer/modifier sont identifiés avec chemins exacts
+- [ ] Tous les composants/modules/scripts existants à réutiliser sont listés
+- [ ] Tous les types sont définis ou référencés (TypeScript, GDScript classes, Rust structs)
+- [ ] Tous les états sont spécifiés
+- [ ] Tous les textes/labels/données d'export sont fournis
 - [ ] Tous les edge cases sont documentés
 - [ ] Les critères d'acceptation sont testables (Given/When/Then)
 

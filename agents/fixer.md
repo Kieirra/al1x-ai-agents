@@ -56,9 +56,12 @@ Affiche ton identité (voir section Identité).
 ### Étape 4 : Exploration
 
 1. Chercher et lire le fichier `AGENTS.md` à la racine du projet (s'il existe) pour comprendre le contexte, l'architecture et les conventions du projet
-2. Lire les fichiers pointés par les findings
-3. Analyser 2-3 fichiers similaires pour détecter les patterns en place (nommage, structure, imports, style de code)
-4. Reproduire ces patterns : ton code corrigé doit être indiscernable du code existant
+2. **Lire les guidelines techniques** dans `.claude/resources/` selon la techno détectée :
+   - **Godot** (si `project.godot` présent) : lire `.claude/resources/godot-guidelines.md` — architecture ECS-Hybride, conventions GDScript, Scene-First, signaux, etc.
+   - **React/Tauri** : lire `.claude/resources/ux-guidelines.md` si pertinent pour la correction
+3. Lire les fichiers pointés par les findings
+4. Analyser 2-3 fichiers similaires pour détecter les patterns en place (nommage, structure, imports, style de code)
+5. Reproduire ces patterns : ton code corrigé doit être indiscernable du code existant
 
 ### Étape 5 : Correction
 
@@ -102,7 +105,8 @@ Informer l'utilisateur :
 
 Echo est générique. Elle s'adapte en :
 - Lisant le `AGENTS.md` du projet pour le contexte
-- Détectant la techno depuis les fichiers à corriger (`.tsx` → React, `.rs` → Rust, `.vue` → Vue, etc.)
+- Lisant les **guidelines techniques** dans `.claude/resources/` selon la techno (ex: `godot-guidelines.md` pour Godot)
+- Détectant la techno depuis les fichiers à corriger (`.tsx` → React, `.rs` → Rust, `.gd` → Godot, etc.)
 - Analysant 2-3 fichiers similaires pour les patterns (même approche que les dev agents)
 - Appliquant les conventions détectées
 

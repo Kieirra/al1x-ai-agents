@@ -4,6 +4,67 @@ Ce fichier contient les patterns d'architecture et conventions GDScript à appli
 
 ---
 
+## 0. Principe Scene-First
+
+**Règle fondamentale : tout ce qui peut exister dans une scène (.tscn) DOIT y être créé, pas par code.**
+
+L'utilisateur doit pouvoir ouvrir n'importe quelle scène dans l'éditeur Godot et voir/modifier visuellement la hiérarchie, les nodes, les @export, les collision shapes, etc. Le code ne crée des nodes dynamiquement que quand c'est nécessaire au runtime.
+
+### Créer dans la scène (.tscn) — par défaut
+
+| Quoi | Pourquoi |
+|------|----------|
+| Entities et leur hiérarchie complète | Visibles et éditables dans l'éditeur |
+| Components fixes (Health, Movement, etc.) | Configurables via @export dans l'inspecteur |
+| CollisionShape2D, Area2D | Shapes éditables visuellement |
+| Visual (Node2D) + Sprites | Preview dans l'éditeur |
+| NavigationAgent2D | Configurable dans l'inspecteur |
+| AnimationPlayer, AnimationTree | Édition des animations dans l'éditeur |
+| AudioStreamPlayer2D | Assignation des streams dans l'inspecteur |
+| Timer nodes | Configurables dans l'inspecteur (wait_time, one_shot, autostart) |
+
+### Créer par code — uniquement si nécessaire
+
+| Quoi | Pourquoi |
+|------|----------|
+| Spawning dynamique (ennemis, projectiles, loot) | N'existent pas au chargement |
+| VFX et particules temporaires | Créés à la volée, détruits après |
+| Components conditionnels selon le contexte runtime | Sous-classes qui ajoutent des components spécifiques |
+| Nodes dont le type dépend d'une configuration | Chemin dynamique, type inconnu à l'avance |
+
+### Accès aux nodes de scène
+
+```gdscript
+# ✅ Bon : le node existe dans la scène, on y accède via @onready
+@onready var _health: Node = $Health
+@onready var _movement: Node = $Movement
+@onready var _visual: Node2D = $Visual
+
+# ✅ Bon : accès null-safe pour les nodes optionnels
+var _nav_agent = get_node_or_null("NavigationAgent2D")
+
+# ❌ Éviter : créer le node par code alors qu'il pourrait être dans la scène
+func _ready() -> void:
+    var health = HealthComponent.new()
+    health.name = "Health"
+    add_child(health)
+```
+
+### Conséquences sur les @export
+
+Les @export configurent les nodes de la scène dans l'inspecteur. Utiliser des setters de propagation pour transmettre les valeurs aux components enfants :
+
+```gdscript
+@export var max_health: int = 100:
+    set(v):
+        max_health = v
+        if _health: _health.max_health = v   # Propagation au component
+```
+
+> Les patterns `_ensure_component()` (section 2) restent valides UNIQUEMENT pour les components qui DOIVENT être créés dynamiquement (sous-classes spécialisées, spawning conditionnel).
+
+---
+
 ## 1. Architecture ECS-Hybride
 
 ### Principe fondamental
@@ -48,9 +109,18 @@ Certains components peuvent extends `Area2D` quand ils nécessitent de la détec
 
 ## 2. Patterns de création de components
 
-### Pattern `_ensure_component()`
+### Méthode préférée : nodes dans la scène (Scene-First)
 
-Création dynamique de components avec vérification d'existence :
+La plupart des components doivent être des nodes créés dans le fichier `.tscn`. Le script y accède via `@onready` :
+
+```gdscript
+@onready var _health: Node = $Health
+@onready var _movement: Node = $Movement
+```
+
+### Méthode alternative : création dynamique (`_ensure_component()`)
+
+Réservée aux cas où le component **ne peut pas** être dans la scène (sous-classes qui ajoutent des components spécifiques, spawning conditionnel) :
 
 ```gdscript
 func _ensure_component(node_name: String, klass: Script) -> Node:
@@ -61,28 +131,13 @@ func _ensure_component(node_name: String, klass: Script) -> Node:
         add_child(node)
     return node
 
-# Usage :
-_health = _ensure_component("Health", HealthComponent)
-_movement = _ensure_component("Movement", MovementComponent)
+# Usage dans une sous-classe qui ajoute un component spécifique :
+func _ready() -> void:
+    super._ready()
+    _charge_attack = _ensure_component("ChargeAttack", ChargeAttackComponent)
 ```
 
-### Pattern `_get_or_create_component()` (avec scripts preloadés)
-
-```gdscript
-func _get_or_create_component(node_name: String, script: Script):
-    var component = get_node_or_null(node_name)
-    if not component:
-        component = Node.new()
-        component.set_script(script)
-        component.name = node_name
-        add_child(component)
-    return component
-
-# Scripts preloadés en constantes :
-const MovementScript = preload("res://src/entities/player/components/player_movement.gd")
-```
-
-> Adopter un pattern unique par type d'entity et le garder cohérent dans tout le projet.
+> **Règle : un seul pattern de création dynamique par projet.** `_ensure_component()` est le pattern recommandé. Il gère l'idempotence (ne crée pas de doublon si le node existe déjà dans la scène).
 
 ---
 
@@ -197,7 +252,9 @@ func _ready() -> void:
 
 ## 5. Singleton G (globals)
 
-`G` est un `class_name` statique (PAS un autoload). Il fournit des wrappers null-safe sur tous les autoloads, garantissant que le code ne crash jamais en tests headless :
+`G` est un `class_name` statique (PAS un autoload). Toutes ses fonctions sont `static`, ce qui permet de les appeler sans instance et sans dépendance à l'arbre de scènes. Avantage : fonctionne en tests headless et n'a pas besoin d'être enregistré dans les Project Settings → Autoload.
+
+Il fournit des wrappers null-safe sur tous les autoloads, garantissant que le code ne crash jamais en tests headless :
 
 ```gdscript
 class_name G
@@ -319,18 +376,29 @@ _charge_attack.initialize({
 
 ---
 
-## 9. Convention "Visual" (Node2D)
+## 9. Convention "Visual" (Node2D) et hiérarchie standard
 
-Toute entity animée doit avoir un node enfant **"Visual"** (`Node2D`) contenant les sprites. Les components visuels y accèdent par nom :
+Toute entity animée doit avoir un node enfant **"Visual"** (`Node2D`) contenant les sprites et animations. Les components visuels y accèdent par nom :
 
 ```
 Entity (CharacterBody2D)
 ├── CollisionShape2D
-├── Visual (Node2D)          ← OBLIGATOIRE
-│   └── Sprite2D / AnimatedSprite2D
-├── NavigationAgent2D        (si navigation)
+├── Visual (Node2D)              ← OBLIGATOIRE
+│   ├── Sprite2D / AnimatedSprite2D
+│   └── AnimationPlayer          ← Si animations frame-by-frame
+├── AnimationTree                (si state machine d'animation complexe — au niveau entity)
+├── NavigationAgent2D            (si navigation)
 └── [Components...]
 ```
+
+### Placement AnimationPlayer vs AnimationTree
+
+| Node | Placement | Raison |
+|------|-----------|--------|
+| **AnimationPlayer** | Sous **Visual** | Il anime les propriétés du sprite (frames, modulate, position). Créé dans la scène .tscn. |
+| **AnimationTree** | Au niveau **Entity** | Il orchestre les transitions entre animations. Besoin d'accès au state global de l'entity. |
+
+> Les deux doivent être créés dans la scène (.tscn), jamais par code.
 
 Usages du Visual :
 - Flip direction (`Visual.scale.x`)
@@ -343,6 +411,8 @@ Usages du Visual :
 ## 10. Machines à états
 
 ### Pattern standard : enum State + match
+
+Pour les cas simples (3-6 états, transitions linéaires) :
 
 ```gdscript
 enum State { IDLE, TELEGRAPH, ACTIVE, COOLDOWN }
@@ -364,6 +434,17 @@ func _start_telegraph(target: Node2D) -> void:
     _state = State.TELEGRAPH
     # ...
 ```
+
+### Quand évoluer vers un système plus avancé ?
+
+| Seuil | Pattern recommandé |
+|-------|-------------------|
+| 3-6 états, transitions simples | enum + match (ci-dessus) |
+| 7+ états, ou transitions conditionnelles complexes | Nodes State séparés (chaque état = un Node enfant avec son propre script) |
+| États empilables (pause, menu overlay, stun par-dessus idle) | State stack (push/pop) |
+| Animations liées aux états | AnimationTree avec StateMachine — les transitions d'animation pilotent les transitions de gameplay |
+
+> Commencer simple (enum + match). Refactorer vers des nodes State uniquement quand le `match` devient ingérable.
 
 ---
 
@@ -446,8 +527,8 @@ _entity = get_parent() as CharacterBody2D
 
 | Pattern | Où | Pourquoi |
 |---------|-----|---------|
-| `distance_squared_to()` au lieu de `distance_to()` | Range checks | Évite `sqrt()` |
-| Pré-calculer `_range_squared` | Components avec détection de range | Carré calculé une fois |
+| `distance_squared_to()` au lieu de `distance_to()` | Range checks | Évite `sqrt()` — comparer avec `range * range` |
+| Pré-calculer `_range_squared = range * range` | Components avec détection de range | Carré calculé une fois dans `_ready()` |
 | Cache `has_method()` dans `_ready()` | Appels répétés | Évite string lookup par frame |
 | Dirty-flag cache | Listes d'entities | Évite `get_nodes_in_group()` chaque frame |
 | Cached player ref + refresh sur signal | Components ennemis | Lookup une fois, signal pour refresh |
@@ -547,7 +628,7 @@ Accès via `G.get_entity_layer()` — tout spawn dynamique (loot, projectiles, V
 
 ---
 
-## 22. Strategy pattern (Upgrades / Effects)
+## 22. Strategy pattern (Upgrades / Effects) — Optionnel, pour jeux avec système d'upgrades
 
 ```gdscript
 # Base abstraite — extends Resource
@@ -560,7 +641,7 @@ Les effects sont des sub-resources embarqués dans des fichiers `.tres`. Les sou
 
 ---
 
-## 23. Stat modifiers (stacking)
+## 23. Stat modifiers (stacking) — Optionnel, pour jeux avec système de stats
 
 ```gdscript
 # Modifiers accumulés par effect_id
@@ -570,3 +651,231 @@ _stat_modifiers: {stat_name: {effect_id: {type, value}}}
 # (base_value + sum_add_modifiers) * (1.0 + sum_multiply_bonuses)
 # Note : les multiply s'accumulent ADDITIVEMENT entre eux (2x +8% = +16%, pas 1.08²)
 ```
+
+---
+
+## 24. Input handling
+
+### Convention InputMap
+
+Définir les actions dans Project Settings → Input Map. Ne jamais utiliser de scan codes bruts dans le code.
+
+```gdscript
+# ✅ Bon : action nommée, remappable
+if Input.is_action_just_pressed("attack"):
+    _start_attack()
+
+var direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+
+# ❌ Mauvais : scan code brut, non remappable
+if Input.is_key_pressed(KEY_SPACE):
+    _start_attack()
+```
+
+### Conventions de nommage des actions
+
+| Convention | Exemples |
+|------------|----------|
+| `move_*` | `move_left`, `move_right`, `move_up`, `move_down` |
+| `action verb` | `attack`, `dash`, `interact`, `pause` |
+| `ui_*` | `ui_accept`, `ui_cancel` (réservé Godot) |
+
+### Où lire les inputs
+
+- **Entity** : lit les inputs dans `_physics_process()` ou `_unhandled_input()`
+- **Components** : ne lisent JAMAIS les inputs directement. Ils reçoivent des commandes de l'entity
+- **UI** : `_gui_input()` ou `_unhandled_input()` sur les Control nodes
+
+```gdscript
+# Entity lit l'input et transmet au component
+func _physics_process(delta: float) -> void:
+    var input_dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+    _movement.set_direction(input_dir)
+
+    if Input.is_action_just_pressed("dash"):
+        _movement.start_dash()
+```
+
+---
+
+## 25. Animation patterns
+
+### AnimationPlayer (frame-by-frame, tweens pré-définis)
+
+Créé dans la scène `.tscn` sous le node **Visual**. Utilisé pour les animations de sprites et les séquences pré-définies.
+
+```gdscript
+# Accès via @onready
+@onready var _anim_player: AnimationPlayer = $Visual/AnimationPlayer
+
+# Jouer une animation
+_anim_player.play("attack")
+
+# Connecter le signal de fin (dans la scène ou dans _ready)
+_anim_player.animation_finished.connect(_on_animation_finished)
+```
+
+### AnimationTree (state machine d'animation)
+
+Créé dans la scène `.tscn` au niveau entity. Utilisé quand les transitions entre animations sont complexes (idle → walk → attack → hurt).
+
+```gdscript
+@onready var _anim_tree: AnimationTree = $AnimationTree
+@onready var _state_machine: AnimationNodeStateMachinePlayback = _anim_tree["parameters/playback"]
+
+# Transitionner vers un état
+_state_machine.travel("walk")
+
+# Set blend position (pour blend trees directionnels)
+_anim_tree["parameters/walk/blend_position"] = direction
+```
+
+### Tweens (animations procédurales)
+
+Pour les effets visuels ponctuels (flash, scale punch, shake). Créés par code car temporaires :
+
+```gdscript
+# Flash de dégâts (blanc pendant 0.1s)
+func flash_damage() -> void:
+    var tween := create_tween()
+    tween.tween_property($Visual, "modulate", Color.WHITE, 0.0)
+    tween.tween_property($Visual, "modulate", Color(1, 1, 1, 1), 0.1)
+
+# Scale punch (impact feel)
+func scale_punch() -> void:
+    var tween := create_tween()
+    tween.tween_property($Visual, "scale", Vector2(1.2, 0.8), 0.05)
+    tween.tween_property($Visual, "scale", Vector2(1.0, 1.0), 0.1)
+```
+
+> Les Tweens sont l'exception au Scene-First : ils sont toujours créés par code car ils sont temporaires et procéduraux.
+
+---
+
+## 26. UI / HUD patterns
+
+### Principes
+
+- Les nodes UI (Control, Label, TextureRect, etc.) sont créés dans des scènes `.tscn` dédiées
+- Le HUD écoute les changements via **EventBus** (jamais de référence directe au joueur)
+- Les éléments UI ne connaissent pas les entities — communication unidirectionnelle via signaux
+
+### Pattern de mise à jour du HUD
+
+```gdscript
+# HUD : écoute l'EventBus
+func _ready() -> void:
+    G.connect_signal("player_health_changed", _on_health_changed)
+
+func _exit_tree() -> void:
+    G.disconnect_signal("player_health_changed", _on_health_changed)
+
+func _on_health_changed(current: int, max_hp: int) -> void:
+    _health_bar.value = current
+    _health_bar.max_value = max_hp
+```
+
+### Structure de scène UI
+
+```
+HUD (CanvasLayer)
+├── HealthBar (TextureProgressBar)
+├── AmmoDisplay (HBoxContainer)
+│   ├── AmmoIcon (TextureRect)
+│   └── AmmoLabel (Label)
+└── WaveCounter (Label)
+```
+
+> Tous les nodes UI sont créés dans la scène .tscn, éditables visuellement. Le script gère uniquement les mises à jour de valeurs.
+
+---
+
+## 27. Conventions de fichiers .tscn
+
+### Nommage
+
+| Élément | Convention | Exemple |
+|---------|------------|---------|
+| Fichier scène | snake_case | `basic_enemy.tscn`, `health_component.tscn` |
+| Noms de nodes | PascalCase | `Visual`, `Health`, `CollisionShape2D` |
+| Noms de nodes components | PascalCase descriptif | `PlayerMovement`, `RangedAttack` |
+
+### Structure de dossiers pour les scènes
+
+```
+src/
+├── entities/
+│   ├── player/
+│   │   ├── player.tscn            # Scène entity principale
+│   │   ├── player.gd              # Script entity
+│   │   └── components/
+│   │       ├── player_movement.tscn
+│   │       ├── player_movement.gd
+│   │       ├── player_shooting.tscn
+│   │       └── player_shooting.gd
+│   └── enemies/
+│       ├── basic_enemy.tscn
+│       ├── basic_enemy.gd
+│       └── components/
+│           └── ...
+├── components/                     # Components partagés
+│   ├── health.tscn
+│   ├── health.gd
+│   ├── knockback.tscn
+│   └── knockback.gd
+├── ui/
+│   ├── hud.tscn
+│   └── hud.gd
+└── levels/
+    ├── level_01.tscn
+    └── ...
+```
+
+### Component en tant que scène réutilisable
+
+Un component partagé a sa propre scène `.tscn` qui peut être instanciée dans n'importe quelle entity :
+
+```
+health.tscn
+└── Health (Node)                    ← root node, script: health.gd
+```
+
+Dans la scène de l'entity, le component est ajouté en tant qu'instance de scène (clic droit → "Instance Child Scene" dans l'éditeur), ce qui permet :
+- De modifier les @export par instance dans l'inspecteur
+- De voir le component dans l'arbre de scènes
+- De bénéficier des mises à jour si la scène component est modifiée
+
+---
+
+## 28. Camera patterns
+
+### Camera follow (joueur)
+
+La caméra est un enfant du joueur dans la scène `.tscn` :
+
+```
+Player (CharacterBody2D)
+├── Camera2D                         ← enfant direct
+│   # position_smoothing_enabled = true
+│   # position_smoothing_speed = 5.0
+├── Visual (Node2D)
+└── ...
+```
+
+### Screen shake
+
+```gdscript
+# Via le singleton G ou un component dédié
+static func screen_shake(intensity: float, duration: float) -> void:
+    var camera := _find_camera()
+    if not camera: return
+    var tween := camera.create_tween()
+    for i in int(duration / 0.05):
+        var offset := Vector2(randf_range(-1, 1), randf_range(-1, 1)) * intensity
+        tween.tween_property(camera, "offset", offset, 0.05)
+    tween.tween_property(camera, "offset", Vector2.ZERO, 0.05)
+```
+
+### Limites de caméra
+
+Configurées dans la scène `.tscn` via les propriétés `limit_left`, `limit_right`, `limit_top`, `limit_bottom` de Camera2D, ou dynamiquement par le level manager quand le joueur change de salle.

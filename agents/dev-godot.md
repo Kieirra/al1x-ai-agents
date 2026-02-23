@@ -72,15 +72,15 @@ Vérifier que l'US contient :
 
 **Si un élément manque** → Demander au scrum-master de compléter l'US (ne PAS improviser)
 
-**3. Implémentation séquentielle**
+**3. Implémentation séquentielle (Scene-First)**
 
 Suivre cet ordre :
 1. **Resources/Data** : types, enums, classes Resource si nécessaire
-2. **Components partagés** : components réutilisables (dans `src/components/`)
-3. **Components spécifiques** : components propres à l'entity (dans le dossier de l'entity)
-4. **Entity** : script principal qui orchestre les components
-5. **Signaux** : câblage EventBus + signaux locaux
-6. **Scènes** : fichiers `.tscn` avec la hiérarchie de nodes correcte
+2. **Scènes components** : fichiers `.tscn` des components (partagés puis spécifiques) avec leur hiérarchie de nodes
+3. **Scripts components** : scripts `.gd` attachés aux nodes des scènes components
+4. **Scène entity** : fichier `.tscn` avec la hiérarchie complète (CollisionShape2D, Visual, components instanciés)
+5. **Script entity** : script `.gd` orchestrateur attaché à la scène entity
+6. **Signaux** : câblage EventBus + signaux locaux
 7. **Intégration** : connexion avec les systèmes existants
 8. **Validation** : vérifier les critères d'acceptation
 
@@ -114,6 +114,50 @@ Suivre cet ordre :
 - **Exception 1** : Un changement qui rend le code significativement plus lisible ET qui touche un fichier déjà modifié par l'US
 - **Exception 2** : Corriger ce que tu casses comme effet de bord
 - **Le scope est défini par le scrum-master** : Le dev exécute, il ne décide pas du périmètre
+
+---
+
+## Principe Scene-First
+
+**Toujours créer les nodes dans les fichiers `.tscn` (scènes), jamais par code quand c'est évitable.**
+
+L'objectif : l'utilisateur doit pouvoir ouvrir la scène dans l'éditeur Godot et voir/modifier visuellement la hiérarchie, les nodes, les @export, les collision shapes, etc. Le code pur (instanciation dynamique) est réservé aux cas où la création runtime est nécessaire (spawning d'ennemis, projectiles, VFX temporaires).
+
+### Quand créer dans la scène (.tscn)
+
+- Entities et leur hiérarchie (CollisionShape2D, Visual, components fixes)
+- Components connus à l'avance (Health, Movement, etc.)
+- NavigationAgent2D, Area2D de détection
+- AnimationPlayer, AudioStreamPlayer
+- Toute configuration visuelle (@export, collision shapes, layers)
+
+### Quand créer par code
+
+- Spawning dynamique (ennemis, projectiles, loot)
+- Components conditionnels ajoutés selon le contexte runtime
+- VFX et particules temporaires
+- Tout ce qui n'existe pas au chargement de la scène
+
+### Conséquences sur le workflow
+
+1. **Créer d'abord la scène `.tscn`** avec la hiérarchie de nodes
+2. **Attacher les scripts `.gd`** aux nodes dans la scène
+3. **Configurer les @export** dans la scène (valeurs par défaut éditables dans l'inspecteur)
+4. **Les scripts accèdent aux nodes enfants** via `@onready var` ou `get_node_or_null()`, pas en les créant
+
+```gdscript
+# ✅ Bon : le node existe dans la scène, on y accède
+@onready var _health: Node = $Health
+@onready var _movement: Node = $Movement
+
+# ❌ Éviter : créer le node par code alors qu'il pourrait être dans la scène
+func _ready() -> void:
+    var health = HealthComponent.new()
+    health.name = "Health"
+    add_child(health)
+```
+
+> Exception : les patterns `_ensure_component()` du guidelines restent valides pour les components qui DOIVENT être créés dynamiquement (sous-classes qui ajoutent des components spécifiques non connus par la scène de base).
 
 ---
 

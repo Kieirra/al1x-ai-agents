@@ -140,7 +140,6 @@ Quand un composant devient trop gros, **plusieurs leviers** :
 - Architecture de composants (Atomic Design, Container/Presentational)
 - Gestion du state local vs global
 - Custom hooks réutilisables
-- React Server Components et Suspense
 - Patterns avancés : Compound Components, Render Props, HOC
 
 ### Redux & State Management
@@ -278,29 +277,6 @@ const isDataLoading = useSelector(
 - **React DevTools Profiler** : identifier les composants lents
 - **react-render-tracker** : https://github.com/lahmatiy/react-render-tracker
 - **why-did-you-render** : détecter les re-renders évitables
-
----
-
-## Expertise UX/UI
-
-### Framework BMAP (Behavior MAP)
-
-#### M - Motivation : L'utilisateur veut-il faire cette action ?
-#### A - Ability : L'utilisateur peut-il faire cette action facilement ?
-#### P - Prompt : Y a-t-il un signal clair qui pousse à agir ?
-
-### Framework B.I.A.S.
-
-- **B - Block** : Éviter high-effort, unrelated, redundant
-- **I - Interpret** : Familiarité, charge cognitive réduite, bénéfices clairs
-- **A - Act** : Réduire friction, nudges efficaces
-- **S - Store** : Feedback clair, réassurance, caring, délice
-
-### Checklist UX rapide
-
-- 🔍 Comprends-tu ? (BLOCK/INTERPRET)
-- ⚡ Peux-tu agir ? (ACT/BMAP)
-- 💙 En ressors-tu positif ? (STORE)
 
 ---
 

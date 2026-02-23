@@ -18,26 +18,39 @@ A centralized collection of custom Claude Code agents, installable in any projec
 
 ## Workflow
 
-The agents are designed to work together in a pipeline:
+The agents are designed to work together in a pipeline. The pipeline adapts to the project's technology:
 
+### React / Tauri (with frontend)
 ```
-/scrum-master (Lyra) → /dev-react (Iris) ou /dev-tauri (Vesta) ou /dev-godot (Aria) → /dev-stories (Chroma) → /reviewer (Athena)
-                                                                                              ↓
-                                                                                    ✅ reviewed → merge
-                                                                                    ❌ changes-requested → /fixer (Echo) → /reviewer (boucle)
+/scrum-master (Lyra) → /dev-react (Iris) ou /dev-tauri (Vesta) → /dev-stories (Chroma) → /reviewer (Athena)
+                                                                                                ↓
+                                                                                      ✅ reviewed → merge
+                                                                                      ❌ changes-requested → /fixer (Echo) → /reviewer (boucle)
 ```
 
-1. **`/scrum-master`** (Lyra) — Creates a user story in `.claude/us/`
+### Godot (no stories)
+```
+/scrum-master (Lyra) → /dev-godot (Aria) → /reviewer (Athena)
+                                                    ↓
+                                          ✅ reviewed → merge
+                                          ❌ changes-requested → /fixer (Echo) → /reviewer (boucle)
+```
+
+### Agents
+
+1. **`/scrum-master`** (Lyra) — Creates a user story in `.claude/us/` (adapts template to project tech)
 2. **`/dev-react`** (Iris) — Detects the US from the current branch name and implements it (React frontend only)
 3. **`/dev-tauri`** (Vesta) — Detects the US from the current branch name and implements it (Tauri v2: Rust backend + React frontend)
-4. **`/dev-godot`** (Aria) — Detects the US from the current branch name and implements it (Godot 4: GDScript, 2D, ECS-Hybrid)
-5. **`/dev-stories`** (Chroma) — Creates Storybook stories for the components created/modified
-6. **`/reviewer`** (Athena) — Reviews code, stories, and US compliance. Writes structured findings in the US
+4. **`/dev-godot`** (Aria) — Detects the US from the current branch name and implements it (Godot 4: GDScript, 2D, ECS-Hybrid, Scene-First)
+5. **`/dev-stories`** (Chroma) — Creates Storybook stories for the components created/modified (React / Tauri only)
+6. **`/reviewer`** (Athena) — Reviews code, stories, and US compliance. Adapts checklist to project tech. Writes structured findings in the US
 7. **`/fixer`** (Echo) — Reads review findings from the US and applies targeted corrections for blockers
 
 Each agent suggests the next step when it's done. The US status is tracked automatically:
 
-`ready` → `in-progress` → `done` → `stories-done` → `reviewed` (merge)
+**React / Tauri:** `ready` → `in-progress` → `done` → `stories-done` → `reviewed` (merge)
+
+**Godot:** `ready` → `in-progress` → `done` → `reviewed` (merge)
 
 If changes are requested:
 

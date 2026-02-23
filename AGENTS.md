@@ -10,17 +10,27 @@ Ce repo est un **gestionnaire centralisé d'agents Claude Code**. Il n'a PAS pou
 
 ## Problème résolu
 
-L'utilisateur travaille sur 5-6 projets différents. Sans ce repo, modifier un agent (ex: `dev-frontend`) nécessiterait de copier-coller manuellement la mise à jour dans chaque projet. Ce repo élimine ce problème.
+L'utilisateur travaille sur 5-6 projets différents. Sans ce repo, modifier un agent (ex: `dev-react`) nécessiterait de copier-coller manuellement la mise à jour dans chaque projet. Ce repo élimine ce problème.
 
 ## Structure du repo
 
 ```
 al1x-ai-agents/
   agents/           # Chaque agent est un fichier .md directement dans ce dossier
-    dev-frontend.md
+    dev-react.md
+    dev-tauri.md
+    dev-godot.md
+    dev-stories.md
     reviewer.md
+    fixer.md
     scrum-master.md
-    team.md
+  resources/        # Fichiers de référence (pas des agents)
+    godot-guidelines.md
+    ux-guidelines.md
+  commands/         # Slash commands
+    workflow.md
+    list-us.md
+    update-agents.md
   install.sh        # Script d'installation (curl depuis GitHub)
   README.md         # Documentation publique
   AGENTS.md         # Ce fichier (instructions pour Claude)
@@ -29,7 +39,8 @@ al1x-ai-agents/
 ## Fonctionnement
 
 - Les agents sont des fichiers `.md` dans `agents/` (format plat, pas de sous-dossiers)
-- Le script `install.sh` télécharge les agents depuis GitHub et les place dans `.claude/agents/` du projet courant
+- Les ressources (guidelines techniques) sont dans `resources/` et lues par les agents au besoin
+- Le script `install.sh` télécharge agents, ressources et commandes depuis GitHub et les installe dans `.claude/` du projet courant
 - Il crée aussi `.claude/commands/update-agents.md` pour permettre la mise à jour via `/update-agents`
 - Le repo est public sur GitHub : `github.com/Kieirra/al1x-ai-agents`
 

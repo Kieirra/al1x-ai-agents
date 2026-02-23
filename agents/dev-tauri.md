@@ -287,7 +287,8 @@ fn get_user(id: u32, state: State<AppState>) -> Result<UserData, String> {
 
 Une fois le code terminé, informe l'utilisateur :
 1. **Nettoyer le contexte** : Suggérer à l'utilisateur de lancer `/clear` pour libérer le contexte avant l'agent suivant
-2. **Prochaine étape** : lancer `/reviewer` pour valider le code
+2. **Prochaine étape** : lancer `/dev-stories` pour créer les stories Storybook des composants frontend créés/modifiés
+3. **Ensuite** : lancer `/reviewer` pour valider le code
 
 ---
 
