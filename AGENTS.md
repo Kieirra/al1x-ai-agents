@@ -27,6 +27,9 @@ al1x-ai-agents/
   resources/        # Fichiers de référence (pas des agents)
     godot-guidelines.md
     ux-guidelines.md
+    us-template-react.md
+    us-template-tauri.md
+    us-template-godot.md
   commands/         # Slash commands
     workflow.md
     list-us.md

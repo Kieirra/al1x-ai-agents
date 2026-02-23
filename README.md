@@ -8,7 +8,7 @@ A centralized collection of custom Claude Code agents, installable in any projec
 
 | Agent | Pseudo | Description |
 |-------|--------|-------------|
-| `scrum-master` | **Lyra** | Product architect — creates structured user story markdowns in `.claude/us/` with UX/UI analysis (BMAP, B.I.A.S.), ready to be picked up by dev agents |
+| `scrum-master` | **Lira** | Product architect — creates structured user story markdowns in `.claude/us/`, loads tech-specific templates, ready to be picked up by dev agents |
 | `dev-react` | **Iris** | Frontend developer — implements user stories created by the scrum-master (React) |
 | `dev-tauri` | **Vesta** | Fullstack developer — implements user stories with Rust backend and React frontend for desktop apps (Tauri v2) |
 | `dev-stories` | **Chroma** | Visual QA — generates Storybook stories for component testing |
@@ -22,7 +22,7 @@ The agents are designed to work together in a pipeline. The pipeline adapts to t
 
 ### React / Tauri (with frontend)
 ```
-/scrum-master (Lyra) → /dev-react (Iris) ou /dev-tauri (Vesta) → /dev-stories (Chroma) → /reviewer (Athena)
+/scrum-master (Lira) → /dev-react (Iris) ou /dev-tauri (Vesta) → /dev-stories (Chroma) → /reviewer (Athena)
                                                                                                 ↓
                                                                                       ✅ reviewed → merge
                                                                                       ❌ changes-requested → /fixer (Echo) → /reviewer (boucle)
@@ -30,7 +30,7 @@ The agents are designed to work together in a pipeline. The pipeline adapts to t
 
 ### Godot (no stories)
 ```
-/scrum-master (Lyra) → /dev-godot (Aria) → /reviewer (Athena)
+/scrum-master (Lira) → /dev-godot (Aria) → /reviewer (Athena)
                                                     ↓
                                           ✅ reviewed → merge
                                           ❌ changes-requested → /fixer (Echo) → /reviewer (boucle)
@@ -38,7 +38,7 @@ The agents are designed to work together in a pipeline. The pipeline adapts to t
 
 ### Agents
 
-1. **`/scrum-master`** (Lyra) — Creates a user story in `.claude/us/` (adapts template to project tech)
+1. **`/scrum-master`** (Lira) — Creates a user story in `.claude/us/` (adapts template to project tech)
 2. **`/dev-react`** (Iris) — Detects the US from the current branch name and implements it (React frontend only)
 3. **`/dev-tauri`** (Vesta) — Detects the US from the current branch name and implements it (Tauri v2: Rust backend + React frontend)
 4. **`/dev-godot`** (Aria) — Detects the US from the current branch name and implements it (Godot 4: GDScript, 2D, ECS-Hybrid, Scene-First)
@@ -104,6 +104,9 @@ commands/            # Slash commands
   update-agents.md
   workflow.md
 resources/           # Reference files (not agents)
-  godot-guidelines.md # Godot 4 architecture & conventions — used by Aria
-  ux-guidelines.md   # UX/UI frameworks (BMAP, B.I.A.S.) — used by Lyra
+  godot-guidelines.md    # Godot 4 architecture & conventions — used by Aria, Athena, Echo
+  ux-guidelines.md       # UX/UI frameworks (BMAP, B.I.A.S.) — used by Lira
+  us-template-react.md   # US template for React projects — loaded by Lira
+  us-template-tauri.md   # US template for Tauri projects — loaded by Lira
+  us-template-godot.md   # US template for Godot projects — loaded by Lira
 ```

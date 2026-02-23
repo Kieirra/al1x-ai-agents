@@ -1,6 +1,6 @@
 # UX/UI Guidelines — Référence pour la rédaction de User Stories
 
-Ce fichier contient les frameworks UX/UI à appliquer lors de la spécification d'interfaces. Il est lu par Lyra (scrum-master) pour enrichir les sections UX/UI des User Stories.
+Ce fichier contient les frameworks UX/UI à appliquer lors de la spécification d'interfaces. Il est lu par Lira (scrum-master) pour enrichir les sections UX/UI des User Stories.
 
 ---
 
