@@ -8,13 +8,13 @@ A centralized collection of custom Claude Code agents, installable in any projec
 
 | Agent | Pseudo | Description |
 |-------|--------|-------------|
-| `scrum-master` | **Lira** | Product architect — creates structured user story markdowns in `.claude/us/`, loads tech-specific templates, ready to be picked up by dev agents |
-| `dev-react` | **Iris** | Frontend developer — implements user stories created by the scrum-master (React) |
-| `dev-tauri` | **Vesta** | Fullstack developer — implements user stories with Rust backend and React frontend for desktop apps (Tauri v2) |
-| `dev-stories` | **Chroma** | Visual QA — generates Storybook stories for component testing |
-| `reviewer` | **Athena** | Code guardian — reviews code, writes structured findings in the US |
-| `dev-godot` | **Aria** | Game developer — implements user stories in Godot 4 / GDScript for 2D games with ECS-Hybrid architecture |
-| `fixer` | **Echo** | Fixer — applies targeted corrections (review findings or direct user instructions) |
+| `scrum-master` | **Scala** | Product architect — creates structured user story markdowns in `.claude/us/`, loads tech-specific templates, ready to be picked up by dev agents |
+| `dev-react` | **Rhea** | Frontend developer — implements user stories created by the scrum-master (React) |
+| `dev-tauri` | **Talia** | Fullstack developer — implements user stories with Rust backend and React frontend for desktop apps (Tauri v2) |
+| `dev-stories` | **Stella** | Visual QA — generates Storybook stories for component testing |
+| `reviewer` | **Reva** | Code guardian — reviews code, writes structured findings in the US |
+| `dev-godot` | **Gaia** | Game developer — implements user stories in Godot 4 / GDScript for 2D games with ECS-Hybrid architecture |
+| `fixer` | **Fira** | Fixer — applies targeted corrections (review findings or direct user instructions) |
 
 ## Workflow
 
@@ -22,18 +22,18 @@ The agents are designed to work together in a pipeline. The pipeline adapts to t
 
 ### React / Tauri (with frontend)
 ```
-/scrum-master (Lira) → /dev-react (Iris) ou /dev-tauri (Vesta) → /dev-stories (Chroma) → /reviewer (Athena)
-                                                                                                ↓
-                                                                                      ✅ reviewed → merge
-                                                                                      ❌ changes-requested → /fixer (Echo) → /reviewer (boucle)
+/scrum-master (Scala) → /dev-react (Rhea) ou /dev-tauri (Talia) → /dev-stories (Stella) → /reviewer (Reva)
+                                                                                                  ↓
+                                                                                        ✅ reviewed → merge
+                                                                                        ❌ changes-requested → /fixer (Fira) → /reviewer (boucle)
 ```
 
 ### Godot (no stories)
 ```
-/scrum-master (Lira) → /dev-godot (Aria) → /reviewer (Athena)
-                                                    ↓
-                                          ✅ reviewed → merge
-                                          ❌ changes-requested → /fixer (Echo) → /reviewer (boucle)
+/scrum-master (Scala) → /dev-godot (Gaia) → /reviewer (Reva)
+                                                     ↓
+                                           ✅ reviewed → merge
+                                           ❌ changes-requested → /fixer (Fira) → /reviewer (boucle)
 ```
 
 ### Agents

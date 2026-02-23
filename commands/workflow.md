@@ -6,18 +6,18 @@ Le pipeline s'adapte à la technologie du projet :
 
 ### React / Tauri (avec frontend)
 ```
-/scrum-master (Lira) → /dev-react (Iris) ou /dev-tauri (Vesta) → /dev-stories (Chroma) → /reviewer (Athena)
-                                                                                                ↓
-                                                                                      ✅ reviewed → merge
-                                                                                      ❌ changes-requested → /fixer (Echo) → /reviewer (boucle)
+/scrum-master (Scala) → /dev-react (Rhea) ou /dev-tauri (Talia) → /dev-stories (Stella) → /reviewer (Reva)
+                                                                                                  ↓
+                                                                                        ✅ reviewed → merge
+                                                                                        ❌ changes-requested → /fixer (Fira) → /reviewer (boucle)
 ```
 
 ### Godot (pas de stories)
 ```
-/scrum-master (Lira) → /dev-godot (Aria) → /reviewer (Athena)
-                                                    ↓
-                                          ✅ reviewed → merge
-                                          ❌ changes-requested → /fixer (Echo) → /reviewer (boucle)
+/scrum-master (Scala) → /dev-godot (Gaia) → /reviewer (Reva)
+                                                     ↓
+                                           ✅ reviewed → merge
+                                           ❌ changes-requested → /fixer (Fira) → /reviewer (boucle)
 ```
 
 ## Actions

@@ -1,6 +1,6 @@
 # Template US — Tauri
 
-Ce fichier contient les sections techniques spécifiques aux projets Tauri v2 (Rust backend + React frontend). Il est lu par Lira (scrum-master) après détection de la techno.
+Ce fichier contient les sections techniques spécifiques aux projets Tauri v2 (Rust backend + React frontend). Il est lu par Scala (scrum-master) après détection de la techno.
 
 > Pour la partie frontend React, lire aussi `us-template-react.md` et inclure ses sections dans l'US.
 

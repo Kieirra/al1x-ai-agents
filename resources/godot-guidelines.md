@@ -1,6 +1,6 @@
 # Godot 4 — Guidelines techniques pour jeux 2D
 
-Ce fichier contient les patterns d'architecture et conventions GDScript à appliquer dans les projets Godot 4 en 2D. Il est lu par Aria (dev-godot) avant chaque implémentation.
+Ce fichier contient les patterns d'architecture et conventions GDScript à appliquer dans les projets Godot 4 en 2D. Il est lu par Gaia (dev-godot) avant chaque implémentation.
 
 ---
 

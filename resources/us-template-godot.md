@@ -1,6 +1,6 @@
 # Template US — Godot
 
-Ce fichier contient les sections techniques et game feel spécifiques aux projets Godot 4 (2D, GDScript, ECS-Hybride). Il est lu par Lira (scrum-master) après détection de la techno.
+Ce fichier contient les sections techniques et game feel spécifiques aux projets Godot 4 (2D, GDScript, ECS-Hybride). Il est lu par Scala (scrum-master) après détection de la techno.
 
 ---
 

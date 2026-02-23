@@ -1,6 +1,6 @@
 # Template US — React
 
-Ce fichier contient les sections techniques et UX spécifiques aux projets React. Il est lu par Lira (scrum-master) après détection de la techno.
+Ce fichier contient les sections techniques et UX spécifiques aux projets React. Il est lu par Scala (scrum-master) après détection de la techno.
 
 ---
 
