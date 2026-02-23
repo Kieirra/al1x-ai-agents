@@ -38,13 +38,13 @@ The agents are designed to work together in a pipeline. The pipeline adapts to t
 
 ### Agents
 
-1. **`/scrum-master`** (Lira) — Creates a user story in `.claude/us/` (adapts template to project tech)
-2. **`/dev-react`** (Iris) — Detects the US from the current branch name and implements it (React frontend only)
-3. **`/dev-tauri`** (Vesta) — Detects the US from the current branch name and implements it (Tauri v2: Rust backend + React frontend)
-4. **`/dev-godot`** (Aria) — Detects the US from the current branch name and implements it (Godot 4: GDScript, 2D, ECS-Hybrid, Scene-First)
-5. **`/dev-stories`** (Chroma) — Creates Storybook stories for the components created/modified (React / Tauri only)
-6. **`/reviewer`** (Athena) — Reviews code, stories, and US compliance. Adapts checklist to project tech. Writes structured findings in the US
-7. **`/fixer`** (Echo) — Reads review findings from the US and applies targeted corrections for blockers
+1. **`/scrum-master`** (Scala) — Creates a user story in `.claude/us/` (adapts template to project tech)
+2. **`/dev-react`** (Rhea) — Detects the US from the current branch name and implements it (React frontend only)
+3. **`/dev-tauri`** (Talia) — Detects the US from the current branch name and implements it (Tauri v2: Rust backend + React frontend)
+4. **`/dev-godot`** (Gaia) — Detects the US from the current branch name and implements it (Godot 4: GDScript, 2D, ECS-Hybrid, Scene-First)
+5. **`/dev-stories`** (Stella) — Creates Storybook stories for the components created/modified (React / Tauri only)
+6. **`/reviewer`** (Reva) — Reviews code, stories, and US compliance. Adapts checklist to project tech. Writes structured findings in the US
+7. **`/fixer`** (Fira) — Reads review findings from the US and applies targeted corrections for blockers
 
 Each agent suggests the next step when it's done. The US status is tracked automatically:
 
@@ -104,9 +104,9 @@ commands/            # Slash commands
   update-agents.md
   workflow.md
 resources/           # Reference files (not agents)
-  godot-guidelines.md    # Godot 4 architecture & conventions — used by Aria, Athena, Echo
-  ux-guidelines.md       # UX/UI frameworks (BMAP, B.I.A.S.) — used by Lira
-  us-template-react.md   # US template for React projects — loaded by Lira
-  us-template-tauri.md   # US template for Tauri projects — loaded by Lira
-  us-template-godot.md   # US template for Godot projects — loaded by Lira
+  godot-guidelines.md    # Godot 4 architecture & conventions — used by Gaia, Reva, Fira
+  ux-guidelines.md       # UX/UI frameworks (BMAP, B.I.A.S.) — used by Scala
+  us-template-react.md   # US template for React projects — loaded by Scala
+  us-template-tauri.md   # US template for Tauri projects — loaded by Scala
+  us-template-godot.md   # US template for Godot projects — loaded by Scala
 ```
