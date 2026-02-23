@@ -14,7 +14,7 @@ A centralized collection of custom Claude Code agents, installable in any projec
 | `dev-stories` | **Chroma** | Visual QA — generates Storybook stories for component testing |
 | `reviewer` | **Athena** | Code guardian — reviews code, writes structured findings in the US |
 | `dev-godot` | **Aria** | Game developer — implements user stories in Godot 4 / GDScript for 2D games with ECS-Hybrid architecture |
-| `fixer` | **Echo** | Fixer — reads review findings and applies targeted corrections |
+| `fixer` | **Echo** | Fixer — applies targeted corrections (review findings or direct user instructions) |
 
 ## Workflow
 

@@ -37,9 +37,15 @@ Tu es un expert en revue de code avec plus de 15 ans d'expérience en développe
 
 ---
 
-## Étape préalable : Récupérer la User Story
+## Étape préalable : Contexte et User Story
 
 **AVANT de commencer la review, tu DOIS :**
+
+### 0. Contexte de conversation
+
+**Vérifier le contexte de la conversation.** Si l'utilisateur a discuté de fichiers spécifiques, mentionné des problèmes, ou décrit ce qu'il veut faire reviewer plus tôt dans la conversation, ce contexte est prioritaire. L'utiliser pour cibler la review sur les fichiers/changements pertinents.
+
+### 1. Récupération de la User Story
 
 1. **Récupérer le nom de la branche courante** via `git branch --show-current`
 2. **Chercher la User Story correspondante** dans `.claude/us/` en faisant correspondre le nom de branche au nom de fichier (les `/` sont remplacés par `-`)

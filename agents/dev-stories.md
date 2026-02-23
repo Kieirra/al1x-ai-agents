@@ -88,20 +88,24 @@ Chromatic capture des screenshots de chaque story. Les stories doivent donc :
 
 **AVANT d'écrire la moindre ligne, tu DOIS suivre cette procédure ciblée :**
 
-### 0. Contexte projet
+### 0. Contexte de conversation
+
+**Vérifier le contexte de la conversation.** Si l'utilisateur a discuté de composants spécifiques, mentionné des fichiers ou décrit ce qu'il veut couvrir plus tôt dans la conversation, ce contexte est prioritaire. L'utiliser comme base de travail pour identifier les composants cibles.
+
+### 1. Contexte projet
 - Chercher et lire le fichier `AGENTS.md` à la racine du projet (s'il existe) pour comprendre le contexte, l'architecture et les conventions du projet
 
-### 1. Trouver 2-3 fichiers stories de référence
+### 2. Trouver 2-3 fichiers stories de référence
 - Chercher `*.stories.tsx` en priorisant ceux dans le même dossier ou feature que le composant cible
 - Si aucun à proximité, en prendre dans d'autres features
 
-### 2. Depuis ces stories, identifier :
+### 3. Depuis ces stories, identifier :
 - Le format du `title` dans le meta (convention de chemin)
 - Les imports : d'où viennent les helpers, decorators, mocks store
 - Comment le store Redux est mocké (fonction helper, nom, import)
 - Comment les APIs sont mockées (MSW handlers, patterns)
 
-### 3. Si des helpers/decorators sont importés, les lire pour comprendre leur usage
+### 4. Si des helpers/decorators sont importés, les lire pour comprendre leur usage
 - Ne PAS explorer au-delà
 
 > **Règle clé : 2-3 stories lues + leurs imports tracés = suffisant.** Ne pas explorer largement la codebase au-delà de ça.
