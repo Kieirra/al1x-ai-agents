@@ -6,31 +6,42 @@ A centralized collection of custom Claude Code agents, installable in any projec
 
 ## Available agents
 
-| Agent | Description |
-|-------|-------------|
-| `dev-react` | React development agent — implements user stories created by the scrum-master |
-| `dev-tauri` | Tauri v2 fullstack agent — implements user stories with Rust backend and React frontend for desktop apps |
-| `dev-stories` | QA agent — generates Storybook stories for component testing |
-| `reviewer` | Code review agent — checks for bugs, security issues, minimalism, project guidelines compliance, and user story requirements |
-| `scrum-master` | Creates structured user story markdowns in `.claude/us/`, ready to be picked up by dev agents — asks clarifying questions to refine requirements |
+| Agent | Pseudo | Description |
+|-------|--------|-------------|
+| `scrum-master` | **Lyra** | Product architect — creates structured user story markdowns in `.claude/us/` with UX/UI analysis (BMAP, B.I.A.S.), ready to be picked up by dev agents |
+| `dev-react` | **Iris** | Frontend developer — implements user stories created by the scrum-master (React) |
+| `dev-tauri` | **Vesta** | Fullstack developer — implements user stories with Rust backend and React frontend for desktop apps (Tauri v2) |
+| `dev-stories` | **Chroma** | Visual QA — generates Storybook stories for component testing |
+| `reviewer` | **Athena** | Code guardian — reviews code, writes structured findings in the US |
+| `dev-godot` | **Aria** | Game developer — implements user stories in Godot 4 / GDScript for 2D games with ECS-Hybrid architecture |
+| `fixer` | **Echo** | Fixer — reads review findings and applies targeted corrections |
 
 ## Workflow
 
 The agents are designed to work together in a pipeline:
 
 ```
-/scrum-master  →  /dev-react or /dev-tauri  →  /dev-stories  →  /reviewer
+/scrum-master (Lyra) → /dev-react (Iris) ou /dev-tauri (Vesta) ou /dev-godot (Aria) → /dev-stories (Chroma) → /reviewer (Athena)
+                                                                                              ↓
+                                                                                    ✅ reviewed → merge
+                                                                                    ❌ changes-requested → /fixer (Echo) → /reviewer (boucle)
 ```
 
-1. **`/scrum-master`** — Creates a user story in `.claude/us/` and suggests a branch name
-2. **`/dev-react`** — Detects the US from the current branch name and implements it (React frontend only)
-3. **`/dev-tauri`** — Detects the US from the current branch name and implements it (Tauri v2: Rust backend + React frontend)
-4. **`/dev-stories`** — Creates Storybook stories for the components created/modified
-5. **`/reviewer`** — Reviews code, stories, and US compliance
+1. **`/scrum-master`** (Lyra) — Creates a user story in `.claude/us/`
+2. **`/dev-react`** (Iris) — Detects the US from the current branch name and implements it (React frontend only)
+3. **`/dev-tauri`** (Vesta) — Detects the US from the current branch name and implements it (Tauri v2: Rust backend + React frontend)
+4. **`/dev-godot`** (Aria) — Detects the US from the current branch name and implements it (Godot 4: GDScript, 2D, ECS-Hybrid)
+5. **`/dev-stories`** (Chroma) — Creates Storybook stories for the components created/modified
+6. **`/reviewer`** (Athena) — Reviews code, stories, and US compliance. Writes structured findings in the US
+7. **`/fixer`** (Echo) — Reads review findings from the US and applies targeted corrections for blockers
 
 Each agent suggests the next step when it's done. The US status is tracked automatically:
 
-`ready` → `in-progress` → `done` → `stories-done` → `reviewed`
+`ready` → `in-progress` → `done` → `stories-done` → `reviewed` (merge)
+
+If changes are requested:
+
+`changes-requested` → `fixed` → `reviewed` (loop back to reviewer)
 
 ## Available commands
 
@@ -70,11 +81,16 @@ Or re-run the curl command above.
 agents/              # Agent definitions
   dev-react.md
   dev-tauri.md
+  dev-godot.md
   dev-stories.md
+  fixer.md
   reviewer.md
   scrum-master.md
 commands/            # Slash commands
   list-us.md
   update-agents.md
   workflow.md
+resources/           # Reference files (not agents)
+  godot-guidelines.md # Godot 4 architecture & conventions — used by Aria
+  ux-guidelines.md   # UX/UI frameworks (BMAP, B.I.A.S.) — used by Lyra
 ```

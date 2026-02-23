@@ -7,6 +7,7 @@ API_URL="https://api.github.com/repos/${REPO}/contents/agents?ref=${BRANCH}"
 RAW_URL="https://raw.githubusercontent.com/${REPO}/${BRANCH}"
 COMMANDS_DIR=".claude/commands"
 AGENTS_DIR=".claude/agents"
+RESOURCES_DIR=".claude/resources"
 
 # Couleurs
 GREEN='\033[0;32m'
@@ -26,6 +27,7 @@ info "Installation des agents al1x-ai-agents..."
 # Créer les dossiers
 mkdir -p "$COMMANDS_DIR"
 mkdir -p "$AGENTS_DIR"
+mkdir -p "$RESOURCES_DIR"
 
 # Récupérer la liste des agents depuis l'API GitHub
 info "Récupération de la liste des agents..."
@@ -71,8 +73,23 @@ for FILE in $COMMAND_FILES; do
     success "Commande /${FILE%.md} installée"
 done
 
+# Télécharger les ressources (ux-guidelines, etc.)
+info "Installation des ressources..."
+RESOURCES_API_URL="https://api.github.com/repos/${REPO}/contents/resources?ref=${BRANCH}"
+RESOURCES_JSON=$(curl -fsSL "$RESOURCES_API_URL" 2>/dev/null) || RESOURCES_JSON=""
+
+if [ -n "$RESOURCES_JSON" ]; then
+    RESOURCE_FILES=$(echo "$RESOURCES_JSON" | grep -oP '"name"\s*:\s*"\K[^"]+\.md' || true)
+    for FILE in $RESOURCE_FILES; do
+        curl -fsSL "${RAW_URL}/resources/${FILE}" -o "${RESOURCES_DIR}/${FILE}" \
+            || { echo -e "${RED}[ERREUR]${NC} Échec du téléchargement de $FILE"; continue; }
+        success "Ressource ${FILE} installée"
+    done
+fi
+
 echo ""
 success "Installation terminée ! ${COUNT} agent(s) installé(s)"
 info "Skills (slash commands) : ${COMMANDS_DIR}/"
 info "Subagents (auto-délégation) : ${AGENTS_DIR}/"
+info "Ressources : ${RESOURCES_DIR}/"
 info "Utilise /update-agents dans Claude Code pour mettre à jour."
