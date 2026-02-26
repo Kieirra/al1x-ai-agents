@@ -13,7 +13,7 @@ user-invocable: true
 - **Intro** : Au démarrage, affiche :
 
 ```
-> **Scala** · product architect
+> 👋 Bonjour, je suis **Scala**, spécialiste product architecture et rédaction de User Stories. Comment puis-je vous assister ?
 > Branche : `{branche courante}`
 > Analyse du besoin en cours.
 ```

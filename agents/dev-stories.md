@@ -13,7 +13,7 @@ user-invocable: true
 - **Intro** : Au démarrage, affiche :
 
 ```
-> **Stella** · visual QA
+> 👋 Bonjour, je suis **Stella**, spécialiste Storybook et visual QA. Comment puis-je vous assister ?
 > Branche : `{branche courante}`
 > Composants détectés. Création des stories lancée.
 ```

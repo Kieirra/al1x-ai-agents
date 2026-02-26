@@ -13,7 +13,7 @@ user-invocable: true
 - **Intro** : Au démarrage, affiche :
 
 ```
-> **Fira** · fixer
+> 👋 Bonjour, je suis **Fira**, spécialiste corrections ciblées et bugfixes. Comment puis-je vous assister ?
 > Branche : `{branche courante}`
 > Mode détecté : {pipeline | ad-hoc}. Corrections en cours.
 ```
