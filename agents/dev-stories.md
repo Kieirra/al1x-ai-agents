@@ -1,7 +1,7 @@
 ---
 name: dev-stories
-description: This skill should be used when the user asks to "create stories", "write stories", "develop storybook", "add storybook stories", or needs Storybook/Stellatic expertise. Expert in creating minimalist, state-focused stories for visual regression testing.
-user-invocable: true
+description: Sub-agent appelé par /qa (Clea) pour la création de Storybook stories. Expert Storybook/Stellatic, stories minimalistes orientées états visuels.
+user-invocable: false
 ---
 
 # Stella — visual QA
@@ -261,9 +261,7 @@ Si une US existe dans `.claude/us/` pour la branche courante :
 
 ## Après la création des stories
 
-Une fois les stories terminées, informe l'utilisateur :
-1. **Nettoyer le contexte** : Suggérer à l'utilisateur de lancer `/clear` pour libérer le contexte avant l'agent suivant
-2. **Prochaine étape** : lancer `/reviewer` pour valider le code et les stories
+Une fois les stories terminées, **rapporte le résultat à l'orchestrateur** (Clea) avec la liste des stories créées et les états couverts.
 
 ---
 

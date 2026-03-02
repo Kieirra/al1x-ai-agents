@@ -12,11 +12,13 @@ RESOURCES_DIR=".claude/resources"
 # Couleurs
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
+YELLOW='\033[0;33m'
 RED='\033[0;31m'
 NC='\033[0m'
 
 info() { echo -e "${BLUE}[INFO]${NC} $1"; }
 success() { echo -e "${GREEN}[OK]${NC} $1"; }
+warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 error() { echo -e "${RED}[ERREUR]${NC} $1"; exit 1; }
 
 # Vérifier les dépendances
@@ -40,8 +42,9 @@ if [ -z "$AGENT_FILES" ]; then
     error "Aucun agent trouvé dans le repo."
 fi
 
-# Télécharger chaque agent dans commands/ et agents/
-COUNT=0
+# Télécharger chaque agent — routage super-agent vs sub-agent via frontmatter
+SUPER_COUNT=0
+SUB_COUNT=0
 for FILE in $AGENT_FILES; do
     NAME="${FILE%.md}"
     info "Téléchargement de $FILE..."
@@ -50,15 +53,29 @@ for FILE in $AGENT_FILES; do
     CONTENT=$(curl -fsSL "${RAW_URL}/agents/${FILE}") \
         || { echo -e "${RED}[ERREUR]${NC} Échec du téléchargement de $FILE"; continue; }
 
-    # Installer comme skill dans commands/ (invocable via /nom)
-    echo "$CONTENT" > "${COMMANDS_DIR}/${FILE}"
+    # Parser le champ user-invocable du frontmatter YAML
+    # Format attendu : "user-invocable: true" ou "user-invocable: false" entre les délimiteurs ---
+    USER_INVOCABLE=$(echo "$CONTENT" | sed -n '/^---$/,/^---$/p' | grep 'user-invocable' | grep -oP '(true|false)' || echo "true")
 
-    # Installer comme subagent dans agents/nom/SKILL.md (auto-délégation)
-    mkdir -p "${AGENTS_DIR}/${NAME}"
-    echo "$CONTENT" > "${AGENTS_DIR}/${NAME}/SKILL.md"
-
-    success "$NAME installé (skill + subagent)"
-    COUNT=$((COUNT + 1))
+    if [ "$USER_INVOCABLE" = "true" ]; then
+        # Super-agent : installer comme skill (slash command) + subagent (auto-délégation)
+        echo "$CONTENT" > "${COMMANDS_DIR}/${FILE}"
+        mkdir -p "${AGENTS_DIR}/${NAME}"
+        echo "$CONTENT" > "${AGENTS_DIR}/${NAME}/SKILL.md"
+        success "$NAME installé (super-agent : skill + subagent)"
+        SUPER_COUNT=$((SUPER_COUNT + 1))
+    else
+        # Sub-agent : installer uniquement comme subagent (pas de slash command)
+        # Nettoyer l'ancienne commande si elle existe (migration depuis l'ancien système)
+        if [ -f "${COMMANDS_DIR}/${FILE}" ]; then
+            rm -f "${COMMANDS_DIR}/${FILE}"
+            warn "$NAME : ancienne commande /${NAME} supprimée (migration sub-agent)"
+        fi
+        mkdir -p "${AGENTS_DIR}/${NAME}"
+        echo "$CONTENT" > "${AGENTS_DIR}/${NAME}/SKILL.md"
+        success "$NAME installé (sub-agent uniquement)"
+        SUB_COUNT=$((SUB_COUNT + 1))
+    fi
 done
 
 # Télécharger les commandes (workflow, list-us, update-agents)
@@ -88,8 +105,9 @@ if [ -n "$RESOURCES_JSON" ]; then
 fi
 
 echo ""
-success "Installation terminée ! ${COUNT} agent(s) installé(s)"
-info "Skills (slash commands) : ${COMMANDS_DIR}/"
-info "Subagents (auto-délégation) : ${AGENTS_DIR}/"
+TOTAL=$((SUPER_COUNT + SUB_COUNT))
+success "Installation terminée ! ${TOTAL} agent(s) installé(s) (${SUPER_COUNT} super-agents, ${SUB_COUNT} sub-agents)"
+info "Super-agents (slash commands) : ${COMMANDS_DIR}/"
+info "Sub-agents (auto-délégation) : ${AGENTS_DIR}/"
 info "Ressources : ${RESOURCES_DIR}/"
 info "Utilise /update-agents dans Claude Code pour mettre à jour."
