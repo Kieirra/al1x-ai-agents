@@ -16,11 +16,11 @@ Les noms sont inspirés des personnages de **Clair Obscur: Expedition 33**.
 
 | Commande | Pseudo | Description |
 |----------|--------|-------------|
-| `/architecte` | **Aline** | Product architect — orchestre 3 explorations parallèles (tech, UX, approches), synthétise en QCM + ASCII mockup, rédige l'US |
-| `/dev` | **Alicia** | Lead developer — détecte la techno, dispatche aux devs spécialisés, parallélise front+back pour Tauri |
-| `/qa` | **Clea** | QA lead — orchestre tests unitaires, stories Storybook, validation des critères d'acceptation |
-| `/uxui` | **Renoir** | UX/UI architect — standalone pour audits/brainstorms/wireframes ASCII, ou sub-agent d'Aline |
-| `/reviewer` | **Verso** | Code guardian — orchestre 5 reviews parallèles (conventions, bugs, sécurité, story compliance) |
+| `/architecte` | **Aline** | Product architect - orchestre 3 explorations parallèles (tech, UX, approches), synthétise en QCM + ASCII mockup, rédige l'US |
+| `/dev` | **Alicia** | Lead developer - détecte la techno, dispatche aux devs spécialisés, parallélise front+back pour Tauri |
+| `/qa` | **Clea** | QA lead - orchestre tests unitaires, stories Storybook, validation des critères d'acceptation |
+| `/uxui` | **Renoir** | UX/UI architect - standalone pour audits/brainstorms/wireframes ASCII, ou sub-agent d'Aline |
+| `/reviewer` | **Verso** | Code guardian - orchestre 5 reviews parallèles (conventions, bugs, sécurité, story compliance) |
 
 ### Sub-agents (appelés par les super-agents)
 
@@ -29,7 +29,7 @@ Les noms sont inspirés des personnages de **Clair Obscur: Expedition 33**.
 | `dev-react` | **Maelle** | Alicia (`/dev`) | Implémentation React/TypeScript |
 | `dev-tauri` | **Lune** | Alicia (`/dev`) | Implémentation Tauri v2 (Rust + React) |
 | `dev-godot` | **Sciel** | Alicia (`/dev`) | Implémentation Godot 4 / GDScript |
-| `dev-stories` | **Stella** | Clea (`/qa`) | Stories Storybook |
+| `dev-stories` | **Gustave** | Clea (`/qa`) | Stories Storybook |
 | `fixer` | **Monoco** | Verso (`/reviewer`) | Corrections ciblées (sur demande uniquement) |
 
 ## Workflow
@@ -54,11 +54,11 @@ Les agents fonctionnent en pipeline. Le pipeline s'adapte à la technologie du p
 
 ### Détail des super-agents
 
-1. **`/architecte`** (Aline) — Demande TOUJOURS à l'utilisateur ce qu'il veut faire (ne devine jamais depuis la branche). Lance 3 explorations parallèles, synthétise en QCM, rédige l'US dans `.claude/us/`
-2. **`/dev`** (Alicia) — Détecte la techno et dispatche : Maelle (React), Lune (Tauri back), Sciel (Godot). Parallélise Lune + Maelle pour les projets Tauri
-3. **`/qa`** (Clea) — Détecte les conventions de test du projet. Lance en parallèle : tests unitaires, stories Storybook, validation des critères d'acceptation
-4. **`/uxui`** (Renoir) — Peut être appelé à tout moment pour un audit UX, brainstorm ou wireframe ASCII. Utilise les frameworks BMAP et B.I.A.S.
-5. **`/reviewer`** (Verso) — Lance 5 reviews parallèles : conventions & patterns, bug hunter, sécurité, story compliance. Ne fixe JAMAIS le code — Monoco le fait sur demande
+1. **`/architecte`** (Aline) - Demande TOUJOURS à l'utilisateur ce qu'il veut faire (ne devine jamais depuis la branche). Lance 3 explorations parallèles, synthétise en QCM, rédige l'US dans `.claude/us/`
+2. **`/dev`** (Alicia) - Détecte la techno et dispatche : Maelle (React), Lune (Tauri back), Sciel (Godot). Parallélise Lune + Maelle pour les projets Tauri
+3. **`/qa`** (Clea) - Détecte les conventions de test du projet. Lance en parallèle : tests unitaires, stories Storybook, validation des critères d'acceptation
+4. **`/uxui`** (Renoir) - Peut être appelé à tout moment pour un audit UX, brainstorm ou wireframe ASCII. Utilise les frameworks BMAP et B.I.A.S.
+5. **`/reviewer`** (Verso) - Lance 5 reviews parallèles : conventions & patterns, bug hunter, sécurité, story compliance. Ne fixe JAMAIS le code - Monoco le fait sur demande
 
 ### Statuts de l'US
 
@@ -78,18 +78,18 @@ Les agents fonctionnent en pipeline. Le pipeline s'adapte à la technologie du p
 
 ## Installation
 
-### Global (recommandé) — disponible dans tous les projets
+### Global (recommandé) - disponible dans tous les projets
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Kieirra/al1x-ai-agents/main/install.sh | bash
+curl - fsSL https://raw.githubusercontent.com/Kieirra/al1x-ai-agents/main/install.sh | bash
 ```
 
-Installe dans `~/.claude/` — les agents, commandes et ressources sont accessibles depuis n'importe quel projet Claude Code.
+Installe dans `~/.claude/` - les agents, commandes et ressources sont accessibles depuis n'importe quel projet Claude Code.
 
-### Local — uniquement dans le projet courant
+### Local - uniquement dans le projet courant
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Kieirra/al1x-ai-agents/main/install.sh | bash -s -- --local
+curl - fsSL https://raw.githubusercontent.com/Kieirra/al1x-ai-agents/main/install.sh | bash - s -- --local
 ```
 
 Installe dans `.claude/` du répertoire courant.
@@ -115,16 +115,16 @@ Or re-run the curl command above.
 
 ```
 agents/                    # Agent definitions
-  architecte.md            # Super-agent (Aline) — product architect
-  dev.md                   # Super-agent (Alicia) — lead developer
-  qa.md                    # Super-agent (Clea) — QA lead
-  uxui.md                  # Super-agent (Renoir) — UX/UI architect
-  reviewer.md              # Super-agent (Verso) — code guardian
-  dev-react.md             # Sub-agent (Maelle) — React/TypeScript
-  dev-tauri.md             # Sub-agent (Lune) — Tauri v2 / Rust
-  dev-godot.md             # Sub-agent (Sciel) — Godot 4 / GDScript
-  dev-stories.md           # Sub-agent (Stella) — Storybook stories
-  fixer.md                 # Sub-agent (Monoco) — targeted fixes
+  architecte.md            # Super-agent (Aline) - product architect
+  dev.md                   # Super-agent (Alicia) - lead developer
+  qa.md                    # Super-agent (Clea) - QA lead
+  uxui.md                  # Super-agent (Renoir) - UX/UI architect
+  reviewer.md              # Super-agent (Verso) - code guardian
+  dev-react.md             # Sub-agent (Maelle) - React/TypeScript
+  dev-tauri.md             # Sub-agent (Lune) - Tauri v2 / Rust
+  dev-godot.md             # Sub-agent (Sciel) - Godot 4 / GDScript
+  dev-stories.md           # Sub-agent (Gustave) - Storybook stories
+  fixer.md                 # Sub-agent (Monoco) - targeted fixes
 commands/                  # Slash commands (non-agent)
   workflow.md
   list-us.md

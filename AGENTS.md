@@ -19,7 +19,7 @@ Les agents sont organisés en deux niveaux :
 - **Super-agents** (`user-invocable: true`) : orchestrateurs qui lancent des sub-agents en parallèle via le Task tool
   - `architecte.md` (Aline), `dev.md` (Alicia), `qa.md` (Clea), `uxui.md` (Renoir), `reviewer.md` (Verso)
 - **Sub-agents** (`user-invocable: false`) : spécialistes appelés par les super-agents
-  - `dev-react.md` (Maelle), `dev-tauri.md` (Lune), `dev-godot.md` (Sciel), `dev-stories.md` (Stella), `fixer.md` (Monoco)
+  - `dev-react.md` (Maelle), `dev-tauri.md` (Lune), `dev-godot.md` (Sciel), `dev-stories.md` (Gustave), `fixer.md` (Monoco)
 
 Le champ `user-invocable` dans le frontmatter YAML de chaque agent détermine comment `install.sh` l'installe :
 - `true` → dans `.claude/commands/` (slash command) ET `.claude/agents/` (auto-délégation)
@@ -30,16 +30,16 @@ Le champ `user-invocable` dans le frontmatter YAML de chaque agent détermine co
 ```
 al1x-ai-agents/
   agents/               # Chaque agent est un fichier .md (format plat)
-    architecte.md       # Super-agent (Aline) — product architect
-    dev.md              # Super-agent (Alicia) — lead developer
-    qa.md               # Super-agent (Clea) — QA lead
-    uxui.md             # Super-agent (Renoir) — UX/UI architect
-    reviewer.md         # Super-agent (Verso) — code guardian
-    dev-react.md        # Sub-agent (Maelle) — React/TypeScript
-    dev-tauri.md        # Sub-agent (Lune) — Tauri v2 / Rust
-    dev-godot.md        # Sub-agent (Sciel) — Godot 4 / GDScript
-    dev-stories.md      # Sub-agent (Stella) — Storybook stories
-    fixer.md            # Sub-agent (Monoco) — targeted fixes
+    architecte.md       # Super-agent (Aline) - product architect
+    dev.md              # Super-agent (Alicia) - lead developer
+    qa.md               # Super-agent (Clea) - QA lead
+    uxui.md             # Super-agent (Renoir) - UX/UI architect
+    reviewer.md         # Super-agent (Verso) - code guardian
+    dev-react.md        # Sub-agent (Maelle) - React/TypeScript
+    dev-tauri.md        # Sub-agent (Lune) - Tauri v2 / Rust
+    dev-godot.md        # Sub-agent (Sciel) - Godot 4 / GDScript
+    dev-stories.md      # Sub-agent (Gustave) - Storybook stories
+    fixer.md            # Sub-agent (Monoco) - targeted fixes
   resources/            # Fichiers de référence (pas des agents)
     godot-guidelines.md
     ux-guidelines.md
