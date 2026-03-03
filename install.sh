@@ -27,7 +27,7 @@ echo ""
 echo "  1) Global  — ~/.claude/ (disponible dans tous les projets)"
 echo "  2) Local   — .claude/  (uniquement dans le projet courant)"
 echo ""
-read -rp "Choix [1/2] (défaut: 1) : " INSTALL_MODE
+read -rp "Choix [1/2] (défaut: 1) : " INSTALL_MODE < /dev/tty
 INSTALL_MODE="${INSTALL_MODE:-1}"
 
 if [ "$INSTALL_MODE" = "2" ]; then
