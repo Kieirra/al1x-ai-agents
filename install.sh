@@ -20,17 +20,21 @@ error() { echo -e "${RED}[ERREUR]${NC} $1"; exit 1; }
 # Vérifier les dépendances
 command -v curl >/dev/null 2>&1 || error "curl est requis mais non installé."
 
-# Choix du mode d'installation
-echo ""
-echo -e "${BLUE}Où installer les agents al1x-ai-agents ?${NC}"
-echo ""
-echo "  1) Global  — ~/.claude/ (disponible dans tous les projets)"
-echo "  2) Local   — .claude/  (uniquement dans le projet courant)"
-echo ""
-read -rp "Choix [1/2] (défaut: 1) : " INSTALL_MODE < /dev/tty
-INSTALL_MODE="${INSTALL_MODE:-1}"
+# Mode d'installation : --local pour le projet courant, global par défaut
+INSTALL_MODE="global"
+for arg in "$@"; do
+    case "$arg" in
+        --local) INSTALL_MODE="local" ;;
+        --help|-h)
+            echo "Usage: install.sh [--local]"
+            echo "  (défaut)  Installe dans ~/.claude/ (tous les projets)"
+            echo "  --local   Installe dans .claude/  (projet courant)"
+            exit 0
+            ;;
+    esac
+done
 
-if [ "$INSTALL_MODE" = "2" ]; then
+if [ "$INSTALL_MODE" = "local" ]; then
     BASE_DIR=".claude"
     INSTALL_LABEL="locale ($(pwd)/.claude/)"
 else
@@ -128,7 +132,7 @@ success "Installation ${INSTALL_LABEL} terminée ! ${TOTAL} agent(s) installé(s
 info "Super-agents (slash commands) : ${COMMANDS_DIR}/"
 info "Sub-agents (auto-délégation) : ${AGENTS_DIR}/"
 info "Ressources : ${RESOURCES_DIR}/"
-if [ "$INSTALL_MODE" != "2" ]; then
+if [ "$INSTALL_MODE" = "global" ]; then
     info "Les agents sont disponibles dans tous tes projets Claude Code."
 fi
 info "Utilise /update-agents dans Claude Code pour mettre à jour."

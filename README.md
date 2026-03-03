@@ -78,17 +78,28 @@ Les agents fonctionnent en pipeline. Le pipeline s'adapte à la technologie du p
 
 ## Installation
 
-From the root of a project, run:
+### Global (recommandé) — disponible dans tous les projets
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Kieirra/al1x-ai-agents/main/install.sh | bash
 ```
 
-Le script installe automatiquement :
-- **Super-agents** (`user-invocable: true`) → dans `.claude/commands/` (slash commands) ET `.claude/agents/` (auto-délégation)
-- **Sub-agents** (`user-invocable: false`) → dans `.claude/agents/` uniquement (pas de slash command)
-- **Commandes utilitaires** (`/workflow`, `/list-us`, `/update-agents`) → dans `.claude/commands/`
-- **Ressources** (guidelines, templates) → dans `.claude/resources/`
+Installe dans `~/.claude/` — les agents, commandes et ressources sont accessibles depuis n'importe quel projet Claude Code.
+
+### Local — uniquement dans le projet courant
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Kieirra/al1x-ai-agents/main/install.sh | bash -s -- --local
+```
+
+Installe dans `.claude/` du répertoire courant.
+
+### Ce que le script installe
+
+- **Super-agents** (`user-invocable: true`) → `commands/` (slash commands) + `agents/` (auto-délégation)
+- **Sub-agents** (`user-invocable: false`) → `agents/` uniquement (pas de slash command)
+- **Commandes utilitaires** (`/workflow`, `/list-us`, `/update-agents`) → `commands/`
+- **Ressources** (guidelines, templates) → `resources/`
 
 ## Updating
 
