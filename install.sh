@@ -5,10 +5,6 @@ REPO="Kieirra/al1x-ai-agents"
 BRANCH="main"
 API_URL="https://api.github.com/repos/${REPO}/contents/agents?ref=${BRANCH}"
 RAW_URL="https://raw.githubusercontent.com/${REPO}/${BRANCH}"
-COMMANDS_DIR=".claude/commands"
-AGENTS_DIR=".claude/agents"
-RESOURCES_DIR=".claude/resources"
-
 # Couleurs
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
@@ -24,7 +20,29 @@ error() { echo -e "${RED}[ERREUR]${NC} $1"; exit 1; }
 # Vérifier les dépendances
 command -v curl >/dev/null 2>&1 || error "curl est requis mais non installé."
 
-info "Installation des agents al1x-ai-agents..."
+# Choix du mode d'installation
+echo ""
+echo -e "${BLUE}Où installer les agents al1x-ai-agents ?${NC}"
+echo ""
+echo "  1) Global  — ~/.claude/ (disponible dans tous les projets)"
+echo "  2) Local   — .claude/  (uniquement dans le projet courant)"
+echo ""
+read -rp "Choix [1/2] (défaut: 1) : " INSTALL_MODE
+INSTALL_MODE="${INSTALL_MODE:-1}"
+
+if [ "$INSTALL_MODE" = "2" ]; then
+    BASE_DIR=".claude"
+    INSTALL_LABEL="locale ($(pwd)/.claude/)"
+else
+    BASE_DIR="$HOME/.claude"
+    INSTALL_LABEL="globale ($HOME/.claude/)"
+fi
+
+COMMANDS_DIR="${BASE_DIR}/commands"
+AGENTS_DIR="${BASE_DIR}/agents"
+RESOURCES_DIR="${BASE_DIR}/resources"
+
+info "Installation ${INSTALL_LABEL}..."
 
 # Créer les dossiers
 mkdir -p "$COMMANDS_DIR"
@@ -106,8 +124,11 @@ fi
 
 echo ""
 TOTAL=$((SUPER_COUNT + SUB_COUNT))
-success "Installation terminée ! ${TOTAL} agent(s) installé(s) (${SUPER_COUNT} super-agents, ${SUB_COUNT} sub-agents)"
+success "Installation ${INSTALL_LABEL} terminée ! ${TOTAL} agent(s) installé(s) (${SUPER_COUNT} super-agents, ${SUB_COUNT} sub-agents)"
 info "Super-agents (slash commands) : ${COMMANDS_DIR}/"
 info "Sub-agents (auto-délégation) : ${AGENTS_DIR}/"
 info "Ressources : ${RESOURCES_DIR}/"
+if [ "$INSTALL_MODE" != "2" ]; then
+    info "Les agents sont disponibles dans tous tes projets Claude Code."
+fi
 info "Utilise /update-agents dans Claude Code pour mettre à jour."
