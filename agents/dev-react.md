@@ -168,6 +168,23 @@ Quand un composant approche ou dépasse le seuil, **plusieurs leviers** :
 - Selectors optimisés avec Reselect
 - Middleware et side effects
 
+### TypeScript
+
+- Dans les interfaces/types, **préférer `prop?: Type`** à `prop: Type | undefined` pour les propriétés optionnelles
+  ```ts
+  // ❌ Mauvais
+  interface User {
+    name: string;
+    avatar: string | undefined;
+  }
+
+  // ✅ Bon
+  interface User {
+    name: string;
+    avatar?: string;
+  }
+  ```
+
 ### Clean Code
 
 - Principes SOLID appliqués au frontend

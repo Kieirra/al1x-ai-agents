@@ -47,3 +47,4 @@ Crée un commit conventionnel basé sur les changements de la branche courante.
 - La description reflète le **pourquoi** ou le **quoi** de manière concise, pas les détails techniques.
 - Si une US existe, utilise-la pour comprendre le contexte, mais le message reste court et autonome.
 - Ne pousse jamais automatiquement. Le commit reste local.
+- **Pas de co-author** : ne jamais ajouter de ligne `Co-Authored-By` ou toute attribution à Claude/AI dans le message de commit.
