@@ -16,12 +16,18 @@ Crée une Pull Request via `gh pr create` sur la branche courante.
 
 4. Si aucun template n'existe :
    - Demande à l'utilisateur s'il y a un lien d'issue associé
-   - Si oui : utilise `fix: {lien_issue}` comme titre et le lien comme body
-   - Si non : propose un titre basé sur les commits et demande confirmation
+   - Si oui et que l'issue est accessible (via `gh issue view`) : titre = `<type>: <titre synthétique de l'issue>`, body = `{lien_issue}`
+   - Si oui mais l'issue n'est pas accessible : titre = `fix: {lien_issue}`, body = vide (`""`)
+   - Si non : propose un titre basé sur les commits et demande confirmation. **Body vide** (`""`) sauf si l'utilisateur demande explicitement une description.
+
+   **Format du titre** : Conventional Commits — `<type>: <description courte en anglais>`
+   - Types : `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+   - Le type est déduit du contenu de l'issue ou des commits
+   - Exemples : `feat: add error message for number edition`, `fix: resolve login redirect loop`
 
 5. Crée la PR avec `gh pr create` :
    ```
-   gh pr create --title "<titre>" --body "<body>"
+   gh pr create --title "<titre>" --body ""
    ```
 
 6. Affiche l'URL de la PR créée.
