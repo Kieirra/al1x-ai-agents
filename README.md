@@ -72,6 +72,7 @@ Les agents fonctionnent en pipeline. Le pipeline s'adapte à la technologie du p
 
 | Command | Description |
 |---------|-------------|
+| `/team` | Launches the full autonomous pipeline: `/architecte` → `/dev` → `/qa` → `/reviewer` → `/fixer` (loop if needed) |
 | `/update-agents` | Re-downloads all agents and commands from this repo |
 | `/workflow` | Shows the current pipeline status and suggests the next step |
 | `/list-us` | Lists all user stories in `.claude/us/` with their status |
@@ -128,6 +129,7 @@ agents/                    # Agent definitions
 commands/                  # Slash commands (non-agent)
   workflow.md
   list-us.md
+  team.md
   update-agents.md
 resources/                 # Reference files (not agents)
   godot-guidelines.md      # Godot 4 architecture & conventions

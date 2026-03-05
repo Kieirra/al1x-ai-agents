@@ -170,6 +170,39 @@ Quand un composant approche ou dépasse le seuil, **plusieurs leviers** :
 
 ### TypeScript
 
+- **Ordre de préférence pour les définitions de types** : `interface` > `enum` > `type`
+  - **`interface`** par défaut pour les objets et les contrats
+  - **`enum`** pour les unions de valeurs nommées (statuts, catégories, etc.)
+  - **`type`** uniquement si ça améliore la lisibilité par rapport à une interface ou un enum (union types, mapped types, types utilitaires)
+
+  ```ts
+  // ✅ Bon : interface par défaut pour les objets
+  interface User {
+    name: string;
+    role: UserRole;
+  }
+
+  // ✅ Bon : enum pour les valeurs nommées
+  enum UserRole {
+    Admin = 'admin',
+    Editor = 'editor',
+    Viewer = 'viewer',
+  }
+
+  // ✅ Bon : type uniquement quand ça apporte de la lisibilité
+  type ApiResponse<T> = SuccessResponse<T> | ErrorResponse;
+  type EventHandler = (event: MouseEvent) => void;
+
+  // ❌ Mauvais : type là où une interface suffit
+  type User = {
+    name: string;
+    role: UserRole;
+  };
+
+  // ❌ Mauvais : union de strings là où un enum est plus clair
+  type UserRole = 'admin' | 'editor' | 'viewer';
+  ```
+
 - Dans les interfaces/types, **préférer `prop?: Type`** à `prop: Type | undefined` pour les propriétés optionnelles
   ```ts
   // ❌ Mauvais

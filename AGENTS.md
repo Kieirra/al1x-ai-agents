@@ -49,6 +49,7 @@ al1x-ai-agents/
   commands/             # Slash commands (utilitaires)
     workflow.md
     list-us.md
+    team.md
     update-agents.md
   install.sh            # Script d'installation (curl depuis GitHub)
   README.md             # Documentation publique
