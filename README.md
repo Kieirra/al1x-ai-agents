@@ -112,6 +112,32 @@ In Claude Code, run:
 
 Or re-run the curl command above.
 
+## review-pr — Review de PRs avec Claude Code
+
+Script standalone pour reviewer des PRs dans un worktree isolé avec Claude Code.
+
+### Installation
+
+```bash
+sudo cp review-pr /usr/local/bin/review-pr
+```
+
+### Usage
+
+```bash
+review-pr                       # Review la branche courante
+review-pr 42                    # Review PR #42
+review-pr feat/login            # Review une branche
+review-pr feat/login develop    # Review contre develop au lieu de main
+review-pr --no-claude 42        # Crée le worktree sans lancer Claude
+review-pr --list                # Liste les sessions de review actives
+review-pr --cleanup             # Supprime tous les worktrees de review
+```
+
+Le script crée un worktree git temporaire sur la branche de la PR, génère un `REVIEW_CONTEXT.md` avec les infos de la PR et les prompts de review, puis lance une session Claude Code dédiée.
+
+**Dépendances :** git, optionnellement gh (infos PR) et claude (review assistée).
+
 ## Structure
 
 ```

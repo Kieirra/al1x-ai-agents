@@ -1,0 +1,337 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ─── Colors ───────────────────────────────────────────────────────────────────
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+NC='\033[0m'
+
+info()    { echo -e "${GREEN}✓${NC} $*"; }
+warn()    { echo -e "${YELLOW}⚠${NC} $*"; }
+error()   { echo -e "${RED}✗${NC} $*" >&2; }
+header()  { echo -e "\n${BOLD}${CYAN}$*${NC}"; }
+
+# ─── Usage ────────────────────────────────────────────────────────────────────
+usage() {
+    cat <<'EOF'
+review-pr — Review PRs with Claude Code in an isolated worktree
+
+USAGE:
+    review-pr                           Review current branch
+    review-pr <branch|PR#> [base]       Review a specific branch or PR
+    review-pr --cleanup                 Remove all review worktrees
+    review-pr --list                    List active review sessions
+    review-pr --help                    Show this help
+
+OPTIONS:
+    --no-claude     Don't launch Claude CLI after setup
+
+EXAMPLES:
+    review-pr                       Review current branch (must not be on base)
+    review-pr 42                    Review PR #42
+    review-pr feat/login            Review branch feat/login
+    review-pr feat/login develop    Review against develop (instead of default base)
+    review-pr --cleanup             Clean up all review worktrees
+EOF
+}
+
+# ─── Helpers ──────────────────────────────────────────────────────────────────
+require_cmd() {
+    command -v "$1" &>/dev/null || { error "'$1' is required but not found in PATH."; exit 1; }
+}
+
+require_git_repo() {
+    git rev-parse --is-inside-work-tree &>/dev/null || { error "Not inside a git repository."; exit 1; }
+}
+
+get_default_base() {
+    local ref
+    if ref=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null); then
+        echo "${ref#refs/remotes/origin/}"
+    else
+        echo "main"
+    fi
+}
+
+slugify() {
+    echo "$1" | tr '/' '-' | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]//g'
+}
+
+get_repo_root() {
+    git rev-parse --show-toplevel
+}
+
+# ─── List ─────────────────────────────────────────────────────────────────────
+cmd_list() {
+    header "Active review sessions"
+    local found=false
+    local repo_root
+    repo_root=$(get_repo_root)
+
+    while IFS= read -r line; do
+        local wt_path wt_branch
+        wt_path=$(echo "$line" | awk '{print $1}')
+        wt_branch=$(echo "$line" | awk '{print $3}' | tr -d '[]')
+        if [[ "$wt_path" == /tmp/pr-review-* ]]; then
+            found=true
+            local created
+            created=$(stat -c '%y' "$wt_path" 2>/dev/null | cut -d'.' -f1 || echo "unknown")
+            echo -e "  ${CYAN}${wt_branch}${NC}  →  ${wt_path}  (${created})"
+        fi
+    done < <(git -C "$repo_root" worktree list)
+
+    if [[ "$found" == false ]]; then
+        warn "No active review sessions."
+    fi
+}
+
+# ─── Cleanup ──────────────────────────────────────────────────────────────────
+cmd_cleanup() {
+    header "Cleaning up review worktrees"
+    local found=false
+    local repo_root
+    repo_root=$(get_repo_root)
+
+    while IFS= read -r line; do
+        local wt_path
+        wt_path=$(echo "$line" | awk '{print $1}')
+        if [[ "$wt_path" == /tmp/pr-review-* ]]; then
+            found=true
+            echo -n "  Removing $wt_path ... "
+            git -C "$repo_root" worktree remove --force "$wt_path" 2>/dev/null && info "done" || warn "failed"
+        fi
+    done < <(git -C "$repo_root" worktree list)
+
+    if [[ "$found" == false ]]; then
+        info "Nothing to clean up."
+    else
+        git -C "$repo_root" worktree prune
+        info "Worktree list pruned."
+    fi
+}
+
+# ─── Generate REVIEW_CONTEXT.md ──────────────────────────────────────────────
+generate_review_context() {
+    local wt_path="$1" branch="$2" base="$3"
+    local ctx="$wt_path/REVIEW_CONTEXT.md"
+
+    {
+        echo "# PR Review Context"
+        echo ""
+        echo "> **This file is for Claude context only — it is gitignored and will not be committed.**"
+        echo ""
+
+        # PR info from gh if available
+        if command -v gh &>/dev/null; then
+            local pr_json
+            pr_json=$(gh pr list --head "$branch" --json number,title,body,author,isDraft,url --limit 1 2>/dev/null || echo "")
+            if [[ -n "$pr_json" && "$pr_json" != "[]" ]]; then
+                local pr_title pr_author pr_number pr_url pr_draft pr_body
+                pr_number=$(echo "$pr_json" | jq -r '.[0].number')
+                pr_title=$(echo "$pr_json" | jq -r '.[0].title')
+                pr_author=$(echo "$pr_json" | jq -r '.[0].author.login')
+                pr_url=$(echo "$pr_json" | jq -r '.[0].url')
+                pr_draft=$(echo "$pr_json" | jq -r '.[0].isDraft')
+                pr_body=$(echo "$pr_json" | jq -r '.[0].body // ""')
+
+                echo "## PR Info"
+                echo ""
+                echo "- **PR:** #${pr_number} — ${pr_title}"
+                echo "- **Author:** ${pr_author}"
+                echo "- **URL:** ${pr_url}"
+                [[ "$pr_draft" == "true" ]] && echo "- **Status:** Draft"
+                echo ""
+                if [[ -n "$pr_body" && "$pr_body" != "null" ]]; then
+                    echo "### Description"
+                    echo ""
+                    echo "$pr_body"
+                    echo ""
+                fi
+            fi
+        fi
+
+        echo "## Branch Info"
+        echo ""
+        echo "- **Branch:** \`${branch}\`"
+        echo "- **Base:** \`${base}\`"
+        echo "- **Worktree:** \`${wt_path}\`"
+        echo ""
+
+        echo "## Commits"
+        echo ""
+        echo '```'
+        git -C "$wt_path" log --oneline "${base}..HEAD" 2>/dev/null || echo "(unable to compute commit range)"
+        echo '```'
+        echo ""
+
+        echo "## Files Changed"
+        echo ""
+        echo '```'
+        git -C "$wt_path" diff --stat "${base}...HEAD" 2>/dev/null || echo "(unable to compute diff stat)"
+        echo '```'
+        echo ""
+
+        echo "## Review Guide"
+        echo ""
+        echo "You are reviewing a PR in an isolated git worktree."
+        echo "If you make fixes, commit and push them — they go directly to the PR branch."
+        echo "Do NOT commit REVIEW_CONTEXT.md (it is gitignored)."
+        echo ""
+        echo "### Suggested prompts"
+        echo ""
+        echo '- `Review this PR for bugs, security issues, and code quality.`'
+        echo '- `Summarize what this PR does in 3 bullet points.`'
+        echo '- `Are there any breaking changes or missing error handling?`'
+        echo '- `Check for OWASP top 10 vulnerabilities in the changed files.`'
+        echo '- `Suggest improvements to the test coverage for these changes.`'
+        echo '- `Fix the issue you found and commit the change.`'
+        echo ""
+
+    } > "$ctx"
+
+    # Gitignore it
+    if ! grep -qxF 'REVIEW_CONTEXT.md' "$wt_path/.gitignore" 2>/dev/null; then
+        echo 'REVIEW_CONTEXT.md' >> "$wt_path/.gitignore"
+        git -C "$wt_path" checkout -- .gitignore 2>/dev/null || true
+    fi
+}
+
+# ─── Main: start review ──────────────────────────────────────────────────────
+cmd_review() {
+    local target="${1:-}"
+    local base="${2:-}"
+    local no_claude="${NO_CLAUDE:-false}"
+    local branch=""
+
+    require_cmd git
+    require_git_repo
+
+    local repo_root
+    repo_root=$(get_repo_root)
+    local repo_name
+    repo_name=$(basename "$repo_root")
+
+    # No argument: use current branch
+    if [[ -z "$target" ]]; then
+        target=$(git -C "$repo_root" branch --show-current)
+        local default_base
+        default_base=$(get_default_base)
+        if [[ "$target" == "$default_base" ]]; then
+            error "You are on '${target}' (base branch). Switch to a PR branch or pass a branch/PR# as argument."
+            exit 1
+        fi
+        info "Using current branch: ${target}"
+    fi
+
+    # Resolve PR number to branch name
+    if [[ "$target" =~ ^[0-9]+$ ]]; then
+        if ! command -v gh &>/dev/null; then
+            error "gh CLI is required to resolve PR numbers. Install it or pass a branch name."
+            exit 1
+        fi
+        header "Resolving PR #${target}"
+        branch=$(gh pr view "$target" --json headRefName -q '.headRefName') || {
+            error "Could not resolve PR #${target}. Does it exist?"
+            exit 1
+        }
+        info "PR #${target} → branch ${branch}"
+    else
+        branch="$target"
+    fi
+
+    # Resolve base branch
+    if [[ -z "$base" ]]; then
+        base=$(get_default_base)
+        info "Using default base: ${base}"
+    fi
+
+    # Ensure we have the branch locally (fetch if needed)
+    local branch_ref="$branch"
+    if ! git -C "$repo_root" rev-parse --verify "$branch" &>/dev/null; then
+        warn "Branch '${branch}' not found locally, fetching..."
+        git -C "$repo_root" fetch origin "$branch" || {
+            error "Could not fetch origin/${branch}."
+            exit 1
+        }
+        branch_ref="origin/${branch}"
+        info "Using ${branch_ref}"
+    fi
+
+    # Ensure base is up to date
+    git -C "$repo_root" fetch origin "$base" &>/dev/null || true
+
+    # Create worktree
+    local slug
+    slug=$(slugify "$repo_name-$branch")
+    local timestamp
+    timestamp=$(date +%s)
+    local wt_path="/tmp/pr-review-${slug}-${timestamp}"
+
+    header "Creating worktree"
+    git -C "$repo_root" worktree add "$wt_path" "$branch_ref" || {
+        error "Failed to create worktree. The branch might already have a worktree."
+        echo "  Run 'review-pr --list' to see active sessions."
+        exit 1
+    }
+    info "Worktree created at ${wt_path}"
+
+    # Generate review context
+    local base_ref="origin/${base}"
+    generate_review_context "$wt_path" "$branch" "$base_ref"
+    info "REVIEW_CONTEXT.md generated"
+
+    # Gitignore REVIEW_CONTEXT.md properly (write directly, don't modify tracked .gitignore)
+    echo 'REVIEW_CONTEXT.md' > "$wt_path/.git-review-ignore"
+    git -C "$wt_path" config core.excludesFile "$wt_path/.git-review-ignore"
+
+    # Summary
+    header "Review session ready"
+    echo ""
+    echo -e "  ${BOLD}Path:${NC}    ${wt_path}"
+    echo -e "  ${BOLD}Branch:${NC}  ${branch}"
+    echo -e "  ${BOLD}Base:${NC}    ${base}"
+    echo ""
+
+    # Launch Claude
+    if [[ "$no_claude" == "true" ]]; then
+        info "Skipping Claude CLI (--no-claude)"
+        echo ""
+        echo "  To start reviewing manually:"
+        echo "    cd ${wt_path} && claude"
+        return
+    fi
+
+    if command -v claude &>/dev/null; then
+        header "Launching Claude Code..."
+        echo -e "  ${YELLOW}(Ctrl+C to skip Claude and keep the worktree)${NC}"
+        echo ""
+        cd "$wt_path" && exec claude --print "Read REVIEW_CONTEXT.md to understand the PR context, then wait for my review instructions."
+    else
+        warn "Claude CLI not found. Start manually:"
+        echo "    cd ${wt_path} && claude"
+    fi
+}
+
+# ─── Entrypoint ───────────────────────────────────────────────────────────────
+main() {
+    local no_claude=false
+
+    # Parse flags
+    local args=()
+    for arg in "$@"; do
+        case "$arg" in
+            --no-claude) no_claude=true ;;
+            --help|-h)   usage; exit 0 ;;
+            --cleanup)   cmd_cleanup; exit 0 ;;
+            --list)      cmd_list; exit 0 ;;
+            *)           args+=("$arg") ;;
+        esac
+    done
+
+    NO_CLAUDE="$no_claude" cmd_review "${args[0]:-}" "${args[1]:-}"
+}
+
+main "$@"
