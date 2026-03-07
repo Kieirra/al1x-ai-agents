@@ -26,9 +26,6 @@ USAGE:
     review-pr --list                    List active review sessions
     review-pr --help                    Show this help
 
-OPTIONS:
-    --no-claude     Don't launch Claude CLI after setup
-
 EXAMPLES:
     review-pr                       Review current branch (must not be on base)
     review-pr 42                    Review PR #42
@@ -64,18 +61,27 @@ get_repo_root() {
     git rev-parse --show-toplevel
 }
 
+# Zed expects worktrees at <parent>/worktrees/<repo-name>/
+get_wt_dir() {
+    local repo_root repo_name
+    repo_root=$(get_repo_root)
+    repo_name=$(basename "$repo_root")
+    echo "$(dirname "$repo_root")/worktrees/${repo_name}"
+}
+
 # ─── List ─────────────────────────────────────────────────────────────────────
 cmd_list() {
     header "Active review sessions"
     local found=false
-    local repo_root
+    local repo_root wt_dir
     repo_root=$(get_repo_root)
+    wt_dir=$(get_wt_dir)
 
     while IFS= read -r line; do
         local wt_path wt_branch
         wt_path=$(echo "$line" | awk '{print $1}')
         wt_branch=$(echo "$line" | awk '{print $3}' | tr -d '[]')
-        if [[ "$wt_path" == /tmp/pr-review-* ]]; then
+        if [[ "$wt_path" == "$wt_dir/"* ]]; then
             found=true
             local created
             created=$(stat -c '%y' "$wt_path" 2>/dev/null | cut -d'.' -f1 || echo "unknown")
@@ -92,16 +98,22 @@ cmd_list() {
 cmd_cleanup() {
     header "Cleaning up review worktrees"
     local found=false
-    local repo_root
+    local repo_root wt_dir
     repo_root=$(get_repo_root)
+    wt_dir=$(get_wt_dir)
 
     while IFS= read -r line; do
-        local wt_path
+        local wt_path wt_branch
         wt_path=$(echo "$line" | awk '{print $1}')
-        if [[ "$wt_path" == /tmp/pr-review-* ]]; then
+        wt_branch=$(echo "$line" | awk '{print $3}' | tr -d '[]')
+        if [[ "$wt_path" == "$wt_dir/"* ]]; then
             found=true
             echo -n "  Removing $wt_path ... "
             git -C "$repo_root" worktree remove --force "$wt_path" 2>/dev/null && info "done" || warn "failed"
+            # Clean up the review branch too
+            if [[ "$wt_branch" == review/* ]]; then
+                git -C "$repo_root" branch -D "$wt_branch" 2>/dev/null || true
+            fi
         fi
     done < <(git -C "$repo_root" worktree list)
 
@@ -111,17 +123,24 @@ cmd_cleanup() {
         git -C "$repo_root" worktree prune
         info "Worktree list pruned."
     fi
+
+    rmdir "$wt_dir" 2>/dev/null || true
 }
 
-# ─── Generate REVIEW_CONTEXT.md ──────────────────────────────────────────────
-generate_review_context() {
-    local wt_path="$1" branch="$2" base="$3"
-    local ctx="$wt_path/REVIEW_CONTEXT.md"
+# ─── Generate CLAUDE.md ──────────────────────────────────────────────────────
+generate_claude_md() {
+    local wt_path="$1" branch="$2" base="$3" review_branch="$4"
+    local ctx="$wt_path/CLAUDE.md"
 
     {
-        echo "# PR Review Context"
+        echo "# Review Mode"
         echo ""
-        echo "> **This file is for Claude context only — it is gitignored and will not be committed.**"
+        echo "You are in a **PR review worktree**. All PR changes are staged (visible via \`git diff --cached\`)."
+        echo ""
+        echo "## Rules"
+        echo ""
+        echo "- Do NOT commit CLAUDE.md"
+        echo "- To push fixes to the PR: \`git push origin ${review_branch}:${branch}\`"
         echo ""
 
         # PR info from gh if available
@@ -137,12 +156,12 @@ generate_review_context() {
                 pr_draft=$(echo "$pr_json" | jq -r '.[0].isDraft')
                 pr_body=$(echo "$pr_json" | jq -r '.[0].body // ""')
 
-                echo "## PR Info"
+                echo "## PR"
                 echo ""
-                echo "- **PR:** #${pr_number} — ${pr_title}"
+                echo "- **#${pr_number}** — ${pr_title}"
                 echo "- **Author:** ${pr_author}"
                 echo "- **URL:** ${pr_url}"
-                [[ "$pr_draft" == "true" ]] && echo "- **Status:** Draft"
+                [[ "$pr_draft" == "true" ]] && echo "- **Draft**"
                 echo ""
                 if [[ -n "$pr_body" && "$pr_body" != "null" ]]; then
                     echo "### Description"
@@ -153,57 +172,26 @@ generate_review_context() {
             fi
         fi
 
-        echo "## Branch Info"
+        echo "## Context"
         echo ""
         echo "- **Branch:** \`${branch}\`"
         echo "- **Base:** \`${base}\`"
-        echo "- **Worktree:** \`${wt_path}\`"
+        echo "- **Review branch:** \`${review_branch}\`"
         echo ""
 
-        echo "## Commits"
+        echo "### Files changed"
         echo ""
         echo '```'
-        git -C "$wt_path" log --oneline "${base}..HEAD" 2>/dev/null || echo "(unable to compute commit range)"
+        git -C "$wt_path" diff --cached --stat 2>/dev/null || echo "(no staged changes)"
         echo '```'
-        echo ""
-
-        echo "## Files Changed"
-        echo ""
-        echo '```'
-        git -C "$wt_path" diff --stat "${base}...HEAD" 2>/dev/null || echo "(unable to compute diff stat)"
-        echo '```'
-        echo ""
-
-        echo "## Review Guide"
-        echo ""
-        echo "You are reviewing a PR in an isolated git worktree."
-        echo "If you make fixes, commit and push them — they go directly to the PR branch."
-        echo "Do NOT commit REVIEW_CONTEXT.md (it is gitignored)."
-        echo ""
-        echo "### Suggested prompts"
-        echo ""
-        echo '- `Review this PR for bugs, security issues, and code quality.`'
-        echo '- `Summarize what this PR does in 3 bullet points.`'
-        echo '- `Are there any breaking changes or missing error handling?`'
-        echo '- `Check for OWASP top 10 vulnerabilities in the changed files.`'
-        echo '- `Suggest improvements to the test coverage for these changes.`'
-        echo '- `Fix the issue you found and commit the change.`'
-        echo ""
 
     } > "$ctx"
-
-    # Gitignore it
-    if ! grep -qxF 'REVIEW_CONTEXT.md' "$wt_path/.gitignore" 2>/dev/null; then
-        echo 'REVIEW_CONTEXT.md' >> "$wt_path/.gitignore"
-        git -C "$wt_path" checkout -- .gitignore 2>/dev/null || true
-    fi
 }
 
 # ─── Main: start review ──────────────────────────────────────────────────────
 cmd_review() {
     local target="${1:-}"
     local base="${2:-}"
-    local no_claude="${NO_CLAUDE:-false}"
     local branch=""
 
     require_cmd git
@@ -211,8 +199,6 @@ cmd_review() {
 
     local repo_root
     repo_root=$(get_repo_root)
-    local repo_name
-    repo_name=$(basename "$repo_root")
 
     # No argument: use current branch
     if [[ -z "$target" ]]; then
@@ -263,29 +249,44 @@ cmd_review() {
     # Ensure base is up to date
     git -C "$repo_root" fetch origin "$base" &>/dev/null || true
 
-    # Create worktree
-    local slug
-    slug=$(slugify "$repo_name-$branch")
-    local timestamp
-    timestamp=$(date +%s)
-    local wt_path="/tmp/pr-review-${slug}-${timestamp}"
-
-    header "Creating worktree"
-    git -C "$repo_root" worktree add "$wt_path" "$branch_ref" || {
-        error "Failed to create worktree. The branch might already have a worktree."
-        echo "  Run 'review-pr --list' to see active sessions."
-        exit 1
-    }
-    info "Worktree created at ${wt_path}"
-
-    # Generate review context
+    # Create worktree on base branch, apply PR diff as staged
+    local slug wt_dir wt_path
+    slug=$(slugify "$branch")
+    wt_dir=$(get_wt_dir)
+    mkdir -p "$wt_dir"
+    wt_path="$wt_dir/${slug}"
+    local review_branch="review/${branch}"
     local base_ref="origin/${base}"
-    generate_review_context "$wt_path" "$branch" "$base_ref"
-    info "REVIEW_CONTEXT.md generated"
 
-    # Gitignore REVIEW_CONTEXT.md properly (write directly, don't modify tracked .gitignore)
-    echo 'REVIEW_CONTEXT.md' > "$wt_path/.git-review-ignore"
-    git -C "$wt_path" config core.excludesFile "$wt_path/.git-review-ignore"
+    if [[ -d "$wt_path" ]]; then
+        warn "Review worktree already exists, reusing: ${wt_path}"
+    else
+        header "Creating worktree"
+
+        # Create a review branch starting from the base
+        git -C "$repo_root" worktree add -b "$review_branch" "$wt_path" "$base_ref" || {
+            # Branch might already exist from a previous review
+            git -C "$repo_root" branch -D "$review_branch" 2>/dev/null || true
+            git -C "$repo_root" worktree add -b "$review_branch" "$wt_path" "$base_ref" || {
+                error "Failed to create worktree."
+                echo "  Run 'review-pr --list' to see active sessions."
+                exit 1
+            }
+        }
+        info "Worktree created on base '${base}'"
+
+        # Apply the full PR diff as staged changes
+        header "Applying PR diff as staged changes"
+        git -C "$repo_root" diff "${base_ref}...${branch_ref}" | git -C "$wt_path" apply --index || {
+            error "Failed to apply PR diff. There may be conflicts."
+            exit 1
+        }
+        info "All PR changes are now staged — browse them in Zed"
+    fi
+
+    # Generate CLAUDE.md (auto-read by Claude Code)
+    generate_claude_md "$wt_path" "$branch" "$base_ref" "$review_branch"
+    info "CLAUDE.md generated"
 
     # Summary
     header "Review session ready"
@@ -294,44 +295,20 @@ cmd_review() {
     echo -e "  ${BOLD}Branch:${NC}  ${branch}"
     echo -e "  ${BOLD}Base:${NC}    ${base}"
     echo ""
-
-    # Launch Claude
-    if [[ "$no_claude" == "true" ]]; then
-        info "Skipping Claude CLI (--no-claude)"
-        echo ""
-        echo "  To start reviewing manually:"
-        echo "    cd ${wt_path} && claude"
-        return
-    fi
-
-    if command -v claude &>/dev/null; then
-        header "Launching Claude Code..."
-        echo -e "  ${YELLOW}(Ctrl+C to skip Claude and keep the worktree)${NC}"
-        echo ""
-        cd "$wt_path" && exec claude --print "Read REVIEW_CONTEXT.md to understand the PR context, then wait for my review instructions."
-    else
-        warn "Claude CLI not found. Start manually:"
-        echo "    cd ${wt_path} && claude"
-    fi
+    echo "  Switch to the worktree in Zed, then open Claude Code."
 }
 
 # ─── Entrypoint ───────────────────────────────────────────────────────────────
 main() {
-    local no_claude=false
-
-    # Parse flags
-    local args=()
-    for arg in "$@"; do
-        case "$arg" in
-            --no-claude) no_claude=true ;;
+    if [[ $# -gt 0 ]]; then
+        case "$1" in
             --help|-h)   usage; exit 0 ;;
             --cleanup)   cmd_cleanup; exit 0 ;;
             --list)      cmd_list; exit 0 ;;
-            *)           args+=("$arg") ;;
         esac
-    done
+    fi
 
-    NO_CLAUDE="$no_claude" cmd_review "${args[0]:-}" "${args[1]:-}"
+    cmd_review "${1:-}" "${2:-}"
 }
 
 main "$@"

@@ -129,12 +129,11 @@ review-pr                       # Review la branche courante
 review-pr 42                    # Review PR #42
 review-pr feat/login            # Review une branche
 review-pr feat/login develop    # Review contre develop au lieu de main
-review-pr --no-claude 42        # Crée le worktree sans lancer Claude
 review-pr --list                # Liste les sessions de review actives
 review-pr --cleanup             # Supprime tous les worktrees de review
 ```
 
-Le script crée un worktree git temporaire sur la branche de la PR, génère un `REVIEW_CONTEXT.md` avec les infos de la PR et les prompts de review, puis lance une session Claude Code dédiée.
+Le script crée un worktree sur la base, applique le diff complet de la PR en staged, et génère un `CLAUDE.md` avec le contexte de review. Il suffit ensuite de switcher sur le worktree dans Zed et d'ouvrir Claude Code.
 
 **Dépendances :** git, optionnellement gh (infos PR) et claude (review assistée).
 
