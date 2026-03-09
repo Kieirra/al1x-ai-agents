@@ -11,7 +11,7 @@ Crée une Pull Request via `gh pr create` sur la branche courante.
 2. Si la branche n'est pas poussée, la pousse avec `git push -u origin <branche>`
 
 3. Détecte si un template de PR existe dans le repo :
-   - Cherche dans `.github/pull_request_template.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `docs/pull_request_template.md`, ou `.github/PULL_REQUEST_TEMPLATE/`
+   - Utilise `find .github docs -iname "pull_request_template*" 2>/dev/null` pour trouver le template quelle que soit la casse
    - Si un template existe, le lit et le remplit en se basant sur les commits et les changements de la branche
 
 4. Si aucun template n'existe :
