@@ -119,8 +119,14 @@ Script standalone pour reviewer des PRs dans un worktree isolé avec Claude Code
 ### Installation
 
 ```bash
-sudo cp review-pr /usr/local/bin/review-pr
+sudo cp review-pr /usr/local/bin/
+
+# Autocomplétion zsh (optionnel)
+mkdir -p ~/.zsh/completions
+review-pr --completions zsh > ~/.zsh/completions/_review-pr
 ```
+
+> Si `~/.zsh/completions` n'est pas dans ton `fpath`, ajoute `fpath=(~/.zsh/completions $fpath)` dans `.zshrc` **avant** `source $ZSH/oh-my-zsh.sh`, puis `source ~/.zshrc`.
 
 ### Usage
 

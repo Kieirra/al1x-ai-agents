@@ -24,6 +24,7 @@ USAGE:
     review-pr <branch|PR#> [base]       Review a specific branch or PR
     review-pr --cleanup                 Remove all review worktrees
     review-pr --list                    List active review sessions
+    review-pr --completions [zsh|bash]  Output shell completions
     review-pr --help                    Show this help
 
 EXAMPLES:
@@ -133,15 +134,47 @@ generate_claude_md() {
     local ctx="$wt_path/CLAUDE.md"
 
     {
-        echo "# Review Mode"
-        echo ""
-        echo "You are in a **PR review worktree**. All PR changes are staged (visible via \`git diff --cached\`)."
-        echo ""
-        echo "## Rules"
-        echo ""
-        echo "- Do NOT commit CLAUDE.md"
-        echo "- To push fixes to the PR: \`git push origin ${review_branch}:${branch}\`"
-        echo ""
+        cat <<'HEADER'
+# Review Mode — Verso (read-only)
+
+You are **Verso**, the code guardian, operating in a **read-only PR review worktree**.
+
+All PR changes are staged (visible via `git diff --cached`). The diff is a patch applied on the base branch — this is NOT the real branch.
+
+## Strict Rules
+
+- **NEVER commit** — not even CLAUDE.md, not even "fix" commits
+- **NEVER push** — this worktree is read-only
+- **NEVER modify any file** — no edits, no writes, no fixes
+- **NEVER use** the Edit, Write, or NotebookEdit tools
+- You are here to **read, explain, and advise** — nothing else
+
+## Your Role
+
+1. **Answer questions** about the code: explain logic, patterns, design choices
+2. **Identify issues** when asked: bugs, code smells, security concerns, simplification opportunities
+3. **Generate prompts for Alicia** when improvements are needed (see below)
+
+## Generating Prompts for Alicia
+
+When you identify an improvement (or the user asks "should this be extracted?", "is this right?", etc.), propose a **copy-paste-ready prompt** for Alicia (`/dev`) on the real branch.
+
+Format each prompt in a fenced block:
+
+```prompt
+[High-level description of what needs to change and why]
+[Which file(s) / area of the code is concerned]
+[Expected behavior or outcome — NOT the technical solution, unless trivial]
+```
+
+**Prompt guidelines:**
+- Describe the **need**, not the implementation (let Alicia choose the technical approach)
+- Be specific enough that Alicia knows exactly *what* to address
+- Be high-level enough that she has freedom on *how* to solve it
+- Exception: if the fix is trivial (rename, typo, missing import), just say what to do
+- One prompt per concern — don't bundle unrelated issues
+
+HEADER
 
         # PR info from gh if available
         if command -v gh &>/dev/null; then
@@ -176,7 +209,6 @@ generate_claude_md() {
         echo ""
         echo "- **Branch:** \`${branch}\`"
         echo "- **Base:** \`${base}\`"
-        echo "- **Review branch:** \`${review_branch}\`"
         echo ""
 
         echo "### Files changed"
@@ -298,13 +330,74 @@ cmd_review() {
     echo "  Switch to the worktree in Zed, then open Claude Code."
 }
 
+# ─── Completions ─────────────────────────────────────────────────────────────
+cmd_completions() {
+    local shell="${1:-zsh}"
+    case "$shell" in
+        zsh)
+            cat <<'COMP'
+#compdef review-pr
+
+_review-pr() {
+    local -a opts branches
+    opts=(
+        '--cleanup[Remove all review worktrees]'
+        '--list[List active review sessions]'
+        '--help[Show help]'
+        '-h[Show help]'
+    )
+
+    if (( CURRENT == 2 )); then
+        # First arg: options or branch/PR#
+        branches=(${(f)"$(git branch -r 2>/dev/null | sed 's|origin/||;s/^[* ]*//' | grep -v HEAD)"})
+        _alternative \
+            'options:option:compadd -a opts' \
+            'branches:branch:compadd -a branches'
+    elif (( CURRENT == 3 )); then
+        # Second arg: base branch
+        branches=(${(f)"$(git branch -r 2>/dev/null | sed 's|origin/||;s/^[* ]*//' | grep -v HEAD)"})
+        compadd -a branches
+    fi
+}
+
+_review-pr "$@"
+COMP
+            ;;
+        bash)
+            cat <<'COMP'
+_review_pr() {
+    local cur opts branches
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    if [[ ${COMP_CWORD} -eq 1 ]]; then
+        opts="--cleanup --list --help -h"
+        branches=$(git branch -r 2>/dev/null | sed 's|origin/||;s/^[* ]*//' | grep -v HEAD)
+        COMPREPLY=( $(compgen -W "${opts} ${branches}" -- "${cur}") )
+    elif [[ ${COMP_CWORD} -eq 2 ]]; then
+        branches=$(git branch -r 2>/dev/null | sed 's|origin/||;s/^[* ]*//' | grep -v HEAD)
+        COMPREPLY=( $(compgen -W "${branches}" -- "${cur}") )
+    fi
+}
+
+complete -F _review_pr review-pr
+COMP
+            ;;
+        *)
+            error "Unsupported shell: ${shell}. Use 'zsh' or 'bash'."
+            exit 1
+            ;;
+    esac
+}
+
 # ─── Entrypoint ───────────────────────────────────────────────────────────────
 main() {
     if [[ $# -gt 0 ]]; then
         case "$1" in
-            --help|-h)   usage; exit 0 ;;
-            --cleanup)   cmd_cleanup; exit 0 ;;
-            --list)      cmd_list; exit 0 ;;
+            --help|-h)       usage; exit 0 ;;
+            --cleanup)       cmd_cleanup; exit 0 ;;
+            --list)          cmd_list; exit 0 ;;
+            --completions)   cmd_completions "${2:-zsh}"; exit 0 ;;
         esac
     fi
 
