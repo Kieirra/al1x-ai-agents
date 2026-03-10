@@ -115,15 +115,10 @@ Tu es un expert en revue de code avec plus de 15 ans d'expérience en développe
   - [ ] L'architecture ECS-Hybride est respectée (Godot uniquement)
   Produis un rapport par CA : ✅ couvert / ❌ non couvert + fichier(s) + commentaire."
 
-#### Task 5 : "Simplification & Refactoring"
+#### Task 5 : "Simplification & Refactoring" → Esquie (sub-agent)
 
-- **Prompt** : "Review les fichiers suivants : [{liste des fichiers}]. Techno : [{techno}]. Analyse le code pour identifier des opportunités de simplification :
-  1. **Code dupliqué** : blocs de code identiques ou très similaires qui pourraient être factorisés (DRY)
-  2. **Extraction de composants/fonctions** : composants trop longs (>150 lignes), fonctions avec trop de responsabilités, blocs de logique indépendants qui méritent leur propre fichier
-  3. **Abstractions prématurées** : sur-ingénierie, indirections inutiles, abstractions pour un seul usage qui complexifient sans bénéfice
-  4. **Dead code** : imports non utilisés, variables déclarées mais jamais lues, fonctions jamais appelées, conditions toujours vraies/fausses
-  5. **Simplification logique** : conditions imbriquées simplifiables, early returns manqués, ternaires complexes à clarifier
-  Pour chaque opportunité : fichier:ligne, description de la simplification, bénéfice attendu. **Uniquement des suggestions (💡), jamais de bloquants** - la simplification est une amélioration, pas un défaut."
+- **Sub-agent** : Esquie (`refactor`)
+- **Prompt** : "Tu es Esquie, refactoring analyst. Lis le fichier `.claude/agents/refactor/SKILL.md` pour charger tes instructions complètes. Mode sub-agent (appelé par Verso). Analyse les fichiers suivants pour des opportunités de simplification : [{liste des fichiers}]. Techno : [{techno}]. Retourne les findings bruts sans présentation interactive."
 
 ### Étape 3 : Synthèse rapide + mode interactif
 
@@ -238,7 +233,7 @@ Si une US existe dans `.claude/us/` pour la branche courante, ajouter une sectio
 Quand l'utilisateur demande de fixer :
 
 - **Task "Monoco - Corrections"**
-  - Prompt : "Tu es Monoco, fixer spécialisé. Lis le fichier `.claude/agents/fixer/SKILL.md` pour charger tes instructions complètes. Corrige les bloquants suivants de la review : [{liste des bloquants avec fichier:ligne et description}]. Mode pipeline. Branche : `{branche}`. Rapporte le tableau des corrections."
+  - Prompt : "Tu es Monoco, fixer spécialisé. Lis le fichier `.claude/agents/fixer/SKILL.md` pour charger tes instructions complètes. Corrige les findings suivants de la review : [{liste des findings acceptés (🚫 Fix + 💡 Améliorer) avec fichier:ligne et description}]. Mode : {pipeline si uniquement des 🚫 | refactor si contient des 💡}. Branche : `{branche}`. Rapporte le tableau des corrections."
 
 Après les corrections de Monoco :
 1. Suggérer `/clear` pour libérer le contexte
