@@ -20,7 +20,8 @@ Les noms sont inspirés des personnages de **Clair Obscur: Expedition 33**.
 | `/dev` | **Alicia** | Lead developer - détecte la techno, dispatche aux devs spécialisés, parallélise front+back pour Tauri |
 | `/qa` | **Clea** | QA lead - orchestre tests unitaires, stories Storybook, validation des critères d'acceptation |
 | `/uxui` | **Renoir** | UX/UI architect - standalone pour audits/brainstorms/wireframes ASCII, ou sub-agent d'Aline |
-| `/reviewer` | **Verso** | Code guardian - orchestre 5 reviews parallèles (conventions, bugs, sécurité, story compliance) |
+| `/reviewer` | **Verso** | Code guardian - orchestre 5 reviews parallèles (conventions, bugs, sécurité, story compliance, simplification via Esquie) |
+| `/refactor` | **Esquie** | Refactoring analyst - analyse proactive du code (DRY, SRP, dead code, simplification). Standalone ou sub-agent de Verso (Task 5) |
 
 ### Sub-agents (appelés par les super-agents)
 
@@ -30,7 +31,8 @@ Les noms sont inspirés des personnages de **Clair Obscur: Expedition 33**.
 | `dev-tauri` | **Lune** | Alicia (`/dev`) | Implémentation Tauri v2 (Rust + React) |
 | `dev-godot` | **Sciel** | Alicia (`/dev`) | Implémentation Godot 4 / GDScript |
 | `dev-stories` | **Gustave** | Clea (`/qa`) | Stories Storybook |
-| `fixer` | **Monoco** | Verso (`/reviewer`) | Corrections ciblées (sur demande uniquement) |
+| `refactor` | **Esquie** | Verso (`/reviewer`) | Analyse refactoring (DRY, SRP, dead code, simplification) |
+| `fixer` | **Monoco** | Verso (`/reviewer`), Esquie (`/refactor`) | Corrections ciblées et refactoring ISO fonctionnel (sur demande uniquement) |
 
 ## Workflow
 
@@ -58,7 +60,8 @@ Les agents fonctionnent en pipeline. Le pipeline s'adapte à la technologie du p
 2. **`/dev`** (Alicia) - Détecte la techno et dispatche : Maelle (React), Lune (Tauri back), Sciel (Godot). Parallélise Lune + Maelle pour les projets Tauri
 3. **`/qa`** (Clea) - Détecte les conventions de test du projet. Lance en parallèle : tests unitaires, stories Storybook, validation des critères d'acceptation
 4. **`/uxui`** (Renoir) - Peut être appelé à tout moment pour un audit UX, brainstorm ou wireframe ASCII. Utilise les frameworks BMAP et B.I.A.S.
-5. **`/reviewer`** (Verso) - Lance 5 reviews parallèles : conventions & patterns, bug hunter, sécurité, story compliance. Ne fixe JAMAIS le code - Monoco le fait sur demande
+5. **`/reviewer`** (Verso) - Lance 5 reviews parallèles : conventions & patterns, bug hunter, sécurité, story compliance, simplification (via Esquie). Ne fixe JAMAIS le code - Monoco le fait sur demande
+6. **`/refactor`** (Esquie) - Analyse proactive du code existant pour identifier des opportunités de refactoring. Peut aussi être appelé par Verso comme Task 5. Lance Monoco en mode refactor sur demande
 
 ### Statuts de l'US
 
@@ -157,7 +160,8 @@ agents/                    # Agent definitions
   dev-tauri.md             # Sub-agent (Lune) - Tauri v2 / Rust
   dev-godot.md             # Sub-agent (Sciel) - Godot 4 / GDScript
   dev-stories.md           # Sub-agent (Gustave) - Storybook stories
-  fixer.md                 # Sub-agent (Monoco) - targeted fixes
+  refactor.md              # Super-agent (Esquie) - refactoring analyst (standalone + sub-agent de Verso)
+  fixer.md                 # Sub-agent (Monoco) - targeted fixes & refactoring
 commands/                  # Slash commands (non-agent)
   workflow.md
   list-us.md
