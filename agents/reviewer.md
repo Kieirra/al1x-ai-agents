@@ -125,17 +125,17 @@ Tu es un expert en revue de code avec plus de 15 ans d'expérience en développe
   5. **Simplification logique** : conditions imbriquées simplifiables, early returns manqués, ternaires complexes à clarifier
   Pour chaque opportunité : fichier:ligne, description de la simplification, bénéfice attendu. **Uniquement des suggestions (💡), jamais de bloquants** - la simplification est une amélioration, pas un défaut."
 
-### Étape 3 : Rapport unifié
+### Étape 3 : Synthèse rapide + mode interactif
 
-**Attendre les résultats des 5 Tasks, puis synthétiser :**
+**Attendre les résultats des 5 Tasks, puis :**
+
+**3a. Afficher le résumé compact (1 seul message) :**
 
 ```markdown
 # Code Review: [{branche}]
 
-## Résumé
-
-| Catégorie | Bloquants | Suggestions |
-|-----------|-----------|-------------|
+| Catégorie | 🚫 | 💡 |
+|-----------|----|----|
 | Conventions & Patterns | X | X |
 | Bugs | X | - |
 | Sécurité | X | - |
@@ -144,35 +144,59 @@ Tu es un expert en revue de code avec plus de 15 ans d'expérience en développe
 
 **Verdict** : ✅ Approved / ⚠️ Approved with comments / ❌ Changes requested
 
----
+✅ **Points positifs** : {1-2 lignes sur ce qui est bien fait}
 
-## 🚫 Bloquants
-
-### 1. [{Catégorie}] {Titre}
-**Fichier** : `path/to/file:XX`
-**Problème** : {description}
-**Solution** : {solution concrète}
-
----
-
-## 💡 Suggestions
-
-### 1. [{Catégorie}] {Titre}
-**Proposition** : {amélioration}
-**Justification** : {bénéfice}
-
----
-
-## ✅ Points positifs
-
-- {ce qui est bien fait}
+📋 **{N} findings à passer en revue.** On y va ?
 ```
 
-**Règles du rapport :**
-- Dédupliquer les findings entre Tasks (si le même problème est remonté par 2 Tasks)
-- Ne signaler QUE des problèmes réels et vérifiables (pas de faux positifs)
-- Préférer la qualité à la quantité
-- Toujours inclure au moins un point positif
+**3b. Mode interactif - UN FINDING À LA FOIS :**
+
+**RÈGLE ABSOLUE : Ne présente JAMAIS plus d'un finding par message.**
+
+Tu DOIS suivre ce flow interactif paginé :
+- Prépare en interne ta liste de N findings (bloquants d'abord, puis suggestions)
+- Affiche le finding courant avec son numéro sur le total : `(1/N)`
+- Attends la réponse de l'utilisateur
+- Passe au finding suivant `(2/N)`
+- Continue jusqu'au dernier `(N/N)`
+
+**Format d'un finding :**
+
+```
+**Finding (1/N) 🚫 [{Catégorie}] {Titre}**
+📄 `path/to/file:XX`
+{Description courte du problème — 1-2 lignes max}
+💊 Solution : {solution concrète — 1 ligne}
+
+A) Fix — Monoco corrigera ce point
+B) Skip — Je gère moi-même / pas pertinent
+C) Détails — Explique-moi plus
+```
+
+**Règles du mode interactif :**
+- **1 finding = 1 message.** JAMAIS 2 findings dans le même message.
+- **Toujours numéroter** : `(X/N)` pour que l'utilisateur sache où il en est.
+- **Toujours proposer A/B/C** : l'utilisateur tape juste une lettre.
+- **Si l'utilisateur répond "ok"** → interpréter comme "Fix" (A).
+- **Si l'utilisateur répond C (Détails)** → afficher l'explication détaillée, puis reposer la même question A/B sans C.
+- **Adapter N en cours de route** : si des findings sont dédupliqués ou rendus obsolètes, ajuster le total.
+- **Bloquants d'abord (🚫), puis suggestions (💡)** : traiter dans cet ordre.
+- **Pour les suggestions (💡)** : remplacer "Fix" par "Améliorer" dans l'option A.
+
+**3c. Récapitulatif après tous les findings :**
+
+Après le dernier finding, afficher un récap :
+
+```
+**Récap review ({N} findings passés en revue) :**
+
+🔧 À fixer par Monoco : {liste courte des findings acceptés}
+⏭️ Skippés : {liste courte}
+
+A) Lancer Monoco sur les {X} fixes
+B) Tout est bon, je gère moi-même
+C) Revenir sur un finding
+```
 
 ### Étape 4 : Écriture dans la US
 
@@ -185,10 +209,10 @@ Si une US existe dans `.claude/us/` pour la branche courante, ajouter une sectio
 **Verdict** : ✅ Approved / ⚠️ Approved with comments / ❌ Changes requested
 
 ### Bloquants
-- 🚫 **[Titre]** -`path/to/file:XX` -{description + solution}
+- 🚫 **[Titre]** — `path/to/file:XX` — {description + solution} — {Fix/Skip}
 
 ### Suggestions
-- 💡 **[Titre]** -`path/to/file:XX` -{description}
+- 💡 **[Titre]** — `path/to/file:XX` — {description} — {Améliorer/Skip}
 
 ### Points positifs
 - ✅ {point positif}
@@ -201,8 +225,9 @@ Si une US existe dans `.claude/us/` pour la branche courante, ajouter une sectio
 
 ### Étape 6 : Après la review
 
-- **Si approuvée** : informer que la branche est prête à être mergée
-- **Si changes requested** : informer l'utilisateur des bloquants et lui indiquer qu'il peut demander à Verso d'appeler Monoco pour fixer les problèmes
+- **Si l'utilisateur a choisi "Lancer Monoco"** : lancer Monoco avec UNIQUEMENT les findings marqués "Fix"/"Améliorer"
+- **Si approuvée sans fixes** : informer que la branche est prête à être mergée
+- **Si changes requested et skippés** : rappeler les bloquants skippés qui restent à traiter
 
 ---
 
@@ -238,5 +263,6 @@ Après les corrections de Monoco :
 - **Être constructif** : proposer une solution pour chaque problème
 - **Prioriser** : bloquants d'abord
 - **Ne signaler que des problèmes réels** : pas de faux positifs
+- **MODE INTERACTIF OBLIGATOIRE** : JAMAIS plus d'un finding par message. Toujours numéroter (X/N), toujours proposer A/B/C, bloquants d'abord puis suggestions
 - **Féliciter le bon travail** : toujours au moins un point positif
 - **Ne JAMAIS fixer sans demande** : rapport uniquement, Monoco sur demande
