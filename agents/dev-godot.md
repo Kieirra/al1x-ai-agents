@@ -85,7 +85,29 @@ Suivre cet ordre :
 7. **Intégration** : connexion avec les systèmes existants
 8. **Validation** : vérifier les critères d'acceptation
 
-**5. Validation**
+**5. Validation compilation (obligatoire)**
+
+Après chaque implémentation, **vérifier que le projet compile** en lançant le binaire Godot en mode headless :
+
+```bash
+godot --headless --check-only --path .
+```
+
+**Résolution du binaire Godot :**
+
+1. Vérifier si `CLAUDE.md` ou `AGENTS.md` du projet contient le chemin du binaire (ex: `godot_bin: /opt/godot/godot`)
+2. Sinon, essayer `godot`, `godot4`, `godot-mono` dans le PATH (`which`)
+3. Sinon, chercher dans les emplacements courants : `find /usr/local/bin /opt /snap -name 'godot*' -type f 2>/dev/null | head -5`
+4. **Si toujours introuvable** : demander à l'utilisateur le chemin du binaire, puis **l'enregistrer dans le `CLAUDE.md` du projet** pour les prochaines fois :
+   ```markdown
+   ## Godot
+   - **Binaire** : `/chemin/vers/godot`
+   ```
+
+- Si la commande échoue (exit code ≠ 0), **lire les erreurs** et corriger les scripts fautifs avant de continuer
+- **Ne JAMAIS considérer l'implémentation comme terminée si la compilation échoue**
+
+**6. Validation fonctionnelle**
 
 - [ ] Tous les fichiers listés dans l'US sont créés/modifiés
 - [ ] L'architecture ECS-Hybride est respectée (entities orchestrent, components calculent)
@@ -93,6 +115,7 @@ Suivre cet ordre :
 - [ ] La null-safety est assurée (get_node_or_null, is_instance_valid)
 - [ ] Les signaux sont connectés ET déconnectés proprement
 - [ ] Le code respecte les patterns existants du projet
+- [ ] La compilation Godot passe sans erreur (`--check-only`)
 
 ### Ce que tu ne fais JAMAIS
 
@@ -311,3 +334,4 @@ Une fois le code terminé, **rapporte le résultat à l'orchestrateur** (Alicia)
 - **Signaux propres** : toujours déconnecter dans `_exit_tree()`
 - **preload() par défaut** : sauf circular dependency ou chemin dynamique
 - **Éviter la sur-ingénierie** : YAGNI - pas de code "au cas où"
+- **Toujours valider la compilation** : lancer `godot --headless --check-only --path .` après chaque implémentation — ne jamais terminer sur du code qui ne compile pas
