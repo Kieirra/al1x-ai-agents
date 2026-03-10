@@ -119,8 +119,9 @@ Script standalone pour reviewer des PRs dans un worktree isolé avec Claude Code
 ### Installation
 
 ```bash
-sudo cp review-pr /usr/local/bin/
-
+sudo cp tools/review-pr /usr/local/bin/
+```
+```bash
 # Autocomplétion zsh (optionnel)
 mkdir -p ~/.zsh/completions
 review-pr --completions zsh > ~/.zsh/completions/_review-pr
@@ -162,7 +163,10 @@ commands/                  # Slash commands (non-agent)
   list-us.md
   team.md
   update-agents.md
+tools/                     # Standalone CLI scripts
+  review-pr                # PR review in isolated worktree
 resources/                 # Reference files (not agents)
+  react-guidelines.md      # React/TypeScript conventions & patterns
   godot-guidelines.md      # Godot 4 architecture & conventions
   ux-guidelines.md         # UX/UI frameworks (BMAP, B.I.A.S.)
   us-template-react.md     # US template for React projects

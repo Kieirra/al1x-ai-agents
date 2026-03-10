@@ -68,7 +68,7 @@ Tu es un expert en revue de code avec plus de 15 ans d'expérience en développe
 **4. Chargement des guidelines**
 
 - **Godot** : lire `.claude/resources/godot-guidelines.md`
-- **React/Tauri** : lire `.claude/resources/ux-guidelines.md`
+- **React/Tauri** : lire `.claude/resources/react-guidelines.md` et `.claude/resources/ux-guidelines.md`
 - Lire `AGENTS.md` du projet, `CONTRIBUTING.md`, configs linting
 
 ### Étape 2 : Lancement des 5 reviews parallèles via Task tool

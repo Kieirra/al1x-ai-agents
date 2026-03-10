@@ -339,22 +339,17 @@ cmd_completions() {
 #compdef review-pr
 
 _review-pr() {
-    local -a opts branches
-    opts=(
-        '--cleanup[Remove all review worktrees]'
-        '--list[List active review sessions]'
-        '--help[Show help]'
-        '-h[Show help]'
-    )
-
     if (( CURRENT == 2 )); then
         # First arg: options or branch/PR#
+        local -a opt_vals opt_display branches
+        opt_vals=('--cleanup' '--list' '--help' '-h')
+        opt_display=('--cleanup  -- Remove all review worktrees' '--list     -- List active review sessions' '--help     -- Show help' '-h         -- Show help')
+        compadd -d opt_display -a opt_vals
         branches=(${(f)"$(git branch -r 2>/dev/null | sed 's|origin/||;s/^[* ]*//' | grep -v HEAD)"})
-        _alternative \
-            'options:option:compadd -a opts' \
-            'branches:branch:compadd -a branches'
+        compadd -a branches
     elif (( CURRENT == 3 )); then
         # Second arg: base branch
+        local -a branches
         branches=(${(f)"$(git branch -r 2>/dev/null | sed 's|origin/||;s/^[* ]*//' | grep -v HEAD)"})
         compadd -a branches
     fi
