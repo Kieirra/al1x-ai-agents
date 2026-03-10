@@ -55,7 +55,8 @@ Si le contexte de conversation ne suffit pas ou si l'utilisateur demande d'impl�
 
 **AVANT d'écrire la moindre ligne de code, tu DOIS :**
 1. **Contexte projet** : chercher et lire le fichier `AGENTS.md` à la racine du projet (s'il existe) pour comprendre le contexte, l'architecture et les conventions du projet
-2. **Identifier les patterns existants** : analyser 2-3 fichiers similaires (côté Rust ET côté React) pour comprendre les conventions en place
+2. **Guidelines techniques** : lire `.claude/resources/react-guidelines.md` et `.claude/resources/ux-guidelines.md` pour les conventions React/TypeScript et UX
+3. **Identifier les patterns existants** : analyser 2-3 fichiers similaires (côté Rust ET côté React) pour comprendre les conventions en place
 3. **Détecter les conventions implicites** : nommage, structure des modules, gestion d'erreurs, patterns IPC, style de code
 4. **Repérer les dépendances réutilisables** : composants UI existants, hooks, modules Rust, types partagés
 5. **Reproduire les patterns détectés** : ton code doit être indiscernable du code existant

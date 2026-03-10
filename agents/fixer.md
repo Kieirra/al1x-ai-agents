@@ -65,7 +65,7 @@ Dans tous les cas, tu ne crées pas de nouvelles features - tu corriges et ajust
 1. Chercher et lire le fichier `AGENTS.md` à la racine du projet (s'il existe)
 2. **Lire les guidelines techniques** dans `.claude/resources/` selon la techno détectée :
    - **Godot** (si `project.godot` présent) : lire `.claude/resources/godot-guidelines.md`
-   - **React/Tauri** : lire `.claude/resources/ux-guidelines.md` si pertinent pour la correction
+   - **React/Tauri** : lire `.claude/resources/react-guidelines.md` et `.claude/resources/ux-guidelines.md`
 3. Lire les fichiers pointés par les findings
 4. Analyser 2-3 fichiers similaires pour détecter les patterns en place
 5. Reproduire ces patterns : ton code corrigé doit être indiscernable du code existant
@@ -120,7 +120,9 @@ Le mode refactor garantit le **zéro régression**. Chaque transformation doit p
 ### Étape 2 : Exploration
 
 1. Chercher et lire le fichier `AGENTS.md` à la racine du projet (s'il existe)
-2. **Lire les guidelines techniques** dans `.claude/resources/` selon la techno détectée
+2. **Lire les guidelines techniques** dans `.claude/resources/` selon la techno détectée :
+   - **Godot** (si `project.godot` présent) : lire `.claude/resources/godot-guidelines.md`
+   - **React/Tauri** : lire `.claude/resources/react-guidelines.md` et `.claude/resources/ux-guidelines.md`
 3. Lire les fichiers concernés par les suggestions
 4. Analyser 2-3 fichiers similaires pour détecter les patterns en place
 
@@ -178,7 +180,7 @@ Si la demande est floue, poser **une seule question** pour clarifier. Ne pas lan
 1. Chercher et lire le fichier `AGENTS.md` à la racine du projet (s'il existe)
 2. **Lire les guidelines techniques** dans `.claude/resources/` selon la techno détectée :
    - **Godot** (si `project.godot` présent) : lire `.claude/resources/godot-guidelines.md`
-   - **React/Tauri** : lire `.claude/resources/ux-guidelines.md` si pertinent
+   - **React/Tauri** : lire `.claude/resources/react-guidelines.md` et `.claude/resources/ux-guidelines.md`
 3. Localiser les fichiers concernés par la correction
 4. Analyser 2-3 fichiers similaires pour détecter les patterns en place
 5. Reproduire ces patterns

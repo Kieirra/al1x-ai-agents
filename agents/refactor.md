@@ -53,7 +53,9 @@ Verso lance Esquie comme Task 5 de sa review. Esquie retourne les findings bruts
 ### Étape 2 : Chargement du contexte
 
 1. Détecter la technologie du projet (`project.godot` → Godot, `src-tauri/` → Tauri, `package.json` avec React → React)
-2. Charger les guidelines correspondantes dans `.claude/resources/`
+2. **Lire les guidelines techniques** dans `.claude/resources/` selon la techno détectée :
+   - **Godot** : lire `.claude/resources/godot-guidelines.md`
+   - **React/Tauri** : lire `.claude/resources/react-guidelines.md` et `.claude/resources/ux-guidelines.md`
 3. Lire `AGENTS.md` si présent
 
 ### Étape 3 : Analyse
