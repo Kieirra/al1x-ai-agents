@@ -1,4 +1,4 @@
-Lance un workflow complet et autonome avec les 4 super-agents, de l'architecture au code reviewé.
+Lance un workflow complet et autonome avec les 5 super-agents, de l'architecture au code reviewé.
 
 ## Introduction
 
@@ -7,6 +7,7 @@ Au démarrage, affiche :
 ```
 > Aline : J'ai étudié le sujet. Je vais structurer ça en US claire et actionnable.
 > Alicia : Dès que l'US est prête, je dispatche aux devs. On code.
+> Esquie : Avant les tests, je simplifie. Dead code, nommage, duplications — rien ne m'échappe.
 > Clea : Je surveille la qualité. Rien ne passe sans mes tests.
 > Verso : Et moi je relis tout. Si c'est pas propre, ça repart en boucle.
 > 🚀 L'équipe est prête. On attaque.
@@ -37,15 +38,23 @@ Lancer `/architecte` avec le contexte fourni par l'utilisateur. Aline produit un
 
 Lancer `/dev` pour implémenter l'US. Alicia détecte la techno et dispatche au sub-agent approprié.
 
-### 3. Quality Assurance — `/qa`
+### 3. Refactoring — `/refactor`
+
+Lancer `/refactor` en mode pipeline. Esquie analyse le code produit par Alicia et applique le mode hybride :
+- **Phase 1 (auto-fix)** : dead code, imports inutilisés, `useMemo`/`useCallback` inutiles (React), simplifications triviales — appliqués automatiquement via Monoco
+- **Phase 2 (interactive)** : DRY, nommage, extractions SRP, restructurations — présentés à l'utilisateur pour validation
+
+**Exception à l'autonomie** : la Phase 2 requiert la validation de l'utilisateur pour les transformations de design. Si aucun finding interactif, cette phase est skippée automatiquement.
+
+### 4. Quality Assurance — `/qa`
 
 Lancer `/qa` pour les tests et stories Storybook (React/Tauri uniquement, skip pour Godot).
 
-### 4. Code Review — `/reviewer`
+### 5. Code Review — `/reviewer`
 
 Lancer `/reviewer` pour la revue de code.
 
-### 5. Boucle de correction (si nécessaire)
+### 6. Boucle de correction (si nécessaire)
 
 Si le reviewer détecte des problèmes :
 
@@ -54,7 +63,7 @@ Si le reviewer détecte des problèmes :
 3. Relancer `/reviewer` pour re-valider
 4. **Répéter** jusqu'à ce que le reviewer valide (max 3 boucles — si après 3 boucles ce n'est pas résolu, s'arrêter et rapporter le status à l'utilisateur)
 
-### 6. Fin
+### 7. Fin
 
 Une fois le reviewer satisfait, afficher un résumé :
 
@@ -67,8 +76,8 @@ Une fois le reviewer satisfait, afficher un résumé :
 
 ## Règles
 
-- **Jamais de question à l'utilisateur** pendant le pipeline (sauf le prérequis initial si pas de contexte)
+- **Jamais de question à l'utilisateur** pendant le pipeline (sauf le prérequis initial si pas de contexte, et la Phase 2 d'Esquie pour les refactorings de design)
 - **Pas de commit automatique** : le code est prêt mais l'utilisateur décide quand commit/merge
 - **Adaptatif** : si le projet est Godot, skip `/qa` (pas de tests/stories). Si React/Tauri, pipeline complet
-- **Transparence** : afficher une ligne de status à chaque transition d'étape (`> 🔄 Étape 2/5 : Développement...`)
+- **Transparence** : afficher une ligne de status à chaque transition d'étape (`> 🔄 Étape 3/7 : Refactoring...`)
 - **Max 3 boucles de correction** : éviter les boucles infinies
