@@ -60,7 +60,7 @@ Les agents fonctionnent en pipeline. Le pipeline s'adapte à la technologie du p
 3. **`/qa`** (Clea) - Détecte les conventions de test du projet. Lance en parallèle : tests unitaires, stories Storybook, validation des critères d'acceptation
 4. **`/uxui`** (Renoir) - Peut être appelé à tout moment pour un audit UX, brainstorm ou wireframe ASCII. Utilise les frameworks BMAP et B.I.A.S.
 5. **`/reviewer`** (Verso) - Lance 4 reviews parallèles : conventions & patterns, bug hunter, sécurité, story compliance. Ne fixe JAMAIS le code - Monoco le fait sur demande
-6. **`/refactor`** (Esquie) - Déclenché après /dev dans le pipeline. Mode hybride : auto-fix silencieux (dead code, useMemo/useCallback inutiles) + interactif (DRY, nommage, restructuration). Guidelines comme source de vérité. Aussi appelable en standalone
+6. **`/refactor`** (Esquie) - Déclenché après /dev dans le pipeline. Orchestre 3 analyses parallèles (guidelines, DRY & dead code, simplification). Mode hybride : auto-fix silencieux + interactif. Guidelines comme source de vérité. Aussi appelable en standalone
 
 ### Statuts de l'US
 
