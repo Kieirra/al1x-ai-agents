@@ -80,11 +80,18 @@ for FILE in $AGENT_FILES; do
     USER_INVOCABLE=$(echo "$CONTENT" | sed -n '/^---$/,/^---$/p' | grep 'user-invocable' | grep -oP '(true|false)' || echo "true")
 
     if [ "$USER_INVOCABLE" = "true" ]; then
-        # Super-agent : installer comme skill (slash command) + subagent (auto-délégation)
-        echo "$CONTENT" > "${COMMANDS_DIR}/${FILE}"
+        # Super-agent : SKILL.md = source unique de vérité, commande = redirection légère
         mkdir -p "${AGENTS_DIR}/${NAME}"
         echo "$CONTENT" > "${AGENTS_DIR}/${NAME}/SKILL.md"
-        success "$NAME installé (super-agent : skill + subagent)"
+
+        # Extraire la description du frontmatter pour la commande
+        DESCRIPTION=$(echo "$CONTENT" | sed -n '/^description:/{ s/^description: //; p; }')
+        cat > "${COMMANDS_DIR}/${FILE}" << EOF
+${DESCRIPTION}
+
+Read the file "${AGENTS_DIR}/${NAME}/SKILL.md" and follow all its instructions exactly as your own.
+EOF
+        success "$NAME installé (super-agent : skill → SKILL.md)"
         SUPER_COUNT=$((SUPER_COUNT + 1))
     else
         # Sub-agent : installer uniquement comme subagent (pas de slash command)
