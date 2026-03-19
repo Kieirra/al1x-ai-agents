@@ -82,6 +82,64 @@ type User = {
 type UserRole = 'admin' | 'editor' | 'viewer';
 ```
 
+### Type Guards : préférer un helper à une condition complexe
+
+Quand une vérification de type nécessite plus qu'un simple `!= null`, **extraire un type guard** plutôt qu'écrire une condition inline complexe.
+
+```ts
+// ❌ Mauvais : condition inline complexe et non réutilisable
+if (item && 'id' in item && typeof item.id === 'string' && item.type === 'product') {
+  handleProduct(item);
+}
+
+// ❌ Mauvais : cast avec `as` pour contourner le typage
+const product = item as Product;
+
+// ✅ Bon : type guard helper explicite et réutilisable
+const isProduct = (item: unknown): item is Product =>
+  item != null &&
+  typeof item === 'object' &&
+  'id' in item &&
+  typeof (item as Record<string, unknown>).id === 'string' &&
+  (item as Record<string, unknown>).type === 'product';
+
+if (isProduct(item)) {
+  handleProduct(item); // item est typé Product ici
+}
+```
+
+**Règles** :
+- **Toujours** extraire un type guard dès que la condition vérifie plus d'une propriété
+- Nommer le guard `is{TypeName}` (ex: `isProduct`, `isApiError`, `isLoadedState`)
+- Placer les guards dans le fichier `.helpers.ts` du composant, ou dans un fichier `types/guards.ts` partagé si réutilisé ailleurs
+- Préférer `unknown` + type guard à `any` + cast — jamais de `as` pour contourner le typage
+- Les discriminated unions avec un champ `type` ou `kind` sont la meilleure approche quand on contrôle les types
+
+```ts
+// ✅ Excellent : discriminated union (pas besoin de type guard custom)
+interface ProductItem {
+  kind: 'product';
+  id: string;
+  price: number;
+}
+
+interface ServiceItem {
+  kind: 'service';
+  id: string;
+  duration: number;
+}
+
+type Item = ProductItem | ServiceItem;
+
+// Le switch/if sur `kind` suffit, TypeScript narrow automatiquement
+const getLabel = (item: Item): string => {
+  switch (item.kind) {
+    case 'product': return `${item.price}€`;  // item est ProductItem
+    case 'service': return `${item.duration}h`; // item est ServiceItem
+  }
+};
+```
+
 ### Propriétés optionnelles
 
 Préférer `prop?: Type` à `prop: Type | undefined`.
