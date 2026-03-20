@@ -140,9 +140,11 @@ const getLabel = (item: Item): string => {
 };
 ```
 
-### Propriétés optionnelles
+### Propriétés et paramètres optionnels
 
-Préférer `prop?: Type` à `prop: Type | undefined`.
+**Toujours utiliser `param?: Type`**, jamais `param: Type | undefined`.
+
+Cette règle s'applique partout : interfaces, types, et paramètres de fonctions.
 
 ```ts
 // ❌ Mauvais
@@ -151,11 +153,15 @@ interface User {
   avatar: string | undefined;
 }
 
+const fetchUser = (id: string, options: FetchOptions | undefined) => { ... };
+
 // ✅ Bon
 interface User {
   name: string;
   avatar?: string;
 }
+
+const fetchUser = (id: string, options?: FetchOptions) => { ... };
 ```
 
 ---
