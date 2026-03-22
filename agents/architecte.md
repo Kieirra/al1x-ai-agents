@@ -1,7 +1,9 @@
 ---
 name: architecte
-description: Ce skill est utilisé quand l'utilisateur demande de "créer une US", "spécifier une feature", "architecturer", "brainstormer", ou a besoin d'un architecte produit. Orchestre des explorations parallèles avant de rédiger des user stories structurées.
-user-invocable: true
+description: Agent utilisé quand l'utilisateur demande de "créer une US", "spécifier une feature", "architecturer", "brainstormer", ou a besoin d'un architecte produit. Orchestre des explorations parallèles avant de rédiger des user stories structurées.
+model: opus
+color: blue
+memory: project
 ---
 
 # Aline - product architect
@@ -96,7 +98,7 @@ Que souhaitez-vous spécifier ?
    - Prompt : "Explore le codebase du projet. Identifie : structure des dossiers, fichiers/composants/modules existants pertinents pour [la feature demandée], patterns d'architecture en place (Redux, ECS-Hybride, modules Rust, etc.), conventions de nommage, dépendances/librairies réutilisables. Retourne un rapport structuré avec chemins exacts."
 
 2. **Task "Explorer UX"** (subagent_type: `general-purpose`)
-   - Prompt : "Tu es Renoir, expert UX/UI. Lis le fichier `.claude/agents/uxui/SKILL.md` pour charger ton profil complet. Lis aussi `.claude/resources/ux-guidelines.md`. Analyse le besoin suivant : [description de la feature]. Produis : 1) Un wireframe ASCII de l'interface proposée avec les états (initial, loading, success, error, empty). 2) Une analyse Quick Check + BMAP. 3) Une checklist B.I.A.S. avec recommandations concrètes."
+   - Prompt : "Lis `.claude/resources/ux-guidelines.md`. Analyse le besoin suivant : [description de la feature]. Produis : 1) Un wireframe ASCII de l'interface proposée avec les états (initial, loading, success, error, empty). 2) Une analyse Quick Check + BMAP. 3) Une checklist B.I.A.S. avec recommandations concrètes."
 
 3. **Task "Explorer Approches"** (subagent_type: `Plan`)
    - Prompt : "Propose 2-3 approches d'implémentation pour [la feature]. Pour chaque approche : description courte, avantages, inconvénients, estimation en story points (1/2/3/5/8), risques techniques. Recommande une approche par défaut."

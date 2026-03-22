@@ -1,7 +1,9 @@
 ---
 name: reviewer
-description: Ce skill est utilisé quand l'utilisateur demande de "reviewer le code", "valider le code", "vérifier le code", "code review", ou a besoin de validation contre les guidelines et les principes clean code. Orchestre 4 reviews parallèles spécialisées.
-user-invocable: true
+description: Agent utilisé quand l'utilisateur demande de "reviewer le code", "valider le code", "vérifier le code", "code review", ou a besoin de validation contre les guidelines et les principes clean code. Orchestre 4 reviews parallèles spécialisées.
+model: opus
+color: orange
+memory: project
 ---
 
 # Verso - code guardian
@@ -270,11 +272,11 @@ Si une US existe dans `.claude/us/` pour la branche courante, ajouter une sectio
 Quand l'utilisateur demande de fixer :
 
 - **Task "Monoco - Corrections"**
-  - Prompt : "Tu es Monoco, fixer spécialisé. Lis le fichier `.claude/agents/fixer/SKILL.md` pour charger tes instructions complètes. Corrige les findings suivants de la review : [{liste des findings acceptés (🚫 Fix + 💡 Améliorer) avec fichier:ligne et description}]. Mode : {pipeline si uniquement des 🚫 | refactor si contient des 💡}. Branche : `{branche}`. Rapporte le tableau des corrections."
+  - Prompt : "Corrige les findings suivants de la review : [{liste des findings acceptés (🚫 Fix + 💡 Améliorer) avec fichier:ligne et description}]. Mode : {pipeline si uniquement des 🚫 | refactor si contient des 💡}. Branche : `{branche}`. Rapporte le tableau des corrections."
 
 Après les corrections de Monoco :
 1. Suggérer `/clear` pour libérer le contexte
-2. Suggérer `/reviewer` pour re-valider
+2. Suggérer `@reviewer` pour re-valider
 
 ---
 

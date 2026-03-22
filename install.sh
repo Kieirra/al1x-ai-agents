@@ -64,47 +64,32 @@ if [ -z "$AGENT_FILES" ]; then
     error "Aucun agent trouvé dans le repo."
 fi
 
-# Télécharger chaque agent — routage super-agent vs sub-agent via frontmatter
-SUPER_COUNT=0
-SUB_COUNT=0
+# Migration : nettoyer l'ancien format agents/nom/SKILL.md
+for FILE in $AGENT_FILES; do
+    NAME="${FILE%.md}"
+    if [ -f "${AGENTS_DIR}/${NAME}/SKILL.md" ]; then
+        rm -rf "${AGENTS_DIR}/${NAME}"
+        warn "$NAME : ancien format SKILL.md supprimé (migration → fichier plat)"
+    fi
+done
+
+# Télécharger chaque agent en fichier plat (agents/nom.md)
+AGENT_COUNT=0
 for FILE in $AGENT_FILES; do
     NAME="${FILE%.md}"
     info "Téléchargement de $FILE..."
 
-    # Télécharger le fichier une seule fois
-    CONTENT=$(curl -fsSL "${RAW_URL}/agents/${FILE}") \
+    curl -fsSL "${RAW_URL}/agents/${FILE}" -o "${AGENTS_DIR}/${FILE}" \
         || { echo -e "${RED}[ERREUR]${NC} Échec du téléchargement de $FILE"; continue; }
 
-    # Parser le champ user-invocable du frontmatter YAML
-    # Format attendu : "user-invocable: true" ou "user-invocable: false" entre les délimiteurs ---
-    USER_INVOCABLE=$(echo "$CONTENT" | sed -n '/^---$/,/^---$/p' | grep 'user-invocable' | grep -oP '(true|false)' || echo "true")
-
-    if [ "$USER_INVOCABLE" = "true" ]; then
-        # Super-agent : SKILL.md = source unique de vérité, commande = redirection légère
-        mkdir -p "${AGENTS_DIR}/${NAME}"
-        echo "$CONTENT" > "${AGENTS_DIR}/${NAME}/SKILL.md"
-
-        # Extraire la description du frontmatter pour la commande
-        DESCRIPTION=$(echo "$CONTENT" | sed -n '/^description:/{ s/^description: //; p; }')
-        cat > "${COMMANDS_DIR}/${FILE}" << EOF
-${DESCRIPTION}
-
-Read the file "${AGENTS_DIR}/${NAME}/SKILL.md" and follow all its instructions exactly as your own.
-EOF
-        success "$NAME installé (super-agent : skill → SKILL.md)"
-        SUPER_COUNT=$((SUPER_COUNT + 1))
-    else
-        # Sub-agent : installer uniquement comme subagent (pas de slash command)
-        # Nettoyer l'ancienne commande si elle existe (migration depuis l'ancien système)
-        if [ -f "${COMMANDS_DIR}/${FILE}" ]; then
-            rm -f "${COMMANDS_DIR}/${FILE}"
-            warn "$NAME : ancienne commande /${NAME} supprimée (migration sub-agent)"
-        fi
-        mkdir -p "${AGENTS_DIR}/${NAME}"
-        echo "$CONTENT" > "${AGENTS_DIR}/${NAME}/SKILL.md"
-        success "$NAME installé (sub-agent uniquement)"
-        SUB_COUNT=$((SUB_COUNT + 1))
+    # Migration : supprimer les anciennes commandes de redirection
+    if [ -f "${COMMANDS_DIR}/${FILE}" ]; then
+        rm -f "${COMMANDS_DIR}/${FILE}"
+        warn "$NAME : ancienne commande /${NAME} supprimée (utiliser @${NAME})"
     fi
+
+    success "$NAME installé (@${NAME})"
+    AGENT_COUNT=$((AGENT_COUNT + 1))
 done
 
 # Télécharger les commandes (workflow, list-us, update-agents)
@@ -134,10 +119,9 @@ if [ -n "$RESOURCES_JSON" ]; then
 fi
 
 echo ""
-TOTAL=$((SUPER_COUNT + SUB_COUNT))
-success "Installation ${INSTALL_LABEL} terminée ! ${TOTAL} agent(s) installé(s) (${SUPER_COUNT} super-agents, ${SUB_COUNT} sub-agents)"
-info "Super-agents (slash commands) : ${COMMANDS_DIR}/"
-info "Sub-agents (auto-délégation) : ${AGENTS_DIR}/"
+success "Installation ${INSTALL_LABEL} terminée ! ${AGENT_COUNT} agent(s) installé(s)"
+info "Agents (@nom) : ${AGENTS_DIR}/"
+info "Commandes (/nom) : ${COMMANDS_DIR}/"
 info "Ressources : ${RESOURCES_DIR}/"
 if [ "$INSTALL_MODE" = "global" ]; then
     info "Les agents sont disponibles dans tous tes projets Claude Code."

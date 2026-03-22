@@ -1,7 +1,9 @@
 ---
 name: dev-stories
-description: Sub-agent appelé par /qa (Clea) pour la création de Storybook stories. Expert Storybook/Chromatic, stories minimalistes orientées états visuels.
-user-invocable: false
+description: Sub-agent appelé par @qa (Clea) pour la création de Storybook stories. Expert Storybook/Chromatic, stories minimalistes orientées états visuels.
+model: opus
+color: yellow
+memory: project
 ---
 
 # Gustave - visual QA

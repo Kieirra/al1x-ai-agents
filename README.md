@@ -1,178 +1,129 @@
 # al1x-ai-agents
 
-A centralized collection of custom Claude Code agents, installable in any project.
-
-> This repo is not open for contributions. Agents are maintained by [@Kieirra](https://github.com/Kieirra) for personal use and shared publicly as-is.
-
-## Architecture : Super-agents + Sub-agents
-
-Les agents sont organisés en deux niveaux :
-- **Super-agents** : orchestrateurs invocables via `/commande`, lancent des sub-agents en parallèle via le Task tool de Claude Code
-- **Sub-agents** : spécialistes appelés par les super-agents, pas invocables directement
+Une collection d'agents Claude Code spécialisés qui forment une **team de dev complète** : architecture, dev, QA, review, refactoring, UX/UI.
 
 Les noms sont inspirés des personnages de **Clair Obscur: Expedition 33**.
 
-### Super-agents (slash commands)
-
-| Commande | Pseudo | Description |
-|----------|--------|-------------|
-| `/architecte` | **Aline** | Product architect - orchestre 3 explorations parallèles (tech, UX, approches), synthétise en QCM + ASCII mockup, rédige l'US |
-| `/dev` | **Alicia** | Lead developer - détecte la techno, dispatche aux devs spécialisés, parallélise front+back pour Tauri |
-| `/qa` | **Clea** | QA lead - orchestre tests unitaires, stories Storybook, validation des critères d'acceptation |
-| `/uxui` | **Renoir** | UX/UI architect - standalone pour audits/brainstorms/wireframes ASCII, ou sub-agent d'Aline |
-| `/reviewer` | **Verso** | Code guardian - orchestre 4 reviews parallèles (conventions, bugs, sécurité, story compliance) |
-| `/refactor` | **Esquie** | Refactoring analyst - déclenché après /dev dans le pipeline (DRY, dead code, simplification, nommage, guidelines). Aussi appelable en standalone |
-
-### Sub-agents (appelés par les super-agents)
-
-| Agent | Pseudo | Appelé par | Spécialité |
-|-------|--------|-----------|------------|
-| `dev-react` | **Maelle** | Alicia (`/dev`) | Implémentation React/TypeScript |
-| `dev-tauri` | **Lune** | Alicia (`/dev`) | Implémentation Tauri v2 (Rust + React) |
-| `dev-godot` | **Sciel** | Alicia (`/dev`) | Implémentation Godot 4 / GDScript |
-| `dev-stories` | **Gustave** | Clea (`/qa`) | Stories Storybook |
-| `fixer` | **Monoco** | Verso (`/reviewer`), Esquie (`/refactor`) | Corrections ciblées et refactoring ISO fonctionnel (sur demande uniquement) |
-
-## Workflow
-
-Les agents fonctionnent en pipeline. Le pipeline s'adapte à la technologie du projet :
-
-### React / Tauri (avec frontend)
-```
-/architecte (Aline) → /dev (Alicia) → /refactor (Esquie) → /qa (Clea) → /reviewer (Verso)
-                                                                                ↓
-                                                                      ✅ reviewed → merge
-                                                                      ❌ changes-requested → Monoco (sur demande) → /reviewer (boucle)
-```
-
-### Godot (pas de stories/tests)
-```
-/architecte (Aline) → /dev (Alicia) → /refactor (Esquie) → /reviewer (Verso)
-                                                                    ↓
-                                                          ✅ reviewed → merge
-                                                          ❌ changes-requested → Monoco (sur demande) → /reviewer (boucle)
-```
-
-### Détail des super-agents
-
-1. **`/architecte`** (Aline) - Demande TOUJOURS à l'utilisateur ce qu'il veut faire (ne devine jamais depuis la branche). Lance 3 explorations parallèles, synthétise en QCM, rédige l'US dans `.claude/us/`
-2. **`/dev`** (Alicia) - Détecte la techno et dispatche : Maelle (React), Lune (Tauri back), Sciel (Godot). Parallélise Lune + Maelle pour les projets Tauri
-3. **`/qa`** (Clea) - Détecte les conventions de test du projet. Lance en parallèle : tests unitaires, stories Storybook, validation des critères d'acceptation
-4. **`/uxui`** (Renoir) - Peut être appelé à tout moment pour un audit UX, brainstorm ou wireframe ASCII. Utilise les frameworks BMAP et B.I.A.S.
-5. **`/reviewer`** (Verso) - Lance 4 reviews parallèles : conventions & patterns, bug hunter, sécurité, story compliance. Ne fixe JAMAIS le code - Monoco le fait sur demande
-6. **`/refactor`** (Esquie) - Déclenché après /dev dans le pipeline. Orchestre 3 analyses parallèles (guidelines, DRY & dead code, simplification). Mode hybride : auto-fix silencieux + interactif. Guidelines comme source de vérité. Aussi appelable en standalone
-
-### Statuts de l'US
-
-**React / Tauri :** `ready` → `in-progress` → `done` → `refactored` → `stories-done` → `reviewed` (merge)
-
-**Godot :** `ready` → `in-progress` → `done` → `refactored` → `reviewed` (merge)
-
-**Si changes requested :** `changes-requested` → `fixed` → `reviewed` (boucle)
-
-## Available commands
-
-| Command | Description |
-|---------|-------------|
-| `/team` | Launches the full autonomous pipeline: `/architecte` → `/dev` → `/refactor` → `/qa` → `/reviewer` → `/fixer` (loop if needed) |
-| `/update-agents` | Re-downloads all agents and commands from this repo |
-| `/workflow` | Shows the current pipeline status and suggests the next step |
-| `/list-us` | Lists all user stories in `.claude/us/` with their status |
+> Ce repo n'est pas ouvert aux contributions. Maintenu par [@Kieirra](https://github.com/Kieirra) pour usage personnel, partagé publiquement tel quel.
 
 ## Installation
 
-### Global (recommandé) - disponible dans tous les projets
+```bash
+curl -fsSL https://raw.githubusercontent.com/Kieirra/al1x-ai-agents/main/install.sh | bash
+```
+
+Pour installer uniquement dans le projet courant :
 
 ```bash
-curl - fsSL https://raw.githubusercontent.com/Kieirra/al1x-ai-agents/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Kieirra/al1x-ai-agents/main/install.sh | bash -s -- --local
 ```
 
-Installe dans `~/.claude/` - les agents, commandes et ressources sont accessibles depuis n'importe quel projet Claude Code.
+Mise à jour : `/update-agents` dans Claude Code ou relancer la commande ci-dessus.
 
-### Local - uniquement dans le projet courant
+## Les agents
+
+### Orchestrateurs
+
+Invocables avec `@nom` dans Claude Code. Chaque orchestrateur lance des sous-agents en parallèle.
+
+| Agent | Pseudo | Role |
+|-------|--------|------|
+| `@architecte` | **Aline** | Product architect — 3 explorations parallèles (tech, UX, approches), QCM, wireframe ASCII, rédaction d'US |
+| `@dev` | **Alicia** | Lead developer — détecte la techno, dispatche aux devs spécialisés, parallélise front+back |
+| `@qa` | **Clea** | QA lead — tests unitaires, stories Storybook, validation des critères d'acceptation |
+| `@reviewer` | **Verso** | Code guardian — 4 reviews parallèles (conventions, bugs, sécurité, story compliance) |
+| `@refactor` | **Esquie** | Refactoring analyst — DRY, dead code, simplification, nommage, guidelines |
+| `@uxui` | **Renoir** | UX/UI architect — audits, brainstorms, wireframes ASCII, frameworks BMAP & B.I.A.S. |
+
+### Sous-agents
+
+Appelés automatiquement par les orchestrateurs. Pas besoin de les invoquer directement.
+
+| Agent | Pseudo | Appelé par | Techno |
+|-------|--------|-----------|--------|
+| `dev-react` | **Maelle** | @dev | React / TypeScript |
+| `dev-tauri` | **Lune** | @dev | Tauri v2 (Rust + React) |
+| `dev-godot` | **Sciel** | @dev | Godot 4 / GDScript |
+| `dev-stories` | **Gustave** | @qa | Stories Storybook |
+| `nestjs-backend` | — | @dev | NestJS backend (modules, controllers, services, DTOs) |
+| `fixer` | **Monoco** | @reviewer, @refactor | Corrections ciblées, refactoring ISO fonctionnel |
+
+## Pipeline
+
+Les agents fonctionnent en chaîne. Le pipeline s'adapte au projet :
+
+```
+React / Tauri :   @architecte → @dev → @refactor → @qa → @reviewer
+Godot :           @architecte → @dev → @refactor → @reviewer
+```
+
+Si le reviewer demande des changements : `@fixer` (sur demande) → `@reviewer` (boucle).
+
+La commande `/team` lance le pipeline complet en autonome.
+
+### Statuts de l'US
+
+| Stack | Progression |
+|-------|------------|
+| React / Tauri | `ready` → `in-progress` → `done` → `refactored` → `stories-done` → `reviewed` (merge) |
+| Godot | `ready` → `in-progress` → `done` → `refactored` → `reviewed` (merge) |
+
+## Commandes utilitaires
+
+| Commande | Description |
+|----------|-------------|
+| `/team` | Pipeline complet autonome |
+| `/workflow` | Affiche l'état du pipeline et la prochaine étape |
+| `/list-us` | Liste les user stories dans `.claude/us/` |
+| `/update-agents` | Met à jour agents et commandes depuis ce repo |
+
+## review-pr
+
+Script standalone pour reviewer des PRs dans un worktree isolé.
 
 ```bash
-curl - fsSL https://raw.githubusercontent.com/Kieirra/al1x-ai-agents/main/install.sh | bash - s -- --local
-```
-
-Installe dans `.claude/` du répertoire courant.
-
-### Ce que le script installe
-
-- **Super-agents** (`user-invocable: true`) → `commands/` (slash commands) + `agents/` (auto-délégation)
-- **Sub-agents** (`user-invocable: false`) → `agents/` uniquement (pas de slash command)
-- **Commandes utilitaires** (`/workflow`, `/list-us`, `/update-agents`) → `commands/`
-- **Ressources** (guidelines, templates) → `resources/`
-
-## Updating
-
-In Claude Code, run:
-
-```
-/update-agents
-```
-
-Or re-run the curl command above.
-
-## review-pr — Review de PRs avec Claude Code
-
-Script standalone pour reviewer des PRs dans un worktree isolé avec Claude Code.
-
-### Installation
-
-```bash
+# Installation
 sudo cp tools/review-pr /usr/local/bin/
-```
-```bash
-# Autocomplétion zsh (optionnel)
-mkdir -p ~/.zsh/completions
-review-pr --completions zsh > ~/.zsh/completions/_review-pr
-```
 
-> Si `~/.zsh/completions` n'est pas dans ton `fpath`, ajoute `fpath=(~/.zsh/completions $fpath)` dans `.zshrc` **avant** `source $ZSH/oh-my-zsh.sh`, puis `source ~/.zshrc`.
-
-### Usage
-
-```bash
+# Usage
 review-pr                       # Review la branche courante
 review-pr 42                    # Review PR #42
 review-pr feat/login            # Review une branche
-review-pr feat/login develop    # Review contre develop au lieu de main
-review-pr --list                # Liste les sessions de review actives
-review-pr --cleanup             # Supprime tous les worktrees de review
+review-pr --list                # Liste les sessions actives
+review-pr --cleanup             # Supprime les worktrees de review
 ```
-
-Le script crée un worktree sur la base, applique le diff complet de la PR en staged, et génère un `CLAUDE.md` avec le contexte de review. Il suffit ensuite de switcher sur le worktree dans Zed et d'ouvrir Claude Code.
-
-**Dépendances :** git, optionnellement gh (infos PR) et claude (review assistée).
 
 ## Structure
 
 ```
-agents/                    # Agent definitions
-  architecte.md            # Super-agent (Aline) - product architect
-  dev.md                   # Super-agent (Alicia) - lead developer
-  qa.md                    # Super-agent (Clea) - QA lead
-  uxui.md                  # Super-agent (Renoir) - UX/UI architect
-  reviewer.md              # Super-agent (Verso) - code guardian
-  dev-react.md             # Sub-agent (Maelle) - React/TypeScript
-  dev-tauri.md             # Sub-agent (Lune) - Tauri v2 / Rust
-  dev-godot.md             # Sub-agent (Sciel) - Godot 4 / GDScript
-  dev-stories.md           # Sub-agent (Gustave) - Storybook stories
-  refactor.md              # Super-agent (Esquie) - refactoring analyst (après /dev dans le pipeline + standalone)
-  fixer.md                 # Sub-agent (Monoco) - targeted fixes & refactoring
-commands/                  # Slash commands (non-agent)
+agents/                    # Agents (fichiers plats .md)
+  architecte.md            # Aline — product architect
+  dev.md                   # Alicia — lead developer
+  dev-react.md             # Maelle — React/TypeScript
+  dev-tauri.md             # Lune — Tauri v2 / Rust
+  dev-godot.md             # Sciel — Godot 4 / GDScript
+  dev-stories.md           # Gustave — Storybook stories
+  qa.md                    # Clea — QA lead
+  reviewer.md              # Verso — code guardian
+  refactor.md              # Esquie — refactoring analyst
+  fixer.md                 # Monoco — targeted fixes
+  nestjs-backend.md        # NestJS backend specialist
+  uxui.md                  # Renoir — UX/UI architect
+commands/                  # Commandes slash (non-agent)
+  team.md
   workflow.md
   list-us.md
-  team.md
   update-agents.md
-tools/                     # Standalone CLI scripts
-  review-pr                # PR review in isolated worktree
-resources/                 # Reference files (not agents)
-  react-guidelines.md      # React/TypeScript conventions & patterns
-  godot-guidelines.md      # Godot 4 architecture & conventions
-  ux-guidelines.md         # UX/UI frameworks (BMAP, B.I.A.S.)
-  us-template-react.md     # US template for React projects
-  us-template-tauri.md     # US template for Tauri projects
-  us-template-godot.md     # US template for Godot projects
+  archive-us.md
+  commit.md
+  create-pr.md
+tools/                     # Scripts CLI standalone
+  review-pr
+resources/                 # Ressources de référence
+  react-guidelines.md
+  godot-guidelines.md
+  ux-guidelines.md
+  us-template-react.md
+  us-template-tauri.md
+  us-template-godot.md
 ```

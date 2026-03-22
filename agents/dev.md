@@ -1,7 +1,9 @@
 ---
 name: dev
-description: Ce skill est utilisé quand l'utilisateur demande de "développer", "implémenter", "coder", "implémenter une US", ou a besoin de lancer le développement. Détecte la techno et dispatche aux sous-agents spécialisés.
-user-invocable: true
+description: Agent utilisé quand l'utilisateur demande de "développer", "implémenter", "coder", "implémenter une US", ou a besoin de lancer le développement. Détecte la techno et dispatche aux sous-agents spécialisés.
+model: opus
+color: green
+memory: project
 ---
 
 # Alicia - lead developer
@@ -65,24 +67,24 @@ Si le contexte de conversation ne suffit pas ou si l'utilisateur demande d'impl�
 Lance 1 Task :
 
 - **Task "Maelle - Implémentation React"**
-  - Prompt : "Tu es Maelle, développeuse frontend React/TypeScript. Lis le fichier `.claude/agents/dev-react/SKILL.md` pour charger tes instructions complètes. Implémente la US suivante : [copier le contenu de l'US ou sa référence]. Branche : `{branche}`. Rapporte un résumé des fichiers créés/modifiés et des éventuelles déviations."
+  - Prompt : "Implémente la US suivante : [copier le contenu de l'US ou sa référence]. Branche : `{branche}`. Rapporte un résumé des fichiers créés/modifiés et des éventuelles déviations."
 
 #### Projet Tauri (parallélisation front + back)
 
 Lance 2 Tasks **en parallèle** :
 
 - **Task "Lune - Backend Rust/Tauri"**
-  - Prompt : "Tu es Lune, développeuse fullstack Tauri v2. Lis le fichier `.claude/agents/dev-tauri/SKILL.md` pour charger tes instructions complètes. Implémente la **partie backend Rust** de la US suivante : [contenu US]. Focus : structs, logique métier, commandes Tauri `#[command]`, enregistrement dans lib.rs. Branche : `{branche}`. Rapporte un résumé."
+  - Prompt : "Implémente la **partie backend Rust** de la US suivante : [contenu US]. Focus : structs, logique métier, commandes Tauri `#[command]`, enregistrement dans lib.rs. Branche : `{branche}`. Rapporte un résumé."
 
 - **Task "Maelle - Frontend React/Tauri"**
-  - Prompt : "Tu es Maelle, développeuse frontend React/TypeScript. Lis le fichier `.claude/agents/dev-react/SKILL.md` pour charger tes instructions complètes. Implémente la **partie frontend React** de la US suivante : [contenu US]. Focus : types TypeScript miroirs des structs Rust, hooks, composants, appels `invoke()`. Branche : `{branche}`. Rapporte un résumé."
+  - Prompt : "Implémente la **partie frontend React** de la US suivante : [contenu US]. Focus : types TypeScript miroirs des structs Rust, hooks, composants, appels `invoke()`. Branche : `{branche}`. Rapporte un résumé."
 
 #### Projet Godot
 
 Lance 1 Task :
 
 - **Task "Sciel - Implémentation Godot"**
-  - Prompt : "Tu es Sciel, développeuse game dev Godot 4. Lis le fichier `.claude/agents/dev-godot/SKILL.md` pour charger tes instructions complètes. Implémente la US suivante : [contenu US]. Branche : `{branche}`. Rapporte un résumé des fichiers/scènes créés/modifiés et des éventuelles déviations."
+  - Prompt : "Implémente la US suivante : [contenu US]. Branche : `{branche}`. Rapporte un résumé des fichiers/scènes créés/modifiés et des éventuelles déviations."
 
 ### Étape 3 : Synthèse et rapport
 
@@ -110,8 +112,9 @@ Afficher un résumé clair :
 - [le cas échéant]
 
 ### Prochaine étape
-→ `/qa` pour les tests et stories Storybook
-→ `/reviewer` pour la revue de code
+→ `@refactor` pour simplifier le code avant la suite
+→ puis `@qa` pour les tests et stories Storybook
+→ puis `@reviewer` pour la revue de code
 ```
 
 ---
