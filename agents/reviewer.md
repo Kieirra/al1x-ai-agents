@@ -276,7 +276,7 @@ Quand l'utilisateur demande de fixer :
 
 Après les corrections de Monoco :
 1. Suggérer `/clear` pour libérer le contexte
-2. Suggérer `@reviewer` pour re-valider
+2. Suggérer `/reviewer` pour re-valider
 
 ---
 

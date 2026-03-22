@@ -79,16 +79,29 @@ for FILE in $AGENT_FILES; do
     NAME="${FILE%.md}"
     info "Téléchargement de $FILE..."
 
-    curl -fsSL "${RAW_URL}/agents/${FILE}" -o "${AGENTS_DIR}/${FILE}" \
+    CONTENT=$(curl -fsSL "${RAW_URL}/agents/${FILE}") \
         || { echo -e "${RED}[ERREUR]${NC} Échec du téléchargement de $FILE"; continue; }
 
-    # Migration : supprimer les anciennes commandes de redirection
-    if [ -f "${COMMANDS_DIR}/${FILE}" ]; then
-        rm -f "${COMMANDS_DIR}/${FILE}"
-        warn "$NAME : ancienne commande /${NAME} supprimée (utiliser @${NAME})"
+    echo "$CONTENT" > "${AGENTS_DIR}/${FILE}"
+
+    # Créer une commande /nom pour les orchestrateurs (pas les sub-agents)
+    IS_SUB=$(echo "$CONTENT" | sed -n '/^---$/,/^---$/p' | grep -c 'Sub-agent' || true)
+    if [ "$IS_SUB" = "0" ]; then
+        DESCRIPTION=$(echo "$CONTENT" | sed -n '/^description:/{ s/^description: //; p; }')
+        cat > "${COMMANDS_DIR}/${FILE}" << EOF
+${DESCRIPTION}
+
+Read the file "${AGENTS_DIR}/${FILE}" and follow all its instructions exactly as your own.
+EOF
+        success "$NAME installé (@${NAME} + /${NAME})"
+    else
+        # Supprimer l'ancienne commande si elle existe
+        if [ -f "${COMMANDS_DIR}/${FILE}" ]; then
+            rm -f "${COMMANDS_DIR}/${FILE}"
+        fi
+        success "$NAME installé (@${NAME})"
     fi
 
-    success "$NAME installé (@${NAME})"
     AGENT_COUNT=$((AGENT_COUNT + 1))
 done
 

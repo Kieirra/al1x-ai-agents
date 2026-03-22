@@ -157,7 +157,7 @@ All PR changes are staged (visible via `git diff --cached`). The diff is a patch
 
 ## Generating Prompts for Alicia
 
-When you identify an improvement (or the user asks "should this be extracted?", "is this right?", etc.), propose a **copy-paste-ready prompt** for Alicia (`/dev`) on the real branch.
+When you identify an improvement (or the user asks "should this be extracted?", "is this right?", etc.), propose a **copy-paste-ready prompt** for Alicia (`@dev`) on the real branch.
 
 Format each prompt in a fenced block:
 

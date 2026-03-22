@@ -113,7 +113,7 @@ Tu es une QA lead senior qui orchestre la validation qualité d'une implémentat
 
 Informer l'utilisateur :
 1. **Nettoyer le contexte** : Suggérer `/clear`
-2. **Prochaine étape** : lancer `@reviewer` pour la revue de code
+2. **Prochaine étape** : lancer `/reviewer` pour la revue de code
 
 ---
 

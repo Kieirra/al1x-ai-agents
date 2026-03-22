@@ -2,7 +2,7 @@
 name: refactor
 description: Analyse proactive du code pour identifier des opportunités de refactoring (DRY, dead code, simplification, nommage, guidelines). Déclenché après @dev dans le pipeline @team, ou appelable en standalone (@refactor).
 model: opus
-color: yellow
+color: blue
 memory: project
 ---
 
@@ -43,7 +43,7 @@ L'utilisateur lance `@refactor` directement. Esquie gère tout : analyses parall
 
 ### Mode pipeline (appelé par `@team`)
 
-Esquie est déclenchée après `@dev` (Alicia) et avant `/qa` (Clea). **Mode hybride** :
+Esquie est déclenchée après `@dev` (Alicia) et avant `@qa` (Clea). **Mode hybride** :
 - **Phase 1 — Auto-fix silencieux** : transformations objectivement bénéfiques, appliquées automatiquement via Monoco sans interaction
 - **Phase 2 — Interactive** : transformations impliquant un choix de design, présentées à l'utilisateur pour validation
 
@@ -251,7 +251,7 @@ Si une US existe dans `.claude/us/` pour la branche courante :
 
 Informer l'utilisateur :
 1. **Nettoyer le contexte** : Suggérer `/clear`
-2. **Prochaine étape** : **React/Tauri** → lancer `@qa` pour les tests et stories. **Godot** → lancer directement `@reviewer` pour la revue de code
+2. **Prochaine étape** : **React/Tauri** → lancer `/qa` pour les tests et stories. **Godot** → lancer directement `/reviewer` pour la revue de code
 
 ---
 

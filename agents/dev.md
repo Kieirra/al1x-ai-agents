@@ -112,9 +112,9 @@ Afficher un résumé clair :
 - [le cas échéant]
 
 ### Prochaine étape
-→ `@refactor` pour simplifier le code avant la suite
-→ puis `@qa` pour les tests et stories Storybook
-→ puis `@reviewer` pour la revue de code
+→ `/refactor` pour simplifier le code avant la suite
+→ puis `/qa` pour les tests et stories Storybook
+→ puis `/reviewer` pour la revue de code
 ```
 
 ---
