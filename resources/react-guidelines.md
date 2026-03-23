@@ -183,6 +183,7 @@ my-component/
 
 - Ne jamais mettre plusieurs composants dans le même fichier.
 - Pas de fichier isolé : un composant React a toujours son propre dossier, même s'il ne contient qu'un fichier au départ.
+- **Pas de barrel files** (`index.ts` qui ré-exporte). Importer directement depuis le fichier source (ex: `import { UserCard } from './user-card/user-card'`). Les barrel files cassent le tree-shaking, ralentissent le bundler, créent des dépendances circulaires et masquent l'origine réelle du code.
 
 ### Seuil de taille : 200-250 lignes max
 
