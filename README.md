@@ -24,7 +24,7 @@ Mise à jour : `/update-agents` dans Claude Code ou relancer la commande ci-dess
 
 ### Orchestrateurs
 
-Invocables avec `@nom` dans Claude Code. Chaque orchestrateur lance des sous-agents en parallèle.
+Invocables avec `@nom` ou `/nom` dans Claude Code. Chaque orchestrateur lance des sous-agents en parallèle.
 
 | Agent | Pseudo | Role |
 |-------|--------|------|
@@ -45,7 +45,7 @@ Appelés automatiquement par les orchestrateurs. Pas besoin de les invoquer dire
 | `dev-tauri` | **Lune** | @dev | Tauri v2 (Rust + React) |
 | `dev-godot` | **Sciel** | @dev | Godot 4 / GDScript |
 | `dev-stories` | **Gustave** | @qa | Stories Storybook |
-| `nestjs-backend` | — | @dev | NestJS backend (modules, controllers, services, DTOs) |
+| `nestjs-backend` | **Golgra** | @dev | NestJS backend (modules, controllers, services, DTOs) |
 | `fixer` | **Monoco** | @reviewer, @refactor | Corrections ciblées, refactoring ISO fonctionnel |
 
 ## Pipeline
@@ -107,7 +107,7 @@ agents/                    # Agents (fichiers plats .md)
   reviewer.md              # Verso — code guardian
   refactor.md              # Esquie — refactoring analyst
   fixer.md                 # Monoco — targeted fixes
-  nestjs-backend.md        # NestJS backend specialist
+  nestjs-backend.md        # Golgra — NestJS backend specialist
   uxui.md                  # Renoir — UX/UI architect
 commands/                  # Commandes slash (non-agent)
   team.md
