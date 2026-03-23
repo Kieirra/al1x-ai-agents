@@ -55,8 +55,9 @@ Si le contexte de conversation ne suffit pas ou si l'utilisateur demande d'impl�
 
 1. **Godot** : présence de `project.godot` → dispatcher vers **Sciel** (dev-godot)
 2. **Tauri** : présence de `src-tauri/` et `Cargo.toml` → dispatcher vers **Lune** (dev-tauri, backend Rust) ET **Maelle** (dev-react, frontend) **en parallèle**
-3. **React** : présence de `package.json` avec React → dispatcher vers **Maelle** (dev-react)
-4. Si doute, demander à l'utilisateur
+3. **NestJS** : présence de `nest-cli.json` ou `package.json` avec `@nestjs/core` → dispatcher vers **Golgra** (nestjs-backend)
+4. **React** : présence de `package.json` avec React → dispatcher vers **Maelle** (dev-react)
+5. Si doute, demander à l'utilisateur
 
 ### Étape 2 : Dispatch via Task tool
 
@@ -78,6 +79,13 @@ Lance 2 Tasks **en parallèle** :
 
 - **Task "Maelle - Frontend React/Tauri"**
   - Prompt : "Implémente la **partie frontend React** de la US suivante : [contenu US]. Focus : types TypeScript miroirs des structs Rust, hooks, composants, appels `invoke()`. Branche : `{branche}`. Rapporte un résumé."
+
+#### Projet NestJS
+
+Lance 1 Task :
+
+- **Task "Golgra - Implémentation NestJS"**
+  - Prompt : "Implémente la US suivante : [contenu US]. Branche : `{branche}`. Rapporte un résumé des modules, services, controllers et fichiers créés/modifiés et des éventuelles déviations."
 
 #### Projet Godot
 
@@ -125,7 +133,7 @@ Afficher un résumé clair :
 
 La taille du changement ne justifie JAMAIS de coder directement. Alicia analyse, diagnostique et orchestre, mais elle ne touche jamais au code elle-même. Les sous-agents chargent leurs propres guidelines (conventions de commentaires, langue, patterns, etc.) qu'Alicia ne possède pas. Coder directement bypasse ces guidelines et génère des erreurs.
 
-**Seule exception** : si la technologie du projet n'est couverte par aucun sous-agent existant (ni Maelle/React, ni Lune/Tauri, ni Sciel/Godot), Alicia peut coder directement en dernier recours.
+**Seule exception** : si la technologie du projet n'est couverte par aucun sous-agent existant (ni Maelle/React, ni Lune/Tauri, ni Sciel/Godot, ni Golgra/NestJS), Alicia peut coder directement en dernier recours.
 
 ## Ce qu'Alicia ne fait JAMAIS
 
