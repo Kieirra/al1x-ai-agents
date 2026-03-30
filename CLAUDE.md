@@ -44,6 +44,9 @@ al1x-ai-agents/
     archive-us.md       # Archive les US terminées
     commit.md           # Commit conventionnel
     create-pr.md        # Création de PR
+  skills/               # Skills (dossiers avec SKILL.md, format natif Claude Code)
+    check-stories/      # Vérification visuelle Storybook via Playwright CLI
+      SKILL.md
   resources/            # Fichiers de référence (lus par les agents)
     react-guidelines.md
     godot-guidelines.md
@@ -63,7 +66,8 @@ al1x-ai-agents/
 - Les agents sont des fichiers `.md` dans `agents/` (format plat, pas de sous-dossiers)
 - Invocables via `@nom` dans Claude Code (ex: `@dev`, `@reviewer`)
 - Les commandes utilitaires restent en `/nom` (ex: `/team`, `/workflow`)
-- Le script `install.sh` télécharge agents, commandes et ressources depuis GitHub et les installe dans `~/.claude/`
+- Les skills sont des dossiers dans `skills/<nom>/` avec `SKILL.md` + `scripts/` optionnel (format natif Claude Code)
+- Le script `install.sh` télécharge agents, commandes, skills et ressources depuis GitHub et les installe dans `~/.claude/`
 - Le repo est public sur GitHub : `github.com/Kieirra/al1x-ai-agents`
 
 ## Quand tu modifies ce repo

@@ -45,6 +45,7 @@ fi
 COMMANDS_DIR="${BASE_DIR}/commands"
 AGENTS_DIR="${BASE_DIR}/agents"
 RESOURCES_DIR="${BASE_DIR}/resources"
+SKILLS_DIR="${BASE_DIR}/skills"
 
 info "Installation ${INSTALL_LABEL}..."
 
@@ -52,6 +53,7 @@ info "Installation ${INSTALL_LABEL}..."
 mkdir -p "$COMMANDS_DIR"
 mkdir -p "$AGENTS_DIR"
 mkdir -p "$RESOURCES_DIR"
+mkdir -p "$SKILLS_DIR"
 
 # Récupérer la liste des agents depuis l'API GitHub
 info "Récupération de la liste des agents..."
@@ -131,10 +133,30 @@ if [ -n "$RESOURCES_JSON" ]; then
     done
 fi
 
+# Télécharger les skills (dossiers avec SKILL.md + scripts/)
+info "Installation des skills..."
+SKILLS_API_URL="https://api.github.com/repos/${REPO}/contents/skills?ref=${BRANCH}"
+SKILLS_JSON=$(curl -fsSL "$SKILLS_API_URL" 2>/dev/null) || SKILLS_JSON=""
+
+if [ -n "$SKILLS_JSON" ]; then
+    SKILL_DIRS=$(echo "$SKILLS_JSON" | grep -oP '"name"\s*:\s*"\K[^"]+' | grep -v '\.' || true)
+    for SKILL_NAME in $SKILL_DIRS; do
+        SKILL_TARGET="${SKILLS_DIR}/${SKILL_NAME}"
+        mkdir -p "${SKILL_TARGET}"
+
+        # Télécharger SKILL.md
+        curl -fsSL "${RAW_URL}/skills/${SKILL_NAME}/SKILL.md" -o "${SKILL_TARGET}/SKILL.md" \
+            || { echo -e "${RED}[ERREUR]${NC} Échec du téléchargement de skills/${SKILL_NAME}/SKILL.md"; continue; }
+
+        success "Skill /${SKILL_NAME} installé (${SKILL_TARGET}/)"
+    done
+fi
+
 echo ""
 success "Installation ${INSTALL_LABEL} terminée ! ${AGENT_COUNT} agent(s) installé(s)"
 info "Agents (@nom) : ${AGENTS_DIR}/"
 info "Commandes (/nom) : ${COMMANDS_DIR}/"
+info "Skills (/nom) : ${SKILLS_DIR}/"
 info "Ressources : ${RESOURCES_DIR}/"
 if [ "$INSTALL_MODE" = "global" ]; then
     info "Les agents sont disponibles dans tous tes projets Claude Code."

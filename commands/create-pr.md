@@ -5,37 +5,36 @@ Crée une Pull Request via `gh pr create` sur la branche courante.
 1. Récupère le contexte :
    - `git branch --show-current` pour la branche
    - `git log main..HEAD --oneline` pour les commits de la branche
-   - `git diff main...HEAD --stat` pour le résumé des changements
    - Vérifie si la branche est poussée sur le remote (`git ls-remote --heads origin <branche>`)
 
 2. Si la branche n'est pas poussée, la pousse avec `git push -u origin <branche>`
 
-3. Détecte si un template de PR existe dans le repo :
-   - Utilise `find .github docs -iname "pull_request_template*" 2>/dev/null` pour trouver le template quelle que soit la casse
-   - Si un template existe, le lit et le remplit en se basant sur les commits et les changements de la branche
+3. Cherche l'US liée à la branche dans `.claude/us/` (les `/` du nom de branche remplacés par `-`)
 
-4. Si aucun template n'existe :
-   - Demande à l'utilisateur s'il y a un lien d'issue associé
-   - Si oui et que l'issue est accessible (via `gh issue view`) : titre = `<type>: <titre synthétique de l'issue>`, body = `fix: {lien_issue}`
-   - Si oui mais l'issue n'est pas accessible : titre déduit des commits, body = `fix: {lien_issue}`
-   - Si non : propose un titre basé sur les commits et demande confirmation. **Body vide** (`""`) sauf si l'utilisateur demande explicitement une description.
-
-   **Format du titre** : Conventional Commits — `<type>: <description courte en anglais>`
+4. **Titre** : format Conventional Commits — `<type>: <description courte en anglais>`
    - Types : `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
-   - Le type est déduit du contenu de l'issue ou des commits
-   - Exemples : `feat: add error message for number edition`, `fix: resolve login redirect loop`
+   - Le type est déduit des commits ou du contenu de l'US
+   - Exemples : `feat: add login form`, `fix: resolve redirect loop`
 
-5. Crée la PR avec `gh pr create` :
-   ```
-   gh pr create --title "<titre>" --body ""
-   ```
+5. **Body** — deux cas, rien d'autre :
 
-6. Affiche l'URL de la PR créée.
+   **Cas A : Un template de PR existe** (chercher dans `.github/` et `docs/`)
+   - Lire le template et le remplir avec les infos disponibles (US, commits)
+
+   **Cas B : Pas de template**
+   - Si une US existe : body = `fix: <titre de l'US>`
+   - Si un lien d'issue est fourni par l'utilisateur : body = `fix: <lien_issue>`
+   - Sinon : body vide (`""`)
+
+6. Crée la PR : `gh pr create --title "<titre>" --body "<body>"`
+
+7. Affiche l'URL de la PR créée.
 
 ## Règles
 
-- **Utiliser `gh pr create`** : toujours utiliser la CLI GitHub, jamais d'API manuelle.
+- **Body minimaliste** : JAMAIS de description, JAMAIS de résumé des changements, JAMAIS de liste de fichiers modifiés, JAMAIS de bullet points explicatifs. Le body contient uniquement ce qui est décrit au point 5.
 - **Pas de co-author** : ne jamais ajouter de ligne `Co-Authored-By` ou toute attribution à Claude/AI.
-- **Pas de contenu superflu** : pas de badges, pas de génération automatique mentions, pas de signatures.
-- **Demander en cas de doute** : si le titre ou le body n'est pas clair, demander confirmation à l'utilisateur avant de créer la PR.
-- **Ne pas merger** : la PR est créée, c'est tout. Le merge est une décision de l'utilisateur.
+- **Pas de contenu superflu** : pas de badges, pas de signatures, pas de "Generated with", pas de "Summary", pas de "Test plan".
+- **Utiliser `gh pr create`** : toujours utiliser la CLI GitHub.
+- **Demander en cas de doute** : si le titre n'est pas clair, demander confirmation avant de créer.
+- **Ne pas merger** : la PR est créée, c'est tout.

@@ -30,7 +30,7 @@ Invocables avec `@nom` ou `/nom` dans Claude Code. Chaque orchestrateur lance de
 |-------|--------|------|
 | `@architecte` | **Aline** | Product architect — 3 explorations parallèles (tech, UX, approches), QCM, wireframe ASCII, rédaction d'US |
 | `@dev` | **Alicia** | Lead developer — détecte la techno, dispatche aux devs spécialisés, parallélise front+back |
-| `@qa` | **Clea** | QA lead — tests unitaires, stories Storybook, validation des critères d'acceptation |
+| `@qa` | **Clea** | QA lead — tests spec-driven (should/when + Given/When/Then), stories Storybook, vérification visuelle Playwright, checklist tests manuels |
 | `@reviewer` | **Verso** | Code guardian — 4 reviews parallèles (conventions, bugs, sécurité, story compliance) |
 | `@refactor` | **Esquie** | Refactoring analyst — DRY, dead code, simplification, nommage, guidelines |
 | `@uxui` | **Renoir** | UX/UI architect — audits, brainstorms, wireframes ASCII, frameworks BMAP & B.I.A.S. |
@@ -77,6 +77,12 @@ La commande `/team` lance le pipeline complet en autonome.
 | `/list-us` | Liste les user stories dans `.claude/us/` |
 | `/update-agents` | Met à jour agents et commandes depuis ce repo |
 
+## Skills
+
+| Skill | Description |
+|-------|-------------|
+| `/check-stories` | Vérifie visuellement les stories Storybook via Playwright (screenshots + erreurs console). Auto-invoqué par @qa. |
+
 ## review-pr
 
 Script standalone pour reviewer des PRs dans un worktree isolé.
@@ -117,6 +123,9 @@ commands/                  # Commandes slash (non-agent)
   archive-us.md
   commit.md
   create-pr.md
+skills/                    # Skills (format natif Claude Code)
+  check-stories/           # Vérification visuelle Storybook via Playwright CLI
+    SKILL.md
 tools/                     # Scripts CLI standalone
   review-pr
 resources/                 # Ressources de référence
