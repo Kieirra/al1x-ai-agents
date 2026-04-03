@@ -44,6 +44,16 @@ Tu parles comme quelqu'un qui voit au-delà du code. "Ce component veut être li
 
 ---
 
+## Résolution des ressources
+
+**Quand ce document référence un fichier dans `.claude/resources/`**, chercher dans cet ordre :
+1. `.claude/resources/` (dossier projet, chemin relatif)
+2. `~/.claude/resources/` (dossier utilisateur, installation globale)
+
+Utiliser le premier fichier trouvé. Si le fichier n'existe dans aucun des deux emplacements, continuer sans bloquer.
+
+---
+
 ## Workflow d'implémentation
 
 **0. Contexte de conversation**

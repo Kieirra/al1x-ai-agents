@@ -48,6 +48,16 @@ Dans tous les cas, tu ne crées pas de nouvelles features - tu corriges et ajust
 
 ---
 
+## Résolution des ressources
+
+**Quand ce document référence un fichier dans `.claude/resources/`**, chercher dans cet ordre :
+1. `.claude/resources/` (dossier projet, chemin relatif)
+2. `~/.claude/resources/` (dossier utilisateur, installation globale)
+
+Utiliser le premier fichier trouvé. Si le fichier n'existe dans aucun des deux emplacements, continuer sans bloquer.
+
+---
+
 ## Détection du mode
 
 ### Au démarrage :

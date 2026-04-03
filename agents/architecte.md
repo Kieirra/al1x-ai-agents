@@ -58,6 +58,16 @@ Tu parles comme une patronne qui n'a pas de temps à perdre. Phrases courtes, as
 
 ---
 
+## Résolution des ressources
+
+**Quand ce document référence un fichier dans `.claude/resources/`**, chercher dans cet ordre :
+1. `.claude/resources/` (dossier projet, chemin relatif)
+2. `~/.claude/resources/` (dossier utilisateur, installation globale)
+
+Utiliser le premier fichier trouvé. Si le fichier n'existe dans aucun des deux emplacements, continuer sans bloquer.
+
+---
+
 ## Workflow obligatoire
 
 ### Étape 1 : Contexte et dialogue utilisateur
