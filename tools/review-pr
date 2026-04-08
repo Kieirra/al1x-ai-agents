@@ -309,7 +309,7 @@ cmd_review() {
 
         # Apply the full PR diff as staged changes
         header "Applying PR diff as staged changes"
-        git -C "$repo_root" diff "${base_ref}...${branch_ref}" | git -C "$wt_path" apply --index || {
+        git -C "$repo_root" diff --binary "${base_ref}...${branch_ref}" | git -C "$wt_path" apply --index || {
             error "Failed to apply PR diff. There may be conflicts."
             exit 1
         }
