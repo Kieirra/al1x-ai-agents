@@ -119,6 +119,8 @@ Que souhaitez-vous spécifier ? Je te proposerai de créer une branche dédiée 
 
 **Charger aussi les guidelines UX/UI** (React/Tauri uniquement) : `.claude/resources/ux-guidelines.md`
 
+**Pour React/Tauri, charger EN PLUS les guidelines techniques** : `.claude/resources/react-guidelines.md`. La section 4 ("Structure des composants") dicte l'arborescence à proposer dans l'US — elle n'est pas optionnelle. Sans cette lecture, l'US produira une arborescence incohérente avec ce que le dev appliquera.
+
 > Ne lire QUE le(s) template(s) et guidelines correspondant à la techno détectée. Ne pas charger les autres.
 
 ### Étape 3 : Explorations parallèles via Task tool
@@ -396,6 +398,12 @@ Une fois l'US sauvegardée, informe l'utilisateur :
 - **Toujours sauvegarder dans `.claude/us/`** : Avec le nom de branche (courante ou nouvellement créée) dans le nom de fichier
 - **Toujours initialiser le Status à `ready`**
 - **Proposer une branche uniquement si sur `main`/`master`/`dev`** : Sur une branche de travail, utiliser la branche courante sans en proposer une autre
+- **Arborescence React conforme à `react-guidelines.md` §4** : pour toute US React/Tauri, la section "Fichiers à créer / modifier" DOIT respecter à la lettre le pattern de la section 4 :
+  - 1 composant = 1 dossier nommé comme le composant. Jamais deux `.tsx` de composants dans le même dossier — un sous-composant a toujours son propre sous-dossier
+  - Pas d'`index.tsx` ni de barrel file (`index.ts` qui ré-exporte)
+  - Les fonctions pures, records statiques et constantes du composant vont dans `{composant}.helpers.ts` placé à côté du `.tsx`, jamais dans le `.tsx` lui-même
+  - Les hooks spécifiques au composant vont dans `hooks/use-{nom}.ts` sous le dossier du composant
+  Si l'US contredit ces règles, la réécrire avant sauvegarde.
 
 ## Règles de qualité
 

@@ -8,10 +8,28 @@ Ce fichier contient les sections techniques et UX spécifiques aux projets React
 
 ### Fichiers à créer
 
+Respecter strictement l'arborescence de `react-guidelines.md` §4 : 1 composant = 1 dossier, helpers dans `{composant}.helpers.ts`, hooks dans `hooks/`, sous-composants dans leur propre sous-dossier.
+
+```
+components/my-feature/
+├── my-feature.tsx
+├── my-feature.helpers.ts
+├── hooks/
+│   └── use-my-feature.ts
+└── my-sub-component/
+    ├── my-sub-component.tsx
+    └── my-sub-component.helpers.ts
+```
+
 | Fichier | Description |
 |---------|-------------|
-| `src/components/[Nom]/[Nom].tsx` | Composant principal |
-| `src/components/[Nom]/[Nom].test.tsx` | Tests unitaires |
+| `src/components/[nom]/[nom].tsx` | Composant principal |
+| `src/components/[nom]/[nom].helpers.ts` | Fonctions pures, records, constantes |
+| `src/components/[nom]/hooks/use-[nom].ts` | Hook du composant (si logique à extraire) |
+| `src/components/[nom]/[sous-composant]/[sous-composant].tsx` | Sous-composant (dans son propre sous-dossier) |
+| `src/components/[nom]/[nom].test.tsx` | Tests unitaires |
+
+> **Règle stricte** : jamais deux `.tsx` de composants dans le même dossier. Les helpers d'un composant (fonctions pures, records statiques, constantes) vont TOUJOURS dans `{composant}.helpers.ts`, jamais dans le `.tsx`. Pas de `index.ts` / `index.tsx` qui ré-exporte (pas de barrel file).
 
 ### Fichiers à modifier
 

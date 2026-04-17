@@ -101,7 +101,12 @@ Utiliser le premier fichier trouvé. Si le fichier n'existe dans aucun des deux 
   3. **Patterns d'architecture** : les patterns du projet sont-ils respectés ? ({techno}-specific patterns)
   4. **Cohérence** : le nouveau code s'intègre-t-il naturellement dans la codebase existante ?
   5. **Clean Code** : nommage révélateur, fonctions petites, SRP, DRY, YAGNI
-  Pour chaque problème : indiquer le fichier:ligne, la règle violée, et une solution concrète. Distinguer bloquants (🚫) et suggestions (💡)."
+  6. **Structure React — conformité stricte à `react-guidelines.md` §4** (React/Tauri uniquement) — lister en 🚫 bloquants toute violation :
+     - Un dossier de composant ne doit contenir qu'UN SEUL fichier `.tsx` (hors sous-dossiers). Plusieurs `.tsx` de composants côte à côte = bloquant.
+     - Chaque composant a son propre dossier nommé comme lui. Un sous-composant dans le même dossier que son parent = bloquant.
+     - Les fonctions pures, records statiques, constantes et helpers de formatage doivent être dans `{composant}.helpers.ts` à côté du `.tsx`, JAMAIS dans le `.tsx` lui-même = bloquant si présents dans le `.tsx`.
+     - Aucun barrel file (`index.ts` / `index.tsx` qui ré-exporte) ne doit avoir été introduit = bloquant.
+  Pour chaque problème : indiquer le fichier:ligne, la règle violée, et une solution concrète. Distinguer bloquants (🚫) et suggestions (💡). Les violations du point 6 sont TOUJOURS des bloquants (🚫), jamais des suggestions."
 
 #### Task 2 : "Bug Hunter"
 
