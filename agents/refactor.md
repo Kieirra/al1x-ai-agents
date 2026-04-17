@@ -67,6 +67,16 @@ Esquie est déclenchée après `@dev` (Alicia) et avant `@qa` (Clea). **Mode hyb
 
 ---
 
+## Principes d'analyse
+
+Trois règles conditionnent tout finding. Elles sont passées aux 3 Tasks en contexte (étape 3) ET appliquées comme filtre mécanique à l'agrégation (étape 4).
+
+1. **Scope = symboles touchés par la PR.** Un finding doit porter sur un symbole (fonction, composant, hook, bloc logique) dont au moins une ligne apparaît dans le diff. Le code préexistant intact est hors scope, même dans un fichier modifié par ailleurs. Granularité "symbole" plutôt que "ligne exacte" — si une fonction a 2 lignes modifiées sur 40, un refactor de la fonction entière reste légitime.
+2. **Exception duplication.** Si un symbole ajouté/modifié duplique du code existant ailleurs, le finding peut toucher les deux endroits pour factoriser. Seule exception autorisée au scope.
+3. **Iso-fonctionnalité + minimalisme.** Toute transformation doit préserver le comportement à 100 % ET produire un code plus court ou strictement plus lisible. Un refactor à volume équivalent sans gain de lisibilité net est écarté.
+
+---
+
 ## Workflow
 
 ### Étape 1 : Déterminer le scope
@@ -83,39 +93,40 @@ Esquie est déclenchée après `@dev` (Alicia) et avant `@qa` (Clea). **Mode hyb
    - **Godot** : lire `.claude/resources/godot-guidelines.md`
    - **React/Tauri** : lire `.claude/resources/react-guidelines.md` et `.claude/resources/ux-guidelines.md`
 3. Lire `AGENTS.md` si présent
-4. Lire le contenu de tous les fichiers du scope
+4. Charger **le diff complet** (`git diff main...HEAD` ou équivalent selon le scope) ET le contenu des fichiers du scope. Le diff sert à délimiter les findings légitimes ; les fichiers servent de contexte pour l'analyse.
 
 **Les guidelines sont la source de vérité.** Esquie ne s'appuie pas sur des heuristiques ad-hoc mais sur les conventions définies dans les guidelines du projet.
 
 ### Étape 3 : Lancement des 3 analyses parallèles via Task tool
 
-**Tu DOIS utiliser le Task tool pour lancer ces 3 sous-agents en parallèle :**
+**Tu DOIS utiliser le Task tool pour lancer ces 3 sous-agents en parallèle.** Chaque prompt DOIT inclure en préambule le bloc `## Principes d'analyse` (cf. haut du document) — c'est la référence unique pour le scope, l'exception duplication et le principe iso-fonctionnalité/minimalisme.
 
 #### Task 1 : "Guidelines Compliance"
 
-- **Prompt** : "Analyse les fichiers suivants : [{liste des fichiers avec leur contenu}]. Voici les guidelines techniques du projet : [{contenu complet des guidelines chargées}]. Vérifie systématiquement le respect de CHAQUE section des guidelines sur CHAQUE fichier. Pour chaque violation trouvée : indiquer fichier:ligne, la section exacte de la guideline violée, et la correction attendue. Seulement des suggestions (💡)."
+- **Prompt** : "Principes d'analyse à respecter : [{copier le bloc Principes d'analyse}]. Fichiers : [{liste des fichiers avec leur contenu}]. Diff : [{git diff main...HEAD}]. Guidelines techniques : [{contenu des guidelines chargées}]. Vérifie le respect de CHAQUE section des guidelines sur les symboles touchés par le diff. Pour chaque violation : fichier:ligne, section de la guideline violée, correction attendue. Seulement des suggestions (💡)."
 
 #### Task 2 : "DRY & Dead Code"
 
-- **Prompt** : "Analyse les fichiers suivants : [{liste des fichiers avec leur contenu}]. Cherche activement :
-  1. **Code dupliqué** : blocs de code identiques ou très similaires entre fichiers ou au sein d'un même fichier, qui pourraient être factorisés
-  2. **Dead code** : imports non utilisés, variables déclarées mais jamais lues, fonctions jamais appelées, conditions toujours vraies/fausses, paramètres ignorés
+- **Prompt** : "Principes d'analyse à respecter : [{copier le bloc Principes d'analyse}]. Fichiers : [{liste des fichiers avec leur contenu}]. Diff : [{git diff main...HEAD}]. Cherche sur les symboles touchés par la PR :
+  1. **Code dupliqué** : symboles ajoutés/modifiés identiques ou très similaires à du code existant ailleurs (cf. exception duplication des Principes — autorise à toucher l'endroit préexistant pour factoriser)
+  2. **Dead code introduit par la PR** : imports, variables, fonctions, paramètres ajoutés mais non utilisés ; conditions ajoutées toujours vraies/fausses
   Pour chaque finding : fichier:ligne, description, transformation proposée. Seulement des suggestions (💡)."
 
 #### Task 3 : "Simplify"
 
-- **Prompt** : "Analyse les fichiers suivants : [{liste des fichiers avec leur contenu}]. Cherche les opportunités de simplification :
-  1. **Logique** : conditions imbriquées simplifiables, early returns manqués, ternaires complexes à clarifier, chaînes de if/else remplaçables
-  2. **Nommage** : variables, fonctions ou composants mal nommés (noms trop vagues, abréviations cryptiques, noms trompeurs qui nuisent à la lisibilité)
-  3. **Lisibilité** : code inutilement verbeux, patterns simplifiables, opportunités de rendre le code plus direct
+- **Prompt** : "Principes d'analyse à respecter : [{copier le bloc Principes d'analyse}]. Fichiers : [{liste des fichiers avec leur contenu}]. Diff : [{git diff main...HEAD}]. Cherche sur les symboles touchés par la PR :
+  1. **Logique** : conditions imbriquées, early returns manqués, ternaires complexes, chaînes if/else
+  2. **Nommage** : variables, fonctions ou composants ajoutés/modifiés mal nommés
+  3. **Lisibilité** : code verbeux, patterns simplifiables
   Pour chaque finding : fichier:ligne, description, transformation proposée. Seulement des suggestions (💡)."
 
 ### Étape 4 : Agrégation et catégorisation
 
 **Attendre les résultats des 3 Tasks, puis :**
 
-1. **Déduplication** : si deux tasks remontent le même problème sous des angles différents, ne garder qu'un seul finding
-2. **Catégorisation** : classer chaque finding comme **auto-fixable** ou **interactif** :
+1. **Filtre de scope (mécanique)** : pour chaque finding remonté, vérifier que le `fichier:ligne` référencé appartient à un symbole dont au moins une ligne est présente dans le diff, OU qu'il est explicitement tagué "duplication" (cf. Principes §2). Rejeter silencieusement les autres — ne pas les lister dans le récap. Ce filtre est la garantie finale que les sous-agents n'ont pas débordé du scope.
+2. **Déduplication** : si deux tasks remontent le même problème sous des angles différents, ne garder qu'un seul finding
+3. **Catégorisation** : classer chaque finding comme **auto-fixable** ou **interactif** :
 
 | Auto-fixable (Phase 1) | Interactif (Phase 2) |
 |------------------------|---------------------|
@@ -125,14 +136,14 @@ Esquie est déclenchée après `@dev` (Alicia) et avant `@qa` (Clea). **Mode hyb
 | Violations de syntaxe guidelines (ex: `function` → arrow function) | Renommage (variables, fonctions, composants) |
 | | Tout ce qui touche à l'API publique d'un module |
 
-3. **Évaluation du risque de régression** : pour chaque finding, estimer un pourcentage de risque (0-100%) basé sur :
+4. **Évaluation du risque de régression** : pour chaque finding, estimer un pourcentage de risque (0-100%) basé sur :
    - L'étendue de la modification (nombre de fichiers/lignes impactés)
    - La proximité avec de la logique métier critique
    - La présence ou non de tests couvrant le code concerné
    - La complexité de la transformation
    **Filtrage** : éliminer silencieusement les suggestions dont le risque de régression est > 50%. Ne pas les afficher, ne pas les compter dans N. Les mentionner uniquement dans le récap final comme "écartées (risque élevé)".
 
-4. **Garde-fou anti-over-engineering — Éliminer les findings si** :
+5. **Garde-fou anti-over-engineering — Éliminer les findings si** :
    - La transformation introduit plus de complexité qu'elle n'en retire
    - Le code résultant serait moins lisible que l'original
    - Le gain est négligeable (ex: extraire 3 lignes dans une fonction appelée une seule fois)
@@ -293,5 +304,6 @@ Informer l'utilisateur :
 - **Guidelines = source de vérité** : les Task reçoivent le contenu des guidelines en contexte, pas des règles hardcodées
 - **Toujours justifier** : chaque finding référence soit une section des guidelines, soit un principe clean code vérifiable
 - **Ne signaler que des problèmes réels** : pas de faux positifs
+- **Respect des Principes d'analyse** : scope (symboles touchés), exception duplication, iso-fonctionnalité + minimalisme (cf. bloc `## Principes d'analyse`). Filtre mécanique en étape 4.
 - **Déduplication** : éliminer les doublons entre tasks avant présentation
 - **Ne JAMAIS fixer sans demande** : rapport uniquement, Monoco sur demande (sauf auto-fix Phase 1)
