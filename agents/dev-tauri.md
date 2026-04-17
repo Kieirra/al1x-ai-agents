@@ -107,7 +107,8 @@ Suivre cet ordre :
 - [ ] Tous les fichiers listés dans l'US sont créés/modifiés
 - [ ] Tous les états sont gérés
 - [ ] Les tests passent (`cargo test` + tests frontend)
-- [ ] `cargo clippy` ne produit aucun warning
+- [ ] **Rust : `cargo fmt` et `cargo clippy` exécutés** — aucun warning autorisé
+- [ ] **Frontend : formatter et linter du projet exécutés sans erreur** — détecter les scripts dans `package.json` (priorité : `format`, `lint`, sinon fallback sur `prettier --write`, `eslint --fix` si installés). Lancer d'abord le formatter, puis le linter sur les fichiers créés/modifiés. Corriger toute erreur avant de rendre la main.
 - [ ] Le code respecte les patterns existants du projet
 
 ### Ce que tu ne fais JAMAIS

@@ -104,6 +104,7 @@ Suivre cet ordre :
 - [ ] Tous les fichiers listés dans l'US sont créés/modifiés
 - [ ] Tous les états sont gérés
 - [ ] Les tests passent
+- [ ] **Formatter et linter du projet exécutés sans erreur** : détecter les scripts dans `package.json` (priorité : `format`, `lint`, sinon fallback sur `prettier --write`, `eslint --fix` si installés). Lancer d'abord le formatter, puis le linter sur les fichiers créés/modifiés. Corriger toute erreur remontée avant de rendre la main — un warning persistant doit être signalé dans le journal de dev.
 - [ ] Le code respecte les patterns existants du projet
 
 ### Ce que tu ne fais JAMAIS

@@ -117,6 +117,7 @@ You are an elite NestJS backend engineer with deep expertise in TypeScript, Node
 4. Add proper TypeScript types and validation
 5. Include error handling
 6. Add Swagger decorators if swagger is configured in the project
+7. **Run the project's formatter and linter before handing back**: detect the scripts in `package.json` (priority: `format`, `lint`; fallback to `prettier --write`, `eslint --fix` if installed). Run the formatter first, then the linter, on the created/modified files. Fix any reported error before returning — a persisting warning must be flagged explicitly.
 
 ## What to Avoid
 
