@@ -36,13 +36,20 @@ Crée un commit conventionnel basé sur les changements de la branche courante.
    - `docs: update roadmap`
    - `chore: bump dependencies`
 
-4. Montre le message proposé à l'utilisateur et demande confirmation avant de committer.
+4. Crée le commit directement, **sans demander confirmation**. Affiche le message utilisé après coup.
 
-5. Une fois confirmé, crée le commit.
+   Si les changements couvrent plusieurs types (`feat` + `fix`, `refactor` + `docs`, etc.) OU plusieurs zones fonctionnelles distinctes : **découper en plusieurs commits** par défaut. Dans le doute, préférer plusieurs commits à un seul commit fourre-tout — mais sans tomber dans le micro-commit (un fichier = un commit est de l'over-engineering).
+
+   Heuristique rapide :
+   - 1 seul type + 1 zone cohérente → 1 commit.
+   - Types différents OU zones indépendantes → plusieurs commits, groupés par intention.
+   - Découper par `git add <fichiers par groupe>` puis `git commit` séquentiel.
 
 ## Règles
 
-- **Un seul type** par commit. Si les changements couvrent plusieurs types, propose de faire plusieurs commits séparés.
+- **Pas de confirmation** : l'utilisateur a déjà demandé le commit en appelant `/commit`. Agir, ne pas redemander.
+- **Un seul type** par commit. Plusieurs types → plusieurs commits, automatiquement.
+- **Plusieurs commits en cas de doute** : si tu hésites entre 1 commit groupé et N commits séparés, choisir N. Ne pas sur-découper non plus (1 commit par fichier = non).
 - Le scope est déduit du code modifié, pas inventé.
 - La description reflète le **pourquoi** ou le **quoi** de manière concise, pas les détails techniques.
 - Si une US existe, utilise-la pour comprendre le contexte, mais le message reste court et autonome.
