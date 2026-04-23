@@ -205,16 +205,79 @@ Un composant qui dépasse 200-250 lignes DOIT être découpé. Autres signes :
 
 ## 5. Commentaires minimalistes
 
-Le code propre se documente lui-même. Ne pas ajouter de commentaires sauf nécessité absolue.
+Le code propre se documente lui-même. **Par défaut : pas de commentaire.** Si tu envisages d'en écrire un, applique d'abord le test ci-dessous.
 
-- **Pas de commentaires** pour expliquer ce que fait le code — le nommage et la structure doivent suffire
-- **Pas de JSDoc/TSDoc** sur les fonctions internes — réserver aux API publiques de librairies
-- **Commentaires autorisés** uniquement pour :
-  - Regex complexes : expliquer le pattern
-  - Workarounds / hacks : expliquer pourquoi (avec lien vers l'issue si applicable)
-  - Logique métier non évidente : quand le "pourquoi" n'est pas déductible du code
-  - `// TODO` avec contexte : quand un point technique est intentionnellement différé
-- Si tu as besoin d'un commentaire pour expliquer un bloc de code, c'est un signe que ce bloc doit être extrait dans une fonction au nom explicite
+### Challenge obligatoire avant d'écrire un commentaire
+
+Pour chaque commentaire que tu envisages, répondre OUI aux 3 questions :
+
+1. **Le "pourquoi" est-il déductible du code seul ?** Si oui → pas de commentaire (renommer la variable/fonction à la place).
+2. **Retirer ce commentaire rendrait-il un reviewer confus ?** Si non → pas de commentaire.
+3. **Le commentaire apporte-t-il une info absente du code (contrainte cachée, workaround, bug précis) ?** Si non → pas de commentaire.
+
+Règle d'or : **préférer aucun commentaire à un commentaire qui paraphrase le code.**
+
+### Contraintes de format
+
+- **2-3 lignes maximum** par commentaire. Jamais de pavé, jamais de narration.
+- **Pas de JSDoc/TSDoc** sur les fonctions internes — réserver aux API publiques de librairies.
+- **Pas de commentaires décoratifs** (`// --- Section ---`, `// Constants`, `// Helpers`).
+- **Pas de commentaires qui décrivent l'évidence** (`// increment counter`, `// return user`, `// handle click`).
+
+### Cas où un commentaire est autorisé
+
+- **Regex complexes** : une ligne pour expliquer le pattern.
+- **Workarounds / hacks** : pourquoi on contourne, avec lien vers l'issue si applicable.
+- **Logique métier non évidente** : quand le "pourquoi" n'est pas déductible du code.
+- **`// TODO`** avec contexte : quand un point technique est intentionnellement différé.
+
+Si tu as besoin d'un commentaire pour expliquer un bloc de code, c'est un signe que ce bloc doit être extrait dans une fonction au nom explicite.
+
+---
+
+## 5bis. Tailwind CSS
+
+**Ne JAMAIS extraire des classes Tailwind dans une variable ou constante.**
+
+Les classes Tailwind restent dans le `className` du JSX. Extraire les classes dans une constante (`const buttonClasses = "bg-blue-500 ..."`) casse la lisibilité, empêche la détection par les outils Tailwind (IntelliSense, purge, tri automatique) et éloigne le style du composant.
+
+```tsx
+// ❌ Mauvais : classes extraites dans une constante
+const cardClasses = 'rounded-lg border border-gray-200 bg-white p-4 shadow-sm';
+const Card = ({ children }: Props) => <div className={cardClasses}>{children}</div>;
+
+// ✅ Bon : classes inline dans le JSX
+const Card = ({ children }: Props) => (
+    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+        {children}
+    </div>
+);
+```
+
+### Seuil de lisibilité : utiliser `clsx` en vertical
+
+Quand la liste de classes devient longue ou qu'elle contient des conditions, **utiliser `clsx`** (ou `classnames`) avec une écriture **verticale, une classe (ou un groupe logique) par ligne**. Cela évite la ligne géante illisible et met en évidence les conditions.
+
+```tsx
+// ❌ Mauvais : ligne monstrueuse, impossible à lire, conditions noyées
+<button className={`rounded-md px-4 py-2 font-medium transition-colors ${isPrimary ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'} ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}>
+
+// ✅ Bon : clsx en vertical, chaque groupe logique sur sa propre ligne
+<button
+    className={clsx(
+        'rounded-md px-4 py-2 font-medium transition-colors',
+        isPrimary && 'bg-blue-500 text-white hover:bg-blue-600',
+        !isPrimary && 'bg-gray-100 text-gray-900 hover:bg-gray-200',
+        disabled && 'cursor-not-allowed opacity-50',
+    )}
+>
+```
+
+**Règles** :
+- Inline tant que la liste tient lisiblement sur une ligne.
+- `clsx` vertical dès qu'il y a une condition OU que la chaîne devient longue (repère pratique : > ~80 caractères ou > 6-8 classes).
+- Grouper les classes par responsabilité (layout, couleurs, typographie, états) sur des lignes distinctes.
+- Pas de variable intermédiaire : le `clsx(...)` reste directement dans le `className`.
 
 ---
 
