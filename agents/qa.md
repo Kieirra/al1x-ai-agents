@@ -203,7 +203,11 @@ Ne teste PAS les détails d'implémentation. Teste le comportement observable."
 #### Task 2 : "Stories Storybook" (si Storybook présent - React/Tauri uniquement)
 
 - **Condition** : des fichiers `*.stories.tsx` existent dans le projet
-- **Prompt** : "Crée les stories pour les composants créés/modifiés par l'US liée à la branche `{branche}`. Rapporte la liste des stories créées et les états couverts."
+- **Prompt** : "Crée les stories pour les composants créés/modifiés par l'US liée à la branche `{branche}`.
+
+**Règle de stabilité obligatoire** : chaque interaction dans une `play` function DOIT être précédée de `await` (`await userEvent.click(...)`, `await userEvent.type(...)`, `await canvas.findByX(...)`). Une story sans `await` est flaky — refuser de livrer. Chaque `step(...)` est également `await` avec une callback `async`.
+
+Rapporte la liste des stories créées, les états couverts, et confirme explicitement que toutes les play functions utilisent `await` sur chaque interaction."
 
 #### Task 3 : "Validation critères d'acceptation"
 

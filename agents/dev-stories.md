@@ -207,6 +207,39 @@ export const Default: Story = {
 - ❌ Valider de la logique métier
 - ❌ Faire des assertions multiples de comportement
 
+### Règle de stabilité : `await` obligatoire sur chaque interaction
+
+Les stories Chromatic sont **fragiles sans `await`** : l'absence d'attente entre actions produit des screenshots flaky (capture avant que le DOM ait été mis à jour, conditions de course entre handlers).
+
+**Règle absolue** : chaque appel à `userEvent.*`, `fireEvent.*`, ou une query asynchrone (`findBy*`, `findAllBy*`) DOIT être précédé de `await`.
+
+```tsx
+// ❌ Mauvais : sans await, la story est flaky (race condition, screenshot partiel)
+play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('button');
+    userEvent.click(trigger);              // ❌ pas d'await
+    userEvent.type(input, 'hello');         // ❌ pas d'await
+    canvas.findByText('Result');            // ❌ pas d'await sur findBy*
+},
+
+// ✅ Bon : await sur chaque interaction et chaque findBy*
+play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    await step('Open dropdown', async () => {
+        const trigger = await canvas.findByRole('button');
+        await userEvent.click(trigger);
+        await userEvent.type(input, 'hello');
+    });
+},
+```
+
+**Checklist** :
+- [ ] `await userEvent.click(...)`, `await userEvent.type(...)`, `await userEvent.keyboard(...)` — jamais sans await.
+- [ ] `await canvas.findByX(...)` pour récupérer un élément qui peut apparaître de façon asynchrone.
+- [ ] `getByX` (synchrone) uniquement pour un élément garanti présent au premier rendu.
+- [ ] Chaque `step(...)` est wrappé dans un `await` et sa callback est `async`.
+
 ### Pattern standard
 
 ```tsx
