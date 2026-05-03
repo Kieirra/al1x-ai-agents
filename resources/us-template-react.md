@@ -1,4 +1,8 @@
+<!-- GUIDELINES_TOKEN: TPL_REACT_v1 -->
+
 # Template US — React
+
+> **Preuve de lecture obligatoire** : tout agent qui charge ce fichier DOIT inclure le token `TPL_REACT_v1` dans son premier message utilisateur (format : `📚 Lu : us-template-react.md [TPL_REACT_v1]`). Sans token = lecture non confirmée.
 
 Ce fichier contient les sections techniques et UX spécifiques aux projets React. Il est lu par Aline (architecte) après détection de la techno.
 

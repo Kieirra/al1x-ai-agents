@@ -1,4 +1,8 @@
+<!-- GUIDELINES_TOKEN: TPL_GODOT_v1 -->
+
 # Template US — Godot
+
+> **Preuve de lecture obligatoire** : tout agent qui charge ce fichier DOIT inclure le token `TPL_GODOT_v1` dans son premier message utilisateur (format : `📚 Lu : us-template-godot.md [TPL_GODOT_v1]`). Sans token = lecture non confirmée.
 
 Ce fichier contient les sections techniques et game feel spécifiques aux projets Godot 4 (2D, GDScript, ECS-Hybride). Il est lu par Aline (architecte) après détection de la techno.
 

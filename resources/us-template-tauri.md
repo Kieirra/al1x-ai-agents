@@ -1,4 +1,8 @@
+<!-- GUIDELINES_TOKEN: TPL_TAURI_v1 -->
+
 # Template US — Tauri
+
+> **Preuve de lecture obligatoire** : tout agent qui charge ce fichier DOIT inclure le token `TPL_TAURI_v1` dans son premier message utilisateur (format : `📚 Lu : us-template-tauri.md [TPL_TAURI_v1]`). Sans token = lecture non confirmée.
 
 Ce fichier contient les sections techniques spécifiques aux projets Tauri v2 (Rust backend + React frontend). Il est lu par Aline (architecte) après détection de la techno.
 

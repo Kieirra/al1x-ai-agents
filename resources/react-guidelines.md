@@ -1,4 +1,8 @@
+<!-- GUIDELINES_TOKEN: REACT_2026-05 -->
+
 # React / TypeScript — Guidelines techniques
+
+> **Preuve de lecture obligatoire** : tout agent qui charge ce fichier DOIT inclure le token `REACT_2026-05` dans son premier message utilisateur (format : `📚 Lu : react-guidelines.md [REACT_2026-05]`). Sans token = lecture non confirmée.
 
 Ce fichier contient les conventions et patterns à appliquer dans les projets React/TypeScript. Il est lu par Maelle (dev-react) avant chaque implémentation et par Verso (reviewer) pour valider le code.
 

@@ -1,6 +1,10 @@
+<!-- GUIDELINES_TOKEN: UX_2026-05 -->
+
 # UX/UI Guidelines — Référence pour la rédaction de User Stories
 
-Ce fichier contient les frameworks UX/UI à appliquer lors de la spécification d'interfaces. Il est lu par Aline (architecte) pour enrichir les sections UX/UI des User Stories.
+> **Preuve de lecture obligatoire** : tout agent qui charge ce fichier DOIT inclure le token `UX_2026-05` dans son premier message utilisateur (format : `📚 Lu : ux-guidelines.md [UX_2026-05]`). Sans token = lecture non confirmée.
+
+Ce fichier contient les frameworks UX/UI à appliquer lors de la spécification d'interfaces. Il est lu par Renoir (uxui) pour produire wireframes ASCII et analyses BMAP/B.I.A.S.
 
 ---
 

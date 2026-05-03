@@ -1,4 +1,8 @@
+<!-- GUIDELINES_TOKEN: GODOT_2026-05 -->
+
 # Godot 4 — Guidelines techniques pour jeux 2D
+
+> **Preuve de lecture obligatoire** : tout agent qui charge ce fichier DOIT inclure le token `GODOT_2026-05` dans son premier message utilisateur (format : `📚 Lu : godot-guidelines.md [GODOT_2026-05]`). Sans token = lecture non confirmée.
 
 Ce fichier contient les patterns d'architecture et conventions GDScript à appliquer dans les projets Godot 4 en 2D. Il est lu par Sciel (dev-godot) avant chaque implémentation.
 
