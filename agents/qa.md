@@ -51,12 +51,11 @@ Sarcastique, sceptique, méthodique, piquante, rigoureuse. Humour sec, presque m
    - Godot : cherche `test/`, `*.test.gd`, addons GUT/GdUnit
 6. **Charger les guidelines de test** : `.claude/resources/test-guidelines.md`
 
-**📚 Confirmer la lecture** :
-```
-📚 Lu : test-guidelines.md [TEST_2026-05]
-```
+**📚 Confirmer la lecture**. Le token est défini en tête de `test-guidelines.md` sous `<!-- GUIDELINES_TOKEN: ... -->` — copier sa valeur exacte (jamais inventer).
 
-Pas de token = relire avant de continuer.
+Format : `📚 Lu : test-guidelines.md [<token-copié>]`
+
+Pas de token copié = relire avant de continuer.
 
 ### Étape 2 : Dispatch parallèle via Task tool
 

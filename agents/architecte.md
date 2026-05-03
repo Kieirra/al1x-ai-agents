@@ -92,12 +92,11 @@ Détecter la techno et charger UNIQUEMENT les ressources nécessaires :
 
 > Aline NE charge PAS `ux-guidelines.md` — Renoir le fait dans son mode sub-agent.
 
-**📚 Confirmer la lecture** : avant de passer à l'étape 3, afficher dans la réponse utilisateur les tokens des fichiers lus :
-```
-📚 Lu : us-template-{techno}.md [TPL_{TECHNO}_v1], react-guidelines.md [REACT_2026-05]
-```
+**📚 Confirmer la lecture** : avant de passer à l'étape 3, afficher les tokens **copiés depuis chaque fichier lu**. Le token est défini en tête de chaque ressource sous `<!-- GUIDELINES_TOKEN: ... -->` — copier sa valeur exacte (jamais inventer ni utiliser un placeholder).
 
-Tokens valides actuellement : `TPL_REACT_v1`, `TPL_TAURI_v1`, `TPL_GODOT_v1`, `REACT_2026-05`. Si tu n'as pas le token = tu n'as pas lu = relis. **Pas de tokens visibles = pas d'exploration ni d'US.**
+Format : `📚 Lu : us-template-{techno}.md [<token-copié>], react-guidelines.md [<token-copié>]`
+
+Pas de token copié = tu n'as pas lu = relis. **Pas de tokens visibles = pas d'exploration ni d'US.**
 
 ### Étape 3 : Explorations parallèles via Task tool
 

@@ -77,12 +77,11 @@ Verso vise **peu de findings mais pertinents**. Le dev a déjà testé son code.
    - React/Tauri : `react-guidelines.md` + `ux-guidelines.md`
    - + `AGENTS.md` projet, `CONTRIBUTING.md`, configs linting
 
-**📚 Confirmer la lecture** avant de lancer les Tasks :
-```
-📚 Lu : react-guidelines.md [REACT_2026-05], ux-guidelines.md [UX_2026-05]
-```
+**📚 Confirmer la lecture** avant de lancer les Tasks. Le token est défini en tête de chaque fichier sous `<!-- GUIDELINES_TOKEN: ... -->` — copier sa valeur exacte (jamais inventer).
 
-Tokens valides : `REACT_2026-05`, `UX_2026-05`, `GODOT_2026-05`. Pas de tokens visibles = relire.
+Format : `📚 Lu : react-guidelines.md [<token-copié>], ux-guidelines.md [<token-copié>]`
+
+Pas de token copié = relire avant de continuer.
 
 ### Étape 2 : 4 reviews parallèles via Task tool
 
@@ -99,7 +98,9 @@ Chaque Task reçoit : liste de fichiers, techno, et **référence au "Calibrage"
 > 4. **Guidelines** : violations explicites
 > 5. **Structure React §4** (React/Tauri uniquement, **bloquants 🚫**) : 1 composant = 1 dossier (pas 2 `.tsx` côte à côte), helpers dans `{composant}.helpers.ts` jamais dans le `.tsx`, pas de barrel `index.ts`/`index.tsx`
 >
-> Applique le **Calibrage de sensibilité** de Verso (cf. agent reviewer). Pour chaque finding retenu : `fichier:ligne`, règle, solution. 🚫 bloquants vs 💡 suggestions. Point 5 = toujours 🚫.
+> **Filtre grossier** (skip si manifeste) : overengineering perçu (ne jamais demander d'ajouter abstraction/config/error handling défensif), choix cohérents avec le projet, micro-style. Doute non-manifeste = remonter — Verso fera l'arbitrage final avec le Calibrage complet.
+>
+> Pour chaque finding retenu : `fichier:ligne`, règle, solution. 🚫 bloquants vs 💡 suggestions. Point 5 = toujours 🚫.
 
 #### Task 2 : "Bug Hunter"
 
@@ -109,7 +110,7 @@ Chaque Task reçoit : liste de fichiers, techno, et **référence au "Calibrage"
 > - **Rust/Tauri** : `unwrap()`/`panic!()` sur erreurs récupérables, `unsafe` non justifié, deadlocks, commandes Tauri qui devraient retourner `Result`
 > - **Godot/GDScript** : `get_node()` sur node potentiellement absent, signaux non déconnectés (fuite), `move_and_slide()` dans un component (violation ECS), refs cross-node sans `is_instance_valid()`
 >
-> Applique le **Calibrage** : skip bugs hypothétiques, null sur chemin où le type garantit l'absence, race conditions sur code synchrone, ce que le dev a forcément vu en testant. Doute = skip.
+> **Filtre grossier** (skip si manifeste) : bugs manifestement hypothétiques sans chemin d'exécution réel, null sur chemin où le type garantit l'absence, ce que le dev a forcément vu en testant le flow principal. Doute non-manifeste = remonter — Verso filtrera finement.
 >
 > Pour chaque bug retenu : `fichier:ligne`, **scénario d'exécution concret**, impact, solution. Bloquants 🚫 only.
 
@@ -122,7 +123,7 @@ Chaque Task reçoit : liste de fichiers, techno, et **référence au "Calibrage"
 > 4. Auth cassée : autorisation manquante, token mal validé
 > 5. Rust : `unsafe` non justifié avec risque mémoire réel
 >
-> Applique le **Calibrage** : skip failles théoriques sans vecteur, XSS sur string interne contrôlée, injection sur query hardcodée, "bonnes pratiques" sans risque concret. Doute = skip. **Préférer 0 finding que 5 fictifs.**
+> **Filtre grossier** (skip si manifeste) : failles manifestement théoriques sans vecteur d'attaque, XSS sur string interne contrôlée, injection sur query hardcodée. Doute non-manifeste = remonter — Verso filtrera finement. **Préférer 0 finding qu'un finding fictif.**
 >
 > Pour chaque faille : `fichier:ligne`, sévérité, **scénario d'attaque concret**, solution. Bloquants 🚫 only.
 
@@ -136,9 +137,19 @@ Chaque Task reçoit : liste de fichiers, techno, et **référence au "Calibrage"
 >
 > Doute à 90% que le user a vu/testé → skip. Si rien : `✅ rien à dire`.
 
-### Étape 3 : Synthèse + mode interactif
+### Étape 3 : Filtrage + synthèse + mode interactif
 
-**3a. Résumé compact (1 message) :**
+**3a. Filtrage des retours (Verso, arbitrage final)** :
+
+Les Tasks ont fait un filtre grossier ; Verso applique maintenant le **Calibrage de sensibilité COMPLET** (cf. section au début de l'agent) sur CHAQUE finding remonté. Skip silencieusement ceux qui tombent dans les catégories "À filtrer" :
+- Règles fonctionnelles divergentes de l'US (peuvent avoir changé)
+- CA visibles à 90% à l'œil nu (le dev a testé son écran principal)
+- Overengineering perçu, sécu/bugs fictifs, choix volontaires cohérents
+- Doute = skip
+
+Compter uniquement les findings retenus pour le résumé.
+
+**3b. Résumé compact (1 message) :**
 
 ```markdown
 # Code Review: [{branche}]

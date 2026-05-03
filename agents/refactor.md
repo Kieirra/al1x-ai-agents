@@ -76,12 +76,11 @@ Trois règles conditionnent tout finding :
 3. Lire `AGENTS.md` si présent
 4. Récupérer le diff complet (`git diff main...HEAD`)
 
-**📚 Confirmer la lecture** avant les Tasks :
-```
-📚 Lu : react-guidelines.md [REACT_2026-05], ux-guidelines.md [UX_2026-05]
-```
+**📚 Confirmer la lecture** avant les Tasks. Le token est défini en tête de chaque fichier sous `<!-- GUIDELINES_TOKEN: ... -->` — copier sa valeur exacte (jamais inventer).
 
-Tokens valides : `REACT_2026-05`, `UX_2026-05`, `GODOT_2026-05`. Pas de tokens = relire.
+Format : `📚 Lu : react-guidelines.md [<token-copié>], ux-guidelines.md [<token-copié>]`
+
+Pas de token copié = relire avant de continuer.
 
 ### Étape 3 : 3 analyses parallèles via Task tool
 
@@ -91,23 +90,27 @@ Chaque Task reçoit en paramètres : **chemins de fichiers** (pas le contenu), d
 
 > Lis les fichiers `[chemins]`. Techno `[X]`. Lis aussi les guidelines (`react-guidelines.md` ou `godot-guidelines.md`) — **inclus le token dans ton rapport**.
 >
-> Applique les **Principes d'analyse** d'Esquie (cf. agent refactor : scope = symboles touchés, exception duplication, iso-fonctionnalité + minimalisme).
+> **Principes (filtre grossier)** : (1) **Scope** = un finding doit porter sur un symbole dont au moins une ligne apparaît dans le diff ; (2) **Exception duplication** : si du code ajouté duplique du code existant, autorisé à toucher l'endroit préexistant ; (3) **Iso-fonctionnalité + minimalisme** : 100% du comportement préservé, code plus court OU strictement plus lisible. Doute = remonter — Esquie filtrera finement.
 >
 > Vérifie le respect de chaque section des guidelines sur les symboles touchés par le diff `[diff]`. Pour chaque violation : `fichier:ligne`, section guideline, correction. **Suggestions 💡 only.**
 
 #### Task 2 : "DRY & Dead Code"
 
-> Lis les fichiers `[chemins]`. Diff : `[diff]`. Applique les **Principes d'analyse** d'Esquie.
+> Lis les fichiers `[chemins]`. Diff : `[diff]`.
+>
+> **Principes (filtre grossier)** : (1) **Scope** = symbole avec ≥1 ligne dans le diff ; (2) **Exception duplication** : autorisé à toucher l'endroit préexistant si factorisation ; (3) **Iso-fonctionnalité + minimalisme** : 100% comportement préservé, code plus court OU plus lisible. Doute = remonter — Esquie filtrera finement.
 >
 > Cherche sur les symboles touchés :
-> 1. **Code dupliqué** : symboles ajoutés/modifiés similaires à du code existant (exception duplication autorise à toucher l'endroit préexistant pour factoriser)
+> 1. **Code dupliqué** : symboles ajoutés/modifiés similaires à du code existant
 > 2. **Dead code introduit par la PR** : imports/variables/fonctions/paramètres ajoutés non utilisés, conditions toujours vraies/fausses
 >
 > Pour chaque finding : `fichier:ligne`, description, transformation. 💡 only.
 
 #### Task 3 : "Simplify"
 
-> Lis les fichiers `[chemins]`. Diff : `[diff]`. Applique les **Principes d'analyse** d'Esquie.
+> Lis les fichiers `[chemins]`. Diff : `[diff]`.
+>
+> **Principes (filtre grossier)** : (1) **Scope** = symbole avec ≥1 ligne dans le diff ; (2) **Exception duplication** : autorisé à toucher l'endroit préexistant si factorisation ; (3) **Iso-fonctionnalité + minimalisme** : 100% comportement préservé, code plus court OU plus lisible. Doute = remonter — Esquie filtrera finement.
 >
 > Cherche sur les symboles touchés :
 > 1. **Logique** : conditions imbriquées, early returns manqués, ternaires complexes, chaînes if/else
@@ -116,7 +119,9 @@ Chaque Task reçoit en paramètres : **chemins de fichiers** (pas le contenu), d
 >
 > Pour chaque finding : `fichier:ligne`, description, transformation. 💡 only.
 
-### Étape 4 : Agrégation et catégorisation
+### Étape 4 : Filtrage + agrégation (Esquie, arbitrage final)
+
+**Attendre les résultats des 3 Tasks. Les sub-tasks ont fait un filtre grossier ; Esquie applique maintenant les Principes COMPLETS et les garde-fous ci-dessous comme arbitrage final** :
 
 1. **Filtre de scope (mécanique)** : pour chaque finding, vérifier que `fichier:ligne` appartient à un symbole avec au moins une ligne dans le diff, OU explicitement tagué "duplication". Rejeter silencieusement les autres.
 2. **Déduplication** : si 2 tasks remontent le même problème, garder un seul.

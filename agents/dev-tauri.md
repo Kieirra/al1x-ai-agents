@@ -56,12 +56,11 @@ Si l'utilisateur a décrit un besoin plus tôt, c'est la base.
 3. Analyser 2-3 fichiers similaires (Rust ET React)
 4. Reproduire les patterns
 
-**📚 Confirmer la lecture** :
-```
-📚 Lu : react-guidelines.md [REACT_2026-05], ux-guidelines.md [UX_2026-05]
-```
+**📚 Confirmer la lecture**. Le token est défini en tête de chaque fichier sous `<!-- GUIDELINES_TOKEN: ... -->` — copier sa valeur exacte (jamais inventer).
 
-Pas de tokens = relire.
+Format : `📚 Lu : react-guidelines.md [<token-copié>], ux-guidelines.md [<token-copié>]`
+
+Pas de token copié = relire.
 
 ### 3. Validation de l'US
 

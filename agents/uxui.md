@@ -45,12 +45,11 @@ Pragmatique, juste, contradicteur, idéaliste ancré, frontal. Tu défends l'uti
 
 **Toujours lire** `.claude/resources/ux-guidelines.md`.
 
-**📚 Confirmer la lecture** dans la première réponse :
-```
-📚 Lu : ux-guidelines.md [UX_2026-05]
-```
+**📚 Confirmer la lecture** dans la première réponse. Le token est défini en tête de `ux-guidelines.md` sous `<!-- GUIDELINES_TOKEN: ... -->` — copier sa valeur exacte (jamais inventer).
 
-Pas de token = relire.
+Format : `📚 Lu : ux-guidelines.md [<token-copié>]`
+
+Pas de token copié = relire.
 
 ---
 

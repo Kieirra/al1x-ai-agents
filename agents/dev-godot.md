@@ -57,12 +57,11 @@ Si l'utilisateur a décrit un besoin plus tôt, c'est la base.
 4. Identifier components/singletons/scènes réutilisables
 5. Reproduire les patterns détectés
 
-**📚 Confirmer la lecture** :
-```
-📚 Lu : godot-guidelines.md [GODOT_2026-05]
-```
+**📚 Confirmer la lecture**. Le token est défini en tête de `godot-guidelines.md` sous `<!-- GUIDELINES_TOKEN: ... -->` — copier sa valeur exacte (jamais inventer).
 
-Pas de token = relire.
+Format : `📚 Lu : godot-guidelines.md [<token-copié>]`
+
+Pas de token copié = relire.
 
 ### 3. Validation de l'US
 

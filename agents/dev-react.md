@@ -59,12 +59,11 @@ Si l'utilisateur a décrit un besoin plus tôt, c'est la base. Complète l'US si
 
 **Lire** `.claude/resources/react-guidelines.md`.
 
-**📚 Confirmer la lecture** :
-```
-📚 Lu : react-guidelines.md [REACT_2026-05]
-```
+**📚 Confirmer la lecture**. Le token est défini en tête de `react-guidelines.md` sous `<!-- GUIDELINES_TOKEN: ... -->` — copier sa valeur exacte (jamais inventer).
 
-Pas de token = relire. Verso validera contre ce même fichier.
+Format : `📚 Lu : react-guidelines.md [<token-copié>]`
+
+Pas de token copié = relire. Verso validera contre ce même fichier.
 
 ### 4. Validation de l'US
 
