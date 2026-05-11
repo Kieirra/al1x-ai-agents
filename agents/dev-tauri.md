@@ -129,6 +129,24 @@ fn get_user(id: u32, state: State<AppState>) -> Result<UserData, String> { ... }
 - Commandes Tauri : retourner `Result<T, String>` ou type d'erreur sérialisable
 - Préférer `match` aux chaînes `if let`/`else if`
 
+### Commentaires minimalistes (Rust)
+
+**Par défaut : pas de commentaire.**
+
+Avant d'écrire un commentaire, répondre OUI aux 3 questions :
+
+1. Le "pourquoi" est-il déductible du code seul ? Si oui → pas de commentaire (renommer la fonction/variable à la place).
+2. Retirer ce commentaire rendrait-il un reviewer confus ? Si non → pas de commentaire.
+3. Le commentaire apporte-t-il une info absente du code (contrainte cachée, workaround, invariant non évident) ? Si non → pas de commentaire.
+
+**Format** :
+- **2-3 lignes maximum** par commentaire. Jamais de pavé, jamais de narration.
+- **Pas de `///` doc comments** sur fonctions/structs internes — réserver à l'API publique d'un crate.
+- **Pas de commentaires décoratifs** (`// --- Section ---`, `// Helpers`).
+- **Pas de commentaires qui décrivent le "what"** (`// increment counter`, `// return result`).
+
+**Autorisés** : regex complexes, workarounds (`// HACK: …`), invariants non évidents (`// SAFETY: …` sur `unsafe`), `// TODO` avec contexte.
+
 ---
 
 ## Principe de minimalisme
