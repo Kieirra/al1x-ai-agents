@@ -1,12 +1,17 @@
-<!-- GUIDELINES_TOKEN: UX_2026-05 -->
+<!-- GUIDELINES_TOKEN: UX_2026-06 -->
 
 # UX/UI Guidelines — Référence pour la rédaction de User Stories
 
-> **Preuve de lecture obligatoire** : tout agent qui charge ce fichier DOIT inclure le token `UX_2026-05` dans son premier message utilisateur (format : `📚 Lu : ux-guidelines.md [UX_2026-05]`). Sans token = lecture non confirmée.
+> **Preuve de lecture obligatoire** : tout agent qui charge ce fichier DOIT inclure le token `UX_2026-06` dans son premier message utilisateur (format : `📚 Lu : ux-guidelines.md [UX_2026-06]`). Sans token = lecture non confirmée.
 
-Ce fichier contient les frameworks UX/UI à appliquer lors de la spécification d'interfaces. Il est lu par Renoir (uxui) pour produire wireframes ASCII et analyses BMAP/B.I.A.S.
+Ce fichier contient les frameworks UX/UI à appliquer lors de la spécification d'interfaces. Il est lu par Renoir (uxui) et s'organise en deux parties :
+
+- **Partie UX — Comportement** : BMAP, B.I.A.S., Psych, Journey Mapping. L'utilisateur comprend-il, agit-il, en ressort-il positif ?
+- **Partie UI — C.L.E.A.R.** : Copywriting, Layout, Emphasis, Accessibility, Reward. L'écran est-il clair, son but immanquable, accessible, gratifiant ?
 
 ---
+
+# PARTIE UX — Comportement
 
 ## Quick Check (à valider pour chaque écran/interaction)
 
@@ -202,3 +207,91 @@ Le cerveau évalue une expérience principalement sur :
 - [ ] **Defaults** : les valeurs par défaut sont-elles dans l'intérêt de l'utilisateur ?
 - [ ] **Complétion** : l'utilisateur peut-il terminer et quitter proprement ?
 - [ ] **Contrôle** : l'utilisateur contrôle-t-il ce qu'il reçoit et quand ?
+
+---
+
+# PARTIE UI — Framework C.L.E.A.R.
+
+Grille d'évaluation visuelle d'un écran, en 5 piliers. Chaque pilier se note de 0 à 5 (scorecard) : on améliore d'abord le pilier le plus faible.
+
+> **Aesthetic usability** : une interface belle et cohérente paraît plus simple à utiliser. Les utilisateurs lui pardonnent davantage les petits défauts.
+
+## C — Copywriting : dire pourquoi s'en soucier
+
+Le texte doit répondre à : « Why should I care, right now? »
+
+**Erreurs courantes** : texte de plus de 2 phrases · libellé générique (« OK » au lieu de « Enregistrer ») · contenu inutile ou dupliqué.
+
+**Leviers** :
+1. **WIIFM** (*What's in it for me?*) : le bénéfice utilisateur doit être évident en 1-2 secondes, sinon réécrire
+2. **Réassurer** au moment du doute : « Modifiable plus tard », « Sans engagement »
+3. **Mots spécifiques** : verbes d'action + résultats concrets, jamais de vague
+4. **Parler comme un humain** : si la phrase sonne faux à voix haute, la réécrire
+
+**Tests** :
+- **Eraser test** : effacer un mot ou une phrase — si rien ne change, supprimer
+- **Copy Swap test** : si un concurrent peut utiliser le même texte tel quel, c'est trop vague
+
+## L — Layout : rendre la structure compréhensible
+
+Le cerveau groupe l'information avant de la lire (Gestalt). 6 principes :
+
+| Principe | Règle |
+|----------|-------|
+| **Similarité** | Même rôle = même apparence. Styles et tailles standardisés, minimum de variantes |
+| **Proximité** | Espacement serré dans un groupe, large entre groupes. Labels collés à leurs valeurs (chunking) |
+| **Simplicité** | Tout style doit porter du sens. Une seule action principale claire par zone |
+| **Alignement** | Une grille, des bords gauches alignés, espacements multiples de 4px |
+| **Continuité** | Chemin de scan évident (haut-gauche → bas, pattern en F). Pas de zig-zag |
+| **Common region** | Sections/cards pour grouper. Fonds subtils avant bordures. max-width sur les layouts larges |
+
+**Erreurs courantes** : espacements incohérents (partir de « trop de padding » puis ajuster) · abus de bordures (préférer des fonds de conteneur subtils) · contenu entassé (supprimer ou révéler progressivement).
+
+## E — Emphasis : rendre l'objectif immanquable
+
+Le Layout rend l'écran *compréhensible* ; l'Emphasis rend son but *immanquable*. La hiérarchie est **relative** : amplifier l'élément principal ET atténuer ce qui le concurrence.
+
+**Test du foggy glass** : si l'écran était flouté, l'objectif principal resterait-il identifiable ?
+
+**6 dials** : Size · Color · Space · Placement · Visualization (montrer plutôt que dire : progress bar, icône, graphe) · Motion (renforce le but de l'écran, jamais décoratif).
+
+**Erreurs courantes** :
+- **Wrong dial** : changer la couleur quand le vrai problème est le placement ou l'espace. Diagnostiquer d'abord : qu'est-ce qui concurrence l'attention ?
+- **Weak dial** : tout ajuster un peu, rien ne ressort. Peu de changements, mais francs
+- **Screaming dial** : tout amplifier provoque le rejet (reactance). La hiérarchie vient surtout de ce qu'on atténue
+
+> Von Restorff : un élément nettement différent de ses voisins est repéré plus vite et mémorisé. Si tout crie, rien ne ressort.
+
+## A — Accessibility : concevoir pour tous
+
+Pas une affaire de conformité : l'UI doit marcher pour quelqu'un de fatigué, pressé, à une main — limitations permanentes, temporaires ou situationnelles.
+
+**3 principes** :
+1. **Visible sans chercher** : l'action principale se repère sans scroll ni fouille
+2. **Opérable sans précision** : cibles larges, atteignables au pouce
+3. **Actionnable sans deviner** : un bouton ressemble à un bouton
+
+**Erreurs courantes** : cibles petites ou serrées · contraste faible · sens porté par la couleur seule · actions cachées sans indice · trop de patterns différents sur un écran.
+
+**Prévention d'erreur** : toujours un undo ; confirmation pour les actions destructives irréversibles ; désactiver les choix impossibles plutôt que laisser échouer.
+
+## R — Reward : faire ressentir quelque chose
+
+Le reward est l'**issue émotionnelle** d'un écran — contextuel et proportionnel : le bon ressenti, au bon moment, à la bonne intensité. Trois besoins psychologiques (Reward Trifecta, dérivé de la Self-Determination Theory) :
+
+| Besoin | Ressenti | Exemples UI |
+|--------|----------|-------------|
+| 🛡️ **Control** | « Je suis en sécurité, je sais ce qui se passe, je peux corriger » | Statuts, ETA, confirmations, undo/cancel |
+| 🪴 **Competence** | « Je progresse, j'y arrive » | Done states, progress bars, deltas (+/−), personal bests |
+| 🤝 **Recognition** | « Mon travail est vu » | Badges, réponses, "merged"/"accepted", accueil personnalisé |
+
+**Test des 30 secondes** : l'écran répond-il à au moins une des trois questions silencieuses — « suis-je en sécurité ? », « est-ce que je progresse ? », « suis-je reconnu ? » Sinon il est émotionnellement plat, même parfaitement utilisable.
+
+**Erreurs courantes** :
+- **Wrong reward** : féliciter un utilisateur anxieux — matcher l'émotion dominante (anxiété → Control, effort → Competence, fierté → Recognition)
+- **Shy reward** : le gain existe mais reste invisible — l'expliciter (« 1 h économisée », « Livré aujourd'hui »)
+- **Over-reward** : intensité disproportionnée — garder les célébrations pour les vrais jalons
+
+## Scorecard C.L.E.A.R.
+
+Noter chaque pilier de 0 à 5. Le but n'est pas la « bonne note » mais de prioriser (corriger le pilier le plus bas), d'aligner l'équipe et d'itérer (re-noter après changement). Question utile : « qu'est-ce qui en ferait un 5 ? »

@@ -33,7 +33,7 @@ Invocables avec `@nom` ou `/nom` dans Claude Code. Chaque orchestrateur lance de
 | `@qa` | **Clea** | QA lead — tests spec-driven (should/when + Given/When/Then), stories Storybook, vérification visuelle Playwright, checklist tests manuels |
 | `@reviewer` | **Verso** | Code guardian — 4 reviews parallèles (conventions, bugs, sécurité, story compliance) |
 | `@refactor` | **Esquie** | Refactoring analyst — DRY, dead code, simplification, nommage, guidelines |
-| `@uxui` | **Renoir** | UX/UI architect — audits, brainstorms, wireframes ASCII, frameworks BMAP & B.I.A.S. |
+| `@uxui` | **Renoir** | UX/UI architect — audits, brainstorms, wireframes ASCII, frameworks UX (BMAP, B.I.A.S.) & UI (C.L.E.A.R.) |
 
 ### Sous-agents
 

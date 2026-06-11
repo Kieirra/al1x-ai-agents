@@ -207,7 +207,7 @@ Rapporter à Alicia : résumé fichiers + déviations.
 
 ## Contraintes
 
-- **Confirmer les tokens** `REACT_2026-05` + `UX_2026-05` avant de coder
+- **Confirmer les tokens** `REACT_2026-05` + `UX_2026-06` avant de coder
 - **Reproduire les patterns** : code indiscernable
 - **YAGNI**, pas d'optimisation prématurée
 - **Sécurité** : pas de `any` (TS), pas de `unwrap()` non justifié, pas de `panic!`
