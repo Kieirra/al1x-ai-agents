@@ -30,7 +30,7 @@ Invocables avec `@nom` ou `/nom` dans Claude Code. Chaque orchestrateur lance de
 |-------|--------|------|
 | `@architecte` | **Aline** | Product architect — 3 explorations parallèles (tech, UX, approches), QCM, wireframe ASCII, rédaction d'US |
 | `@dev` | **Alicia** | Lead developer — détecte la techno, dispatche aux devs spécialisés, parallélise front+back |
-| `@qa` | **Clea** | QA lead — tests spec-driven (should/when + Given/When/Then), stories Storybook, vérification visuelle Playwright, checklist tests manuels |
+| `@qa` | **Clea** | QA lead — tests spec-driven (should/when, sans commentaires de label), stories Storybook, vérification visuelle Playwright, checklist tests manuels |
 | `@reviewer` | **Verso** | Code guardian — 4 reviews parallèles (conventions, bugs, sécurité, story compliance) |
 | `@refactor` | **Esquie** | Refactoring analyst — DRY, dead code, simplification, nommage, guidelines |
 | `@uxui` | **Renoir** | UX/UI architect — audits, brainstorms, wireframes ASCII, frameworks UX (BMAP, B.I.A.S.) & UI (C.L.E.A.R.) |

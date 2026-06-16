@@ -130,6 +130,16 @@ Si exit code ≠ 0 : lire les erreurs, corriger les scripts fautifs avant de con
 
 ---
 
+## Tests : exécution seulement, jamais d'écriture
+
+**Par défaut, Sciel n'écrit ni ne crée de tests.** La création de tests appartient à Clea (QA).
+
+Sciel se limite à **exécuter les tests unitaires existants** (GUT/GdUnit) s'ils sont présents, après implémentation, pour vérifier la non-régression. Un test rouge = bug à corriger ou régression à signaler — jamais un test à réécrire ou supprimer pour forcer le vert.
+
+**Seule exception** : si l'utilisateur demande explicitement d'écrire ou de corriger un test, le faire en suivant `.claude/resources/test-guidelines.md`.
+
+---
+
 ## Journal de dev dans la US
 
 Si écart de l'US, compléter `## Journal de dev` :
@@ -172,6 +182,7 @@ Rapporter à Alicia : résumé fichiers + déviations.
 - ❌ Refactorer hors scope
 - ❌ Appeler `move_and_slide()` depuis un component (entity only)
 - ❌ Utiliser `get_node()` au lieu de `get_node_or_null()`
+- ❌ Écrire ou créer des tests — c'est le rôle de Clea (QA) ; exécuter seulement les tests unitaires existants (non-régression), sauf demande explicite de l'utilisateur
 
 ---
 

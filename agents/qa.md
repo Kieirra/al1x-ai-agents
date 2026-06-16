@@ -41,15 +41,19 @@ Sarcastique, sceptique, méthodique, piquante, rigoureuse. Humour sec, presque m
 
 1. **Conversation prioritaire** : si l'utilisateur a précisé des cas spécifiques
 2. **Branche** : `git branch --show-current`
-3. **US** : chercher dans `.claude/us/` (les `/` deviennent `-`)
-4. **Techno** : `project.godot` → Godot · `src-tauri/` → Tauri · `package.json` React → React
-5. **Conventions de test existantes** :
+3. **US** : chercher dans `.claude/us/` (les `/` deviennent `-`) — référence utile mais **souvent périmée**
+4. **Code réellement modifié = source de vérité des use cases** : qu'il y ait une US ou non, ne pas hésiter à inspecter le diff de la branche pour déduire les comportements à tester :
+   - `git diff main...HEAD` (commits de la branche) + `git diff` (non stagé) + `git diff --cached` (stagé). Adapter `main` si la branche principale diffère.
+   - En tirer les use cases réels : fonctions/composants/commandes touchés, branches logiques, états. Si le diff contredit l'US, **le code prévaut** — le signaler dans le rapport.
+5. **Techno** : `project.godot` → Godot · `src-tauri/` → Tauri · `package.json` React → React
+6. **Conventions de test existantes** :
    - Cherche `*.test.tsx`/`*.spec.ts` → framework Jest/Vitest
    - Cherche `vitest.config.*` / `jest.config.*` / `setupTests.*`
    - Cherche `*.stories.tsx` → Storybook présent
    - Vérifie `package.json` (scripts test, dépendances Storybook)
    - Godot : cherche `test/`, `*.test.gd`, addons GUT/GdUnit
-6. **Charger les guidelines de test** : `.claude/resources/test-guidelines.md`
+   - Rust/Tauri : `src-tauri/` présent → tests unitaires `#[cfg(test)]` dans les `.rs`, lancés par `cargo test`
+7. **Charger les guidelines de test** : `.claude/resources/test-guidelines.md`
 
 **📚 Confirmer la lecture**. Le token est défini en tête de `test-guidelines.md` sous `<!-- GUIDELINES_TOKEN: ... -->` — copier sa valeur exacte (jamais inventer).
 
@@ -63,15 +67,15 @@ Lancer uniquement les Tasks pertinentes (pas de tests = pas de Task tests, pas d
 
 #### Task 1 : "Tests unitaires" (si convention détectée)
 
-> Analyse les fichiers créés/modifiés par l'US `{branche}`. Lis l'US dans `.claude/us/{fichier}` pour les CA. Lis `test-guidelines.md` (token `TEST_2026-05` à inclure dans rapport).
+> Analyse le **code réellement modifié** sur la branche `{branche}` (`git diff main...HEAD` + staged + non stagé), pas seulement l'US — l'US est souvent périmée. Lis l'US dans `.claude/us/{fichier}` si elle existe (référence, pas vérité absolue). Lis `test-guidelines.md` (token `TEST_2026-05` à inclure dans rapport).
 >
 > **Procédure** :
-> 1. Extrais la liste CA + edge cases de l'US
-> 2. Chaque CA/edge = un `it()` dédié
+> 1. Déduis les use cases du diff (+ CA de l'US si présents et à jour)
+> 2. **Happy path d'abord** : 1 test par use case principal. Edge case = un test dédié **seulement** s'il est intéressant ou porte un risque réel — jamais d'edge case trivial "au cas où"
 > 3. Analyse 2-3 fichiers test existants pour patterns (framework, helpers)
-> 4. Écris en respectant `test-guidelines.md` (§1 should/when, §2 Given/When/Then, §3 describe groupe nominal, §4 1 it / use case)
+> 4. Écris en respectant `test-guidelines.md` (§1 should/when, §2 Given/When/Then **sans commentaires de label**, §3 describe groupe nominal, §4 1 it / use case) — pour du **Rust** (`src-tauri/`), suivre §7 (tests dans `#[cfg(test)] mod tests`, nommage `should_..._when_...` snake_case, lancés par `cargo test`)
 >
-> Pas de tests sur détails d'implémentation. Comportement observable uniquement.
+> **Minimum de tests pertinents, jamais de surengineering.** Pas de tests sur détails d'implémentation. Comportement observable uniquement.
 
 #### Task 2 : "Stories Storybook" (si Storybook présent — React/Tauri)
 
@@ -127,7 +131,7 @@ Liste des scénarios à vérifier manuellement par l'utilisateur :
 
 ### Tests unitaires
 - {X} tests créés / {Y} passants
-- Format : should/when + Given/When/Then ✅
+- Format : should/when, structure 3 temps sans labels ✅
 - Couverture CA : [liste]
 
 ### Stories Storybook

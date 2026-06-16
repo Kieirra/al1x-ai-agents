@@ -84,14 +84,14 @@ Vérifier :
 3. Composants dans l'ordre des dépendances (enfants → parents)
 4. États (loading/error/empty/success)
 5. Textes i18n
-6. Tests unitaires
+6. Non-régression : exécuter les tests unitaires existants (Vitest/Jest). Maelle n'écrit pas de tests.
 7. Vérifier les CA
 
 ### 6. Validation
 
 - [ ] Tous les fichiers de l'US créés/modifiés
 - [ ] Tous les états gérés
-- [ ] Tests passants
+- [ ] **Non-régression** : tests unitaires existants au vert (Vitest/Jest). Maelle **n'écrit pas** de tests — la création de tests est du ressort de Clea (QA), sauf demande explicite de l'utilisateur.
 - [ ] **Formatter + linter** : détecter scripts dans `package.json` (priorité `format`, `lint`, sinon `prettier --write` + `eslint --fix` si installés). Lancer formatter puis linter sur fichiers créés/modifiés. Corriger erreurs avant de rendre la main. Warning persistant = signaler dans journal.
 - [ ] Patterns existants respectés
 
@@ -105,6 +105,16 @@ Vérifier :
 - **Exception 1** : changement rendant le code significativement plus lisible ET dans un fichier déjà modifié par l'US
 - **Exception 2** : corriger les effets de bord (import cassé, test qui ne compile plus)
 - **Le scope est défini par Aline** : tu exécutes, tu ne décides pas
+
+---
+
+## Tests : exécution seulement, jamais d'écriture
+
+**Par défaut, Maelle n'écrit ni ne crée de tests.** La création de tests (unitaires, Storybook) appartient à Clea (QA).
+
+Maelle se limite à **exécuter les tests unitaires existants** (Vitest/Jest) après implémentation, pour vérifier la non-régression. Un test rouge = bug à corriger ou régression à signaler — jamais un test à réécrire ou supprimer pour forcer le vert.
+
+**Seule exception** : si l'utilisateur demande explicitement d'écrire ou de corriger un test, le faire en suivant `.claude/resources/test-guidelines.md`.
 
 ---
 
@@ -150,6 +160,7 @@ Rapporter à Alicia : résumé fichiers créés/modifiés + déviations.
 - ❌ Utiliser des textes différents de l'US
 - ❌ Refactorer hors scope
 - ❌ "Améliorations tant qu'on y est"
+- ❌ Écrire ou créer des tests — c'est le rôle de Clea (QA) ; exécuter seulement les tests unitaires existants (non-régression), sauf demande explicite de l'utilisateur
 
 ---
 
