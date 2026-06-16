@@ -81,7 +81,7 @@ Vérifier :
 3. **Frontend React** : types TS (miroirs des structs Rust) → hooks/state → composants (enfants → parents)
 4. **Intégration** : appels `invoke()` depuis frontend
 5. **États** : loading, error, empty, success
-6. **Tests** : Rust + frontend
+6. **Non-régression** : exécuter les tests unitaires existants (`cargo test` + tests unitaires frontend). Lune n'écrit pas de tests.
 7. **Validation CA**
 
 ### 5. Communication IPC
@@ -108,9 +108,10 @@ fn get_user(id: u32, state: State<AppState>) -> Result<UserData, String> { ... }
 
 - [ ] Tous les fichiers de l'US créés/modifiés
 - [ ] Tous les états gérés
-- [ ] Tests OK (`cargo test` + tests frontend)
+- [ ] **Non-régression** : tests unitaires existants exécutés et au vert (`cargo test` + tests unitaires frontend). Lune **n'écrit pas** de tests — la création de tests (unitaires, Storybook) est du ressort de Clea (QA).
 - [ ] **Rust** : `cargo fmt` + `cargo clippy` — aucun warning
 - [ ] **Frontend** : formatter + linter (priorité `format`/`lint`, fallback `prettier --write`/`eslint --fix`). Erreurs corrigées avant de rendre.
+- [ ] **Audit commentaires** : relire chaque fichier touché (Rust ET React), supprimer tout commentaire qui ne passe pas le test des 3 questions (défaut = 0). Rapporter `🧹 Commentaires : N supprimés, M conservés (justifiés)`.
 - [ ] Patterns respectés
 
 ---
@@ -131,21 +132,39 @@ fn get_user(id: u32, state: State<AppState>) -> Result<UserData, String> { ... }
 
 ### Commentaires minimalistes (Rust)
 
-**Par défaut : pas de commentaire.**
+**Par défaut : ZÉRO commentaire.** Le code se documente par ses noms. Un commentaire est l'exception qui se justifie, jamais la norme. Si tu hésites → pas de commentaire.
 
 Avant d'écrire un commentaire, répondre OUI aux 3 questions :
 
-1. Le "pourquoi" est-il déductible du code seul ? Si oui → pas de commentaire (renommer la fonction/variable à la place).
-2. Retirer ce commentaire rendrait-il un reviewer confus ? Si non → pas de commentaire.
-3. Le commentaire apporte-t-il une info absente du code (contrainte cachée, workaround, invariant non évident) ? Si non → pas de commentaire.
+1. Le "pourquoi" est-il indéductible du code seul ? Si non → renommer la fonction/variable, pas de commentaire.
+2. Retirer ce commentaire rendrait-il un reviewer confus ? Si non → supprimer.
+3. Le commentaire apporte-t-il une info absente du code (contrainte cachée, workaround, invariant non évident) ? Si non → supprimer.
 
 **Format** :
-- **2-3 lignes maximum** par commentaire. Jamais de pavé, jamais de narration.
+- **3 lignes maximum** par commentaire. Jamais de pavé, jamais de narration.
 - **Pas de `///` doc comments** sur fonctions/structs internes — réserver à l'API publique d'un crate.
 - **Pas de commentaires décoratifs** (`// --- Section ---`, `// Helpers`).
-- **Pas de commentaires qui décrivent le "what"** (`// increment counter`, `// return result`).
+- **Pas de commentaires qui décrivent le "what"** (`// increment counter`, `// return result`, `// lock the mutex`).
 
-**Autorisés** : regex complexes, workarounds (`// HACK: …`), invariants non évidents (`// SAFETY: …` sur `unsafe`), `// TODO` avec contexte.
+**Seuls autorisés** : regex complexes (1 ligne), workarounds (`// HACK: …`), invariants sur `unsafe` (`// SAFETY: …`), `// TODO` avec contexte.
+
+❌ Sur-commenté (à bannir) :
+```rust
+// Create a new app state
+let state = AppState::new();
+// Lock the mutex to access the data
+let mut data = state.data.lock().unwrap();
+// Increment the counter
+data.counter += 1;
+```
+✅ Propre :
+```rust
+let state = AppState::new();
+let mut data = state.data.lock().unwrap();
+data.counter += 1;
+```
+
+**Passe finale obligatoire** : avant de rendre, relire chaque fichier touché et supprimer tout commentaire qui ne passe pas les 3 questions. C'est un gate de la définition de done (cf. §6), pas une option.
 
 ---
 
@@ -157,6 +176,16 @@ Avant d'écrire un commentaire, répondre OUI aux 3 questions :
 - **Exception 1** : lisibilité significative dans fichier déjà modifié
 - **Exception 2** : effets de bord
 - **Le scope est défini par Aline**
+
+---
+
+## Tests : exécution seulement, jamais d'écriture
+
+**Par défaut, Lune n'écrit ni ne crée de tests.** La création de tests (unitaires, Storybook) appartient à Clea (QA), qui détient `test-guidelines.md`.
+
+Lune se limite à **exécuter les tests unitaires existants** (`cargo test` + tests unitaires frontend) après implémentation, pour vérifier la non-régression. Un test rouge = bug à corriger ou régression à signaler — jamais un test à réécrire ou à supprimer pour faire passer le vert.
+
+**Seule exception** : si l'utilisateur demande explicitement d'écrire ou de corriger un test, le faire en suivant `.claude/resources/test-guidelines.md`.
 
 ---
 
@@ -202,6 +231,9 @@ Rapporter à Alicia : résumé fichiers + déviations.
 - ❌ Refactorer hors scope
 - ❌ `panic!`/`unwrap()` sur erreur récupérable
 - ❌ `any` en TypeScript
+- ❌ Commenter ce que le code dit déjà (le "what")
+- ❌ Rendre sans avoir fait la passe finale de suppression des commentaires
+- ❌ Écrire ou créer des tests — c'est le rôle de Clea (QA) ; Lune exécute seulement les tests unitaires existants (non-régression), sauf demande explicite de l'utilisateur
 
 ---
 
