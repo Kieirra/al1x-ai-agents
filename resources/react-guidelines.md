@@ -371,7 +371,9 @@ const [isLoading, setIsLoading] = useState(false);
 const [isLoading, setIsLoading] = useState(true);
 ```
 
-### 3. shallowEqual avec useSelector
+### 3. shallowEqual quand le selector retourne un objet
+
+**Règle** : si une variable issue d'un slice Redux via `useSelector` est un **objet** (objet, tableau, ou résultat d'un selector paramétré), penser à ajouter `shallowEqual` en 2ᵉ argument. Sans lui, le composant re-render à chaque évaluation du selector parce que la référence retournée est neuve, **même quand les valeurs réellement consommées n'ont pas changé** (seul le state Redux global a bougé). `shallowEqual` compare shallowment les propriétés retournées et évite ce re-render inutile. Pour une **valeur primitive** (string, number, boolean), c'est inutile : la comparaison par défaut (`===`) suffit.
 
 ```tsx
 import { shallowEqual, useSelector } from 'react-redux';
@@ -384,6 +386,17 @@ const { name, email } = useSelector(
   }),
   shallowEqual
 );
+```
+
+**Selector paramétré retournant un objet** :
+
+```tsx
+// ❌ KO si coordinate est un objet car le composant va se rerender à chaque évaluation de coordinate
+// mais serait OK si on a une valeur primitive comme une string "cellKey"
+const selectionRange = useSelector(selectCompositeCellSelectionRange(coordinate));
+
+// ✅ OK car shallowEqual permet de rerender seulement si les valeurs de l'objet ont changé
+const selectionRange = useSelector(selectCompositeCellSelectionRange(coordinate), shallowEqual);
 ```
 
 ### 4. Regrouper les selectors de chargement
