@@ -136,7 +136,7 @@ interface ServiceItem {
 type Item = ProductItem | ServiceItem;
 
 // Le switch/if sur `kind` suffit, TypeScript narrow automatiquement
-const getLabel = (item: Item): string => {
+const getLabel = (item: Item) => {
   switch (item.kind) {
     case 'product': return `${item.price}€`;  // item est ProductItem
     case 'service': return `${item.duration}h`; // item est ServiceItem
@@ -167,6 +167,24 @@ interface User {
 
 const fetchUser = (id: string, options?: FetchOptions) => { ... };
 ```
+
+### Inférence du type de retour : typer les paramètres, pas le retour
+
+**Typer les paramètres** (TypeScript ne peut pas les deviner), mais **laisser l'inférence déterminer le type de retour**. Ne jamais forcer une annotation de retour que TypeScript sait déjà déduire : c'est redondant, et il faut la maintenir à la main à chaque changement d'implémentation.
+
+```ts
+// ❌ Mauvais : type de retour redondant, TS le déduit déjà
+const getFullName = (user: User): string => `${user.firstName} ${user.lastName}`;
+const useUsers = (): UseUsersResult => { ... };
+
+// ✅ Bon : paramètres typés, retour inféré
+const getFullName = (user: User) => `${user.firstName} ${user.lastName}`;
+const useUsers = () => { ... };
+```
+
+**Exceptions** — n'annoter le retour que quand l'inférence ne peut pas s'appliquer ou qu'on veut verrouiller un contrat :
+- **Type predicates** (`item is Product`) : obligatoire, TS ne peut pas les inférer.
+- Quand on veut volontairement élargir/contraindre le type retourné par rapport à l'inféré (ex: forcer un type d'interface publique plutôt que le type concret).
 
 ---
 

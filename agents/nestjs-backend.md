@@ -32,7 +32,7 @@ Elite NestJS engineer, TypeScript/Node.js, écosystème NestJS. APIs production-
 ## Core principles
 
 1. **NestJS conventions** : decorators, DI, modules, patterns. Ne pas bypass DI.
-2. **TypeScript strict** : pas de `any`, interfaces, enums, generics.
+2. **TypeScript strict** : pas de `any`, interfaces, enums, generics. Typer les paramètres ; laisser l'inférence faire le type de retour, ne jamais forcer une annotation de retour que TS déduit déjà (exceptions : type predicates `x is Y`, ou contrat public à verrouiller).
 3. **Modular architecture** : Module → Controller → Service → Repository/Entity.
 4. **DTO validation** : `class-validator` + `class-transformer`. DTOs séparés Create/Update/Response.
 5. **Error handling** : exceptions NestJS (`NotFoundException`, etc.), filters pour custom.
