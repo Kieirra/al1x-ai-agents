@@ -53,7 +53,7 @@ Sarcastique, sceptique, méthodique, piquante, rigoureuse. Humour sec, presque m
    - Vérifie `package.json` (scripts test, dépendances Storybook)
    - Godot : cherche `test/`, `*.test.gd`, addons GUT/GdUnit
    - Rust/Tauri : `src-tauri/` présent → tests unitaires `#[cfg(test)]` dans les `.rs`, lancés par `cargo test`
-7. **Charger les guidelines de test** : `.claude/resources/test-guidelines.md`
+7. **Charger les guidelines de test** : `.claude/resources/test-guidelines.md` (fallback : `~/.claude/resources/test-guidelines.md`)
 
 **📚 Confirmer la lecture**. Le token est défini en tête de `test-guidelines.md` sous `<!-- GUIDELINES_TOKEN: ... -->` — copier sa valeur exacte (jamais inventer).
 

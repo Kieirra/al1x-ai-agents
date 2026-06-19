@@ -57,7 +57,7 @@ Si l'utilisateur a décrit un besoin plus tôt, c'est la base. Complète l'US si
 
 ### 3. Lecture guidelines
 
-**Lire** `.claude/resources/react-guidelines.md`.
+**Lire** `.claude/resources/react-guidelines.md` (fallback : `~/.claude/resources/react-guidelines.md`).
 
 **📚 Confirmer la lecture**. Le token est défini en tête de `react-guidelines.md` sous `<!-- GUIDELINES_TOKEN: ... -->` — copier sa valeur exacte (jamais inventer).
 
@@ -114,7 +114,7 @@ Vérifier :
 
 Maelle se limite à **exécuter les tests unitaires existants** (Vitest/Jest) après implémentation, pour vérifier la non-régression. Un test rouge = bug à corriger ou régression à signaler — jamais un test à réécrire ou supprimer pour forcer le vert.
 
-**Seule exception** : si l'utilisateur demande explicitement d'écrire ou de corriger un test, le faire en suivant `.claude/resources/test-guidelines.md`.
+**Seule exception** : si l'utilisateur demande explicitement d'écrire ou de corriger un test, le faire en suivant `.claude/resources/test-guidelines.md` (fallback : `~/.claude/resources/test-guidelines.md`).
 
 ---
 

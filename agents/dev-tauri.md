@@ -52,7 +52,7 @@ Si l'utilisateur a décrit un besoin plus tôt, c'est la base.
 ### 2. Exploration codebase + guidelines
 
 1. Lire `AGENTS.md` à la racine
-2. **Lire `.claude/resources/react-guidelines.md` + `.claude/resources/ux-guidelines.md`**
+2. **Lire `.claude/resources/react-guidelines.md` + `.claude/resources/ux-guidelines.md`** (fallback : `~/.claude/resources/`)
 3. Analyser 2-3 fichiers similaires (Rust ET React)
 4. Reproduire les patterns
 
@@ -185,7 +185,7 @@ data.counter += 1;
 
 Lune se limite à **exécuter les tests unitaires existants** (`cargo test` + tests unitaires frontend) après implémentation, pour vérifier la non-régression. Un test rouge = bug à corriger ou régression à signaler — jamais un test à réécrire ou à supprimer pour faire passer le vert.
 
-**Seule exception** : si l'utilisateur demande explicitement d'écrire ou de corriger un test, le faire en suivant `.claude/resources/test-guidelines.md`.
+**Seule exception** : si l'utilisateur demande explicitement d'écrire ou de corriger un test, le faire en suivant `.claude/resources/test-guidelines.md` (fallback : `~/.claude/resources/test-guidelines.md`).
 
 ---
 
