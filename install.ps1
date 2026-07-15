@@ -216,10 +216,22 @@ function Invoke-LegacyClaudeMigration {
     if (-not (Test-Path $commandsDir)) { return }
 
     $removed = 0
+
+    # Commandes utilitaires historiques : suppression par nom connu.
     foreach ($name in $LegacyClaudeCommands) {
         $file = Join-Path $commandsDir "$name.md"
         if (Test-Path $file) {
             Remove-Item -LiteralPath $file -Force
+            $removed++
+        }
+    }
+
+    # Wrappers d'orchestrateurs generes par d'anciennes versions : detectes par
+    # leur contenu (reference a un fichier agent al1x), pour ne jamais toucher
+    # une commande personnelle sans rapport.
+    foreach ($item in (Get-ChildItem -LiteralPath $commandsDir -Filter *.md -File -ErrorAction SilentlyContinue)) {
+        if (Select-String -LiteralPath $item.FullName -Pattern '\.claude/agents/' -Quiet) {
+            Remove-Item -LiteralPath $item.FullName -Force
             $removed++
         }
     }

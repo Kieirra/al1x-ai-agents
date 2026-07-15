@@ -219,12 +219,25 @@ migrate_legacy_claude() {
     local commands_dir="$base_dir/commands"
     local removed=0
     local name
+    local item
 
     [ -d "$commands_dir" ] || return 0
 
+    # Commandes utilitaires historiques : suppression par nom connu.
     for name in $LEGACY_CLAUDE_COMMANDS; do
         if [ -f "$commands_dir/$name.md" ]; then
             rm -f "$commands_dir/$name.md"
+            removed=$((removed + 1))
+        fi
+    done
+
+    # Wrappers d'orchestrateurs générés par d'anciennes versions : détectés par
+    # leur contenu (référence à un fichier agent al1x), pour ne jamais toucher
+    # une commande personnelle sans rapport.
+    for item in "$commands_dir"/*.md; do
+        [ -f "$item" ] || continue
+        if grep -q '\.claude/agents/' "$item" 2>/dev/null; then
+            rm -f "$item"
             removed=$((removed + 1))
         fi
     done
