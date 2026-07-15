@@ -128,87 +128,6 @@ function Sync-Directory {
     Write-Ok "$Label : $count element(s) installe(s) dans $TargetDir"
 }
 
-function Set-CodexConfig {
-    param([string]$ConfigFile)
-
-    $dir = Split-Path -Parent $ConfigFile
-    New-Item -ItemType Directory -Path $dir -Force | Out-Null
-
-    if (-not (Test-Path $ConfigFile)) {
-        Set-Content -LiteralPath $ConfigFile -Value "[agents]`nmax_depth = 2`nmax_threads = 8" -Encoding utf8
-        Write-Ok "Configuration Codex creee : $ConfigFile"
-        return
-    }
-
-    $lines = @(Get-Content -LiteralPath $ConfigFile)
-    $hasAgents = $lines | Where-Object { $_ -match '^\[agents\]\s*$' }
-
-    $out = New-Object System.Collections.Generic.List[string]
-
-    if (-not $hasAgents) {
-        $out.Add("[agents]")
-        $out.Add("max_depth = 2")
-        $out.Add("max_threads = 8")
-        $out.Add("")
-        foreach ($l in $lines) { $out.Add($l) }
-    } else {
-        $inAgents = $false
-        $depthSeen = $false
-        $threadsSeen = $false
-
-        function Get-TomlValue {
-            param([string]$line)
-            $v = $line -replace '.*=', ''
-            $v = $v -replace '\s*#.*', ''
-            return $v.Trim()
-        }
-
-        for ($i = 0; $i -lt $lines.Count; $i++) {
-            $line = $lines[$i]
-
-            if ($line -match '^\[agents\]\s*$') {
-                $inAgents = $true
-                $out.Add($line)
-                continue
-            }
-
-            if ($line -match '^\[') {
-                if ($inAgents) {
-                    if (-not $depthSeen)   { $out.Add("max_depth = 2") }
-                    if (-not $threadsSeen) { $out.Add("max_threads = 8") }
-                }
-                $inAgents = $false
-                $out.Add($line)
-                continue
-            }
-
-            if ($inAgents -and $line -match '^\s*max_depth\s*=') {
-                $value = Get-TomlValue $line
-                if ([int]$value -lt 2) { $out.Add("max_depth = 2") } else { $out.Add($line) }
-                $depthSeen = $true
-                continue
-            }
-
-            if ($inAgents -and $line -match '^\s*max_threads\s*=') {
-                $value = Get-TomlValue $line
-                if ([int]$value -lt 8) { $out.Add("max_threads = 8") } else { $out.Add($line) }
-                $threadsSeen = $true
-                continue
-            }
-
-            $out.Add($line)
-        }
-
-        if ($inAgents) {
-            if (-not $depthSeen)   { $out.Add("max_depth = 2") }
-            if (-not $threadsSeen) { $out.Add("max_threads = 8") }
-        }
-    }
-
-    Set-Content -LiteralPath $ConfigFile -Value $out -Encoding utf8
-    Write-Ok "Configuration Codex synchronisee : max_depth>=2, max_threads>=8"
-}
-
 function Invoke-LegacyClaudeMigration {
     param([string]$BaseDir)
 
@@ -276,7 +195,6 @@ function Install-Codex {
     Sync-Directory (Join-Path $SourceRoot "codex/agents") (Join-Path $codexDir "agents") "Agents Codex"
     Sync-Directory (Join-Path $SourceRoot "codex/skills") $skillsDir "Skills Codex"
     Sync-Directory (Join-Path $SourceRoot "resources")    (Join-Path $codexDir "resources") "Ressources Codex"
-    Set-CodexConfig (Join-Path $codexDir "config.toml")
 }
 
 try {

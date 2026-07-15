@@ -45,7 +45,7 @@ $s = irm https://raw.githubusercontent.com/Kieirra/al1x-ai-agents/main/install.p
 & ([scriptblock]::Create($s)) -All -Local    # dans le projet courant
 ```
 
-`install.ps1` reproduit à l'identique le comportement de `install.sh` (mêmes plateformes, mêmes dossiers cibles, même fusion de `config.toml`).
+`install.ps1` reproduit à l'identique le comportement de `install.sh` (mêmes plateformes, mêmes dossiers cibles).
 
 | Plateforme | Global | Local |
 |---|---|---|
@@ -54,7 +54,7 @@ $s = irm https://raw.githubusercontent.com/Kieirra/al1x-ai-agents/main/install.p
 | Codex agents | `~/.codex/agents/` | `.codex/agents/` |
 | Codex skills | `~/.agents/skills/` | `.agents/skills/` |
 
-L'installation Codex garantit `agents.max_depth >= 2` et `agents.max_threads >= 8` sans réduire des valeurs plus élevées ni remplacer le reste de `config.toml`.
+L'installation ne modifie pas ton `~/.codex/config.toml`.
 
 Mise à jour : `/update-agents` dans Claude, `$update-agents` dans Codex, ou relancer l'installation `--all`.
 
@@ -77,7 +77,7 @@ Invocation directe :
 |---|---|
 | `/architecte`, `/dev`, `/qa`, `/reviewer`, `/refactor`, `/uxui` | `$architecte`, `$dev`, `$qa`, `$reviewer`, `$refactor`, `$uxui` |
 
-Les agents peuvent aussi être lancés comme sub-agents par leur nom. Dans Claude, les orchestrateurs disposent d'un fallback interne lorsqu'ils sont eux-mêmes sub-agents. Dans Codex, la profondeur `2` permet la délégation imbriquée.
+Les agents peuvent aussi être lancés comme sub-agents par leur nom. Les orchestrateurs disposent d'un fallback interne lorsqu'ils sont eux-mêmes sub-agents et ne peuvent pas déléguer.
 
 ### Spécialistes
 

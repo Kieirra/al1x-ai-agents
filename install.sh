@@ -138,82 +138,6 @@ sync_directory() {
     success "${label} : ${count} élément(s) installé(s) dans ${target_dir}"
 }
 
-ensure_codex_config() {
-    local config_file="$1"
-    local temp_file
-
-    mkdir -p "$(dirname "$config_file")"
-
-    if [ ! -f "$config_file" ]; then
-        cat > "$config_file" <<'EOF'
-[agents]
-max_depth = 2
-max_threads = 8
-EOF
-        success "Configuration Codex créée : ${config_file}"
-        return
-    fi
-
-    temp_file=$(mktemp)
-
-    if grep -Eq '^\[agents\][[:space:]]*$' "$config_file"; then
-        awk '
-            function emit_missing() {
-                if (!depth_seen) print "max_depth = 2"
-                if (!threads_seen) print "max_threads = 8"
-            }
-            BEGIN {
-                in_agents = 0
-                depth_seen = 0
-                threads_seen = 0
-            }
-            /^\[agents\][[:space:]]*$/ {
-                in_agents = 1
-                print
-                next
-            }
-            /^\[/ {
-                if (in_agents) emit_missing()
-                in_agents = 0
-                print
-                next
-            }
-            in_agents && /^[[:space:]]*max_depth[[:space:]]*=/ {
-                value = $0
-                sub(/.*=/, "", value)
-                sub(/[[:space:]]*#.*/, "", value)
-                gsub(/^[[:space:]]+|[[:space:]]+$/, "", value)
-                if ((value + 0) < 2) print "max_depth = 2"
-                else print
-                depth_seen = 1
-                next
-            }
-            in_agents && /^[[:space:]]*max_threads[[:space:]]*=/ {
-                value = $0
-                sub(/.*=/, "", value)
-                sub(/[[:space:]]*#.*/, "", value)
-                gsub(/^[[:space:]]+|[[:space:]]+$/, "", value)
-                if ((value + 0) < 8) print "max_threads = 8"
-                else print
-                threads_seen = 1
-                next
-            }
-            { print }
-            END {
-                if (in_agents) emit_missing()
-            }
-        ' "$config_file" > "$temp_file"
-    else
-        {
-            printf '[agents]\nmax_depth = 2\nmax_threads = 8\n\n'
-            cat "$config_file"
-        } > "$temp_file"
-    fi
-
-    mv "$temp_file" "$config_file"
-    success "Configuration Codex synchronisée : max_depth>=2, max_threads>=8"
-}
-
 migrate_legacy_claude() {
     local base_dir="$1"
     local commands_dir="$base_dir/commands"
@@ -281,7 +205,6 @@ install_codex() {
     sync_directory "$SOURCE_ROOT/codex/agents" "$codex_dir/agents" "Agents Codex"
     sync_directory "$SOURCE_ROOT/codex/skills" "$skills_dir" "Skills Codex"
     sync_directory "$SOURCE_ROOT/resources" "$codex_dir/resources" "Ressources Codex"
-    ensure_codex_config "$codex_dir/config.toml"
 }
 
 resolve_source

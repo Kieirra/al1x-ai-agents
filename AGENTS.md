@@ -45,7 +45,8 @@ Une modification n'est pas terminée tant que les deux versions ne sont pas sync
 - Omettre `model` pour hériter du modèle de la session ; utiliser `model_reasoning_effort` seulement quand le rôle le justifie.
 - Skills : `codex/skills/<nom>/SKILL.md` avec un frontmatter portable `name` + `description`.
 - Employer les capacités Codex de manière sémantique : déléguer à un agent nommé et actualiser le plan disponible, sans figer un nom d'outil interne non documenté.
-- Les orchestrateurs Codex peuvent déléguer jusqu'à la profondeur `2`, configurée par l'installateur.
+- Les orchestrateurs Codex documentent un fallback interne lorsqu'ils ne peuvent pas déléguer.
+- L'installateur ne modifie pas `~/.codex/config.toml`.
 - Les ressources Codex sont résolues dans `.codex/resources/`, puis `~/.codex/resources/`.
 
 ## Installation
