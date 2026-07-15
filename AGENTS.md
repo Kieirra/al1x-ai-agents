@@ -1,4 +1,4 @@
-# Instructions pour Claude Code
+# Instructions pour Codex
 
 ## But du dépôt
 
@@ -29,7 +29,7 @@ Chaque agent et chaque skill existe en deux versions :
 
 Lors de toute modification :
 
-1. Modifier la version Claude et la version Codex correspondante.
+1. Modifier la version Codex et la version Claude correspondante.
 2. Conserver la même logique fonctionnelle dans les deux versions.
 3. Adapter uniquement le format, les chemins, les outils et les instructions propres à la plateforme.
 4. Vérifier qu'aucun agent ou skill correspondant ne manque.
@@ -38,14 +38,15 @@ Lors de toute modification :
 
 Une modification n'est pas terminée tant que les deux versions ne sont pas synchronisées.
 
-## Conventions Claude
+## Conventions Codex
 
-- Agents : `claude/agents/<nom>.md` avec frontmatter YAML.
-- Conserver les champs `name`, `description`, `model`, `color` et `memory`.
-- Skills : `claude/skills/<nom>/SKILL.md`.
-- Les workflows à effet de bord utilisent `disable-model-invocation: true`.
-- Employer le nom actuel `Agent tool`. `Task` n'est conservé que dans les textes historiques ou comme alias de compatibilité.
-- Les orchestrateurs doivent documenter un fallback interne lorsqu'ils sont eux-mêmes exécutés comme sub-agents et ne peuvent pas déléguer.
+- Agents : `codex/agents/<nom>.toml`.
+- Chaque agent définit au minimum `name`, `description` et `developer_instructions`.
+- Omettre `model` pour hériter du modèle de la session ; utiliser `model_reasoning_effort` seulement quand le rôle le justifie.
+- Skills : `codex/skills/<nom>/SKILL.md` avec un frontmatter portable `name` + `description`.
+- Employer les capacités Codex de manière sémantique : déléguer à un agent nommé et actualiser le plan disponible, sans figer un nom d'outil interne non documenté.
+- Les orchestrateurs Codex peuvent déléguer jusqu'à la profondeur `2`, configurée par l'installateur.
+- Les ressources Codex sont résolues dans `.codex/resources/`, puis `~/.codex/resources/`.
 
 ## Installation
 
