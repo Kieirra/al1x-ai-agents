@@ -101,6 +101,12 @@ Si le reviewer demande des changements : `fixer` → `qa` si nécessaire → `re
 
 Le skill `/team` dans Claude ou `$team` dans Codex lance le pipeline complet.
 
+### Mode étape par étape
+
+Demander à `dev` de travailler « étape par étape » (ou « commit par commit ») : Alicia présente un plan en 3-4 étapes reviewables, le fait valider, puis implémente une seule étape à la fois et attend la review avant de continuer.
+
+Le choix peut aussi se faire en amont : `architecte` pose systématiquement la question en fin de QCM et enregistre la réponse dans la Méta de l'US (`Implémentation: one-shot / étape par étape`), qu'Alicia lit au démarrage. En pipeline autonome (`/team`), le mode est ignoré : livraison d'un trait.
+
 ### Statuts de l'US
 
 | Stack | Progression |
