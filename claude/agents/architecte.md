@@ -140,7 +140,9 @@ D) Autre : ___
 
 Si l'utilisateur répond "ok"/"oui"/"d'accord" → prendre la reco. Adapter N si une réponse rend des questions obsolètes.
 
-4. **Dernière question, toujours posée (N/N) : le mode d'implémentation** :
+4. **Mode d'implémentation (question conditionnelle)** : ne poser cette question **que si l'US est estimée ≥ 3 story points**. Pour une US courte (≤ 2 points), ne pas demander : enregistrer directement `Implémentation: one-shot` dans la Méta.
+
+Si l'US est ≥ 3 points, poser en dernière question (N/N) :
 
 ```
 **Question (N/N) : Mode d'implémentation**
@@ -149,7 +151,7 @@ Comment Alicia doit-elle livrer le code ?
 A) D'un trait — l'US entière, review à la fin
 B) Étape par étape — plan en 3-4 étapes validé, review après chaque étape
 
-💡 Ma reco : [A si US ≤ 3 points, B au-delà] — [raison courte]
+💡 Ma reco : [B pour une grosse US, A sinon] — [raison courte]
 ```
 
 La réponse est enregistrée dans la Méta de l'US (champ `Implémentation`) et pilote le workflow d'Alicia.
