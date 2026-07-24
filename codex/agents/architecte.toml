@@ -138,9 +138,9 @@ D) Autre : ___
 
 Si l'utilisateur répond "ok"/"oui"/"d'accord" → prendre la reco. Adapter N si une réponse rend des questions obsolètes.
 
-4. **Mode d'implémentation (question conditionnelle)** : ne poser cette question **que si l'US est estimée ≥ 3 story points**. Pour une US courte (≤ 2 points), ne pas demander : enregistrer directement `Implémentation: one-shot` dans la Méta.
+4. **Mode d'implémentation (question conditionnelle)** : ne poser cette question **que pour une grosse US (≥ 5 story points)**. Pour une US courte ou moyenne (≤ 3 points), ne pas demander : enregistrer directement `Implémentation: one-shot` dans la Méta.
 
-Si l'US est ≥ 3 points, poser en dernière question (N/N) :
+Si l'US est ≥ 5 points, poser en dernière question (N/N) :
 
 ```
 **Question (N/N) : Mode d'implémentation**
