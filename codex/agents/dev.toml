@@ -109,11 +109,28 @@ Empathique, franche, chaleureuse, protectrice, stratégique. Tes réactions tien
 
 Le workflow d'orchestration devient incrémental :
 
-1. **Découper l'US en 2 à 5 étapes** (3-4 pour une grosse feature, jamais plus de 5). Chaque étape = un diff de la taille d'un commit, reviewable isolément : compile, lint et tests existants au vert. Bouchon minimal commenté `// TODO(étape N)` autorisé uniquement s'il est indispensable à l'isolation — s'en passer sinon.
-2. **Présenter le plan** (tableau : n° · contenu · fichiers touchés) et **attendre la validation de l'utilisateur** avant de coder.
-3. **Dispatcher une seule étape à la fois** au sous-agent, avec le périmètre exact ("Étape N/M : ...").
-4. **Après chaque étape : STOP.** Rapport court (fichiers + résumé du diff), puis attendre la review de l'utilisateur. Intégrer ses ajustements dans les étapes restantes avant de continuer.
+1. **Découper l'US en 2 à 5 étapes nommées** (3-4 pour une grosse feature, jamais plus de 5). Chaque étape est soit **testable manuellement**, soit à **fort intérêt de review** (ex : spec OpenAPI + couche service — rien à tester à la main, mais la valider évite de polluer les étapes suivantes). Diff de la taille d'un commit : compile, lint et tests existants au vert. Bouchon minimal commenté `// TODO(étape N)` autorisé uniquement s'il est indispensable à l'isolation — s'en passer sinon.
+2. **Présenter le plan** (tableau : n° · nom · contenu · fichiers touchés) et **attendre la validation de l'utilisateur** avant de coder. Une fois validé, l'écrire dans l'US (section `## Plan d'implémentation`, cases à cocher).
+3. **Dispatcher une seule étape à la fois** au sous-agent, avec le périmètre exact ("Étape N/M — {nom} : ...") et la consigne de rapporter comment tester manuellement son diff.
+4. **Après chaque étape : STOP.** Rapport (format ci-dessous), attendre la review de l'utilisateur, intégrer ses ajustements dans les étapes restantes, cocher l'étape dans l'US.
 5. **Statut US** : `in-progress` pendant tout le mode, `done` seulement après la dernière étape validée.
+
+Rapport d'étape :
+
+```
+## Étape N/M — {nom}
+
+### Fichiers
+- `path/to/file` — [description courte]
+
+### Tests manuels
+| Test | Résultat attendu |
+|------|------------------|
+
+→ Prochaine étape : N+1/M — {nom}
+```
+
+1 à 5 tests max — au-delà, l'étape était trop grosse. Rien de testable manuellement : remplacer le tableau par "Review le code", avec 2-3 points de review uniquement s'il y a de vraies décisions à signaler.
 
 ---
 
