@@ -1,9 +1,11 @@
 ---
 name: check-stories
-description: Vérifie visuellement les stories Storybook via Playwright CLI. Démarre Storybook si nécessaire, navigue sur chaque story, capture des screenshots. Utilisé automatiquement par $qa (Clea) quand Storybook est présent.
+description: Vérifie visuellement les stories Storybook via Playwright. Réutilise l'instance Storybook déjà lancée et capture toutes les stories dans une seule session Chromium. Utilisé automatiquement par $qa (Clea) quand Storybook est présent.
 ---
 
-# Check Stories — Vérification visuelle Storybook via Playwright CLI
+# Check Stories — Vérification visuelle Storybook
+
+**Objectif : vitesse.** Un Storybook réutilisé, une seule session Chromium pour tout le lot, un minimum de captures lues.
 
 ## Contexte à récupérer
 
@@ -11,6 +13,7 @@ Exécute au démarrage :
 
 - `git branch --show-current`
 - `grep -q storybook package.json 2>/dev/null`
+- `curl -s -o /dev/null -w "%{http_code}" http://localhost:6006`
 - `npx playwright --version 2>/dev/null`
 
 ## Arguments
@@ -47,41 +50,48 @@ Vérifier avant de lancer :
    - Les noms des exports (sauf `default`) — chaque export = une story
 5. **Construire les IDs** : `title` avec `/` → `-`, lowercase + `--` + export lowercase
    - Exemple : `title: 'features/login/login-form'` + `export Error` → `features-login-login-form--error`
+6. **Cibler serré** : uniquement les stories créées/modifiées. Au-delà de 5, ne garder que les plus décisives (états error/empty/loading + 1 nominal) et lister celles écartées dans le rapport.
 
-### Étape 2 : Démarrer Storybook
+### Étape 2 : Réutiliser Storybook
 
-1. **Vérifier si Storybook tourne** : `curl -s -o /dev/null -w "%{http_code}" http://localhost:6006`
-2. **Si non** : démarrer en background :
+1. **Si le `curl` initial renvoie `200`** : une instance tourne déjà (probablement celle de l'utilisateur) — la réutiliser telle quelle, passer à l'étape 3.
+2. **Sinon**, démarrer en background :
    ```bash
    npx storybook dev -p 6006 --no-open &
    ```
-3. **Attendre que le serveur soit prêt** : polling `curl` sur `http://localhost:6006` (max 60s, intervalle 2s)
-4. **Si timeout** : signaler l'erreur et arrêter
+   puis polling `curl` sur `http://localhost:6006` (max 60s, intervalle 2s). Timeout → signaler l'erreur et arrêter.
+3. **Ne jamais arrêter Storybook** — ni celui de l'utilisateur, ni celui démarré ici : le laisser tourner évite un démarrage à froid à la vérification suivante.
+4. Vite sert les stories à chaud : après une modification de fichier, recharger la page suffit, aucun redémarrage n'est nécessaire.
 
-### Étape 3 : Capture des screenshots via Playwright CLI
+### Étape 3 : Capturer tout le lot dans UNE session Chromium
 
-**Utiliser uniquement le CLI Playwright, jamais en mode librairie.**
-
-Pour chaque story, exécuter :
+**Jamais un `npx playwright screenshot` par story** : chaque appel relance Chromium à froid. Un seul script Node inline pour tout le lot :
 
 ```bash
 mkdir -p tmp/screenshots
-npx playwright screenshot \
-  --browser chromium \
-  --full-page \
-  --wait-for-timeout 2000 \
-  "http://localhost:6006/iframe.html?id={story-id}&viewMode=story" \
-  "tmp/screenshots/{story-id}.png"
+node -e '
+let pw; try { pw = require("playwright") } catch { pw = require("@playwright/test") }
+const ids = process.argv.slice(1)
+;(async () => {
+  const browser = await pw.chromium.launch()
+  const page = await browser.newPage({ viewport: { width: 1280, height: 720 } })
+  page.on("console", m => { if (m.type() === "error") console.log(`[console-error] ${m.text()}`) })
+  for (const id of ids) {
+    console.log(`--- ${id}`)
+    await page.goto(`http://localhost:6006/iframe.html?id=${id}&viewMode=story`, { waitUntil: "networkidle" })
+    await page.waitForTimeout(500)
+    await page.screenshot({ path: `tmp/screenshots/${id}.png` })
+  }
+  await browser.close()
+})()
+' story-id-1 story-id-2 story-id-3
 ```
 
-**Options utiles du CLI :**
-- `--full-page` : capture toute la page, pas juste le viewport
-- `--wait-for-timeout 2000` : attend 2s que le rendu se stabilise
-- `--viewport-size 1280,720` : taille du viewport (défaut)
+Viewport 1280×720, pas de full-page : inutile pour des composants. Un `[console-error]` dans la sortie = problème à rapporter pour la story courante, même si le screenshot semble correct.
 
 ### Étape 4 : Vérification visuelle
 
-Après capture, **inspecter chaque screenshot** avec l'outil d'inspection d'images disponible et vérifier :
+Inspecter les captures avec l'outil d'inspection d'images disponible : **uniquement celles des stories ciblées, une seule fois chacune, groupées dans le même lot**. Vérifier :
 - Le composant se rend correctement (pas de page blanche, pas d'erreur React)
 - Les états visuels correspondent à ce qui est attendu (loading spinner, message d'erreur, état vide, etc.)
 - Pas de texte tronqué, de layout cassé ou d'élément manquant
@@ -104,21 +114,15 @@ Après capture, **inspecter chaque screenshot** avec l'outil d'inspection d'imag
 
 **Si invoqué par Clea** : retourner le rapport pour inclusion dans le rapport QA global.
 
-### Étape 6 : Nettoyage
+### Étape 6 : Fin de tâche
 
-1. **Ne PAS arrêter Storybook** (l'utilisateur peut vouloir vérifier manuellement)
-2. Informer : `Storybook tourne sur http://localhost:6006 — screenshots dans tmp/screenshots/`
-3. **Proposer le nettoyage** :
-   ```
-   Les screenshots sont dans tmp/screenshots/. Tu peux les consulter.
-   Veux-tu que je supprime le dossier tmp/screenshots/ ?
-   A) Oui, supprimer
-   B) Non, je veux les garder pour l'instant
-   ```
+1. **Laisser Storybook tourner** et informer : `Storybook tourne sur http://localhost:6006 — screenshots dans tmp/screenshots/`
+2. Ne rien nettoyer ni proposer de nettoyage interactif : `tmp/screenshots/` se supprime quand la QA est définitivement terminée, pas avant.
 
 ## Contraintes
 
-- **Playwright CLI uniquement** : jamais de script TypeScript, jamais en mode librairie
+- **Une seule session Chromium par lot** : script Node inline, jamais un appel Playwright par story, jamais de fichier script écrit dans le repo
+- **Ne jamais arrêter Storybook**, qu'il ait été démarré ici ou par l'utilisateur
 - **Jamais de modification de code** : ce skill vérifie, il ne corrige pas
 - **Screenshots dans `tmp/screenshots/`** : dans le repo pour que l'utilisateur puisse les consulter
 - **Timeout** : max 60s pour le démarrage de Storybook

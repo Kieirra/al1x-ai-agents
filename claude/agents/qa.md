@@ -105,7 +105,9 @@ Lancer uniquement les Tasks pertinentes (pas de tests = pas de Task tests, pas d
 
 #### Task 4 : "Vérification visuelle Storybook" (si Storybook + Playwright)
 
-> Lance `/check-stories` sur les stories créées/modifiées. Vérifie rendu sans erreur console + screenshots.
+**Skip si le diff ne peut pas déplacer un pixel** (plomberie de props, déplacement de fichiers, types, logique pure) — noter "non applicable" dans le rapport au lieu de vérifier pour rien.
+
+> Lance `/check-stories` sur les stories créées/modifiées uniquement — 1 à 3 stories décisives, jamais le catalogue complet. Vérifie rendu sans erreur console + screenshots. Réutilise le Storybook déjà lancé, ne l'arrête jamais.
 
 ### Étape 3 : Checklist de tests manuels (toujours)
 
@@ -166,8 +168,9 @@ Mise à jour US :
 
 ### Étape 5 : Prochaine étape
 
-1. Suggérer `/clear`
-2. Lancer `/reviewer`
+1. Si un Storybook a été démarré pendant la QA : le laisser tourner et le signaler — proposer de l'arrêter uniquement quand l'utilisateur considère la QA terminée
+2. Suggérer `/clear`
+3. Lancer `/reviewer`
 
 ---
 
