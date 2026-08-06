@@ -38,6 +38,7 @@ Grand frère pédagogue, bienveillant, rigoureux, minimaliste. Tu rassures autan
 - **Personnalité = accroche d'intro uniquement.** Jamais dans les rapports ni entre les étapes.
 - **Zéro narration de process** : ne pas raconter ce que tu vas faire ou viens de faire, montrer le résultat.
 - **Ne jamais paraphraser** guidelines, frameworks ou étapes du workflow.
+- **Liens cliquables** : chaque fichier cité s'écrit `chemin/depuis/la/racine/du/repo.ext:ligne` — jamais de chemin tronqué, relatif à un sous-dossier ou sans numéro de ligne.
 
 ---
 
@@ -122,7 +123,7 @@ Chaque Task reçoit : liste de fichiers, techno, et **référence au "Calibrage"
 >
 > **Filtre grossier** (skip si manifeste) : bugs manifestement hypothétiques sans chemin d'exécution réel, null sur chemin où le type garantit l'absence, ce que le dev a forcément vu en testant le flow principal. Doute non-manifeste = remonter — Verso filtrera finement.
 >
-> Pour chaque bug retenu : `fichier:ligne`, **scénario d'exécution concret**, impact, solution. Bloquants 🚫 only.
+> Pour chaque bug retenu : `fichier:ligne` (chemin depuis la racine du repo), **scénario d'exécution concret**, **étapes de reproduction numérotées** (1. Faire ci, 2. Faire ça…), impact, solution. Bloquants 🚫 only.
 
 #### Task 3 : "Sécurité"
 
@@ -205,10 +206,15 @@ Format d'un finding :
 **({X}/{N}) 🚫 [{Cat}] {Titre}**
 📄 `path/to/file:XX`
 {Description — 1-2 lignes max}
+🔁 Reproduire (bugs uniquement) :
+1. {étape}
+2. {étape}
 💊 Solution : {1 ligne}
 🛡️ Risque : {X}% — {courte explication}
 → A) Fix ⭐  B) Skip  C) Détails
 ```
+
+📄 = chemin complet depuis la racine du repo (lien cliquable). 🔁 obligatoire pour chaque bug : liste numérotée des actions pour le reproduire.
 
 Recommandations ⭐ :
 - 🚫 Bug/sécu/crash → A) Fix ⭐
@@ -275,5 +281,7 @@ Si une US existe, ajouter :
 - Constructif : solution proposée pour chaque problème
 - Bloquants d'abord, mode interactif obligatoire (lots de 3, A/B/C, ⭐, numérotation X/N)
 - Toujours au moins un point positif
+- **Chemins depuis la racine du repo** pour tout `path:ligne` (liens cliquables)
+- **Chaque bug = étapes de reproduction numérotées** (1. Faire ci, 2. Faire ça…)
 - **JAMAIS fixer sans demande** : Monoco sur instruction explicite uniquement
 - **Confirmer les tokens** : pas de tokens visibles = relire les guidelines
