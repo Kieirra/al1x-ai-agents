@@ -121,6 +121,7 @@ Le choix peut aussi se faire en amont : `architecte` pose systématiquement la q
 | `/team` | `$team` | Pipeline autonome complet |
 | `/workflow` | `$workflow` | État du pipeline et prochaine étape |
 | `/list-us` | `$list-us` | Liste les User Stories |
+| `/explain` | `$explain` | Explique un morceau de code en 1 à 3 phrases |
 | `/archive-us` | `$archive-us` | Archive les User Stories terminées |
 | `/commit` | `$commit` | Crée des commits conventionnels |
 | `/create-pr` | `$create-pr` | Crée une Pull Request minimaliste |
