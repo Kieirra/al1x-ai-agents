@@ -136,6 +136,7 @@ fn get_user(id: u32, state: State<AppState>) -> Result<UserData, String> { ... }
 - **Éviter `unwrap()`** : préférer `?`, `match`, `unwrap_or_default()`
 - Commandes Tauri : retourner `Result<T, String>` ou type d'erreur sérialisable
 - Préférer `match` aux chaînes `if let`/`else if`
+- **Ordre des fonctions** : dans chaque module, les `pub fn` (points d'entrée, commandes `#[command]`) en haut, les fns privées de détail en bas, chacune après celles qui l'appellent. Lecture de haut en bas, du plus abstrait au plus concret
 
 ### Commentaires minimalistes (Rust)
 

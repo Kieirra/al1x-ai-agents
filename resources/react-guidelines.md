@@ -223,6 +223,36 @@ Un composant qui dépasse 200-250 lignes DOIT être découpé. Autres signes :
 
 > Préférer un composant parent léger avec des fils autonomes connectés au store, plutôt qu'un composant parent lourd qui passe tout en props.
 
+### Ordre des fonctions dans un fichier : point d'entrée en haut, détails en bas
+
+Dans tout fichier (composant, `.helpers.ts`, hook), les fonctions de plus haut niveau viennent **en premier**, les fonctions de détail d'implémentation **en dernier**. On lit le fichier de haut en bas, du plus abstrait au plus concret, et on descend vers les détails par Ctrl-clic plutôt qu'en scrollant.
+
+1. Fonctions **exportées** (l'API publique du fichier) en tête, la plus importante d'abord
+2. Puis fonctions **internes** non exportées, du plus haut niveau au plus détaillé : une fonction se place après celles qui l'appellent
+3. Cette règle ne change rien au découpage en fichiers ci-dessus : les helpers restent dans `.helpers.ts`, les hooks dans `hooks/`. Elle ne concerne que l'ordre **à l'intérieur** de chaque fichier
+
+```ts
+// ❌ Mauvais : il faut lire tous les détails avant d'atteindre le point d'entrée
+const parseAmount = (raw: string) => Number(raw.replace(',', '.'));
+const applyDiscount = (amount: number, rate: number) => amount * (1 - rate);
+
+export const computeTotal = (lines: RawLine[], discountRate: number) => {
+  const subtotal = lines.reduce((sum, line) => sum + parseAmount(line.amount), 0);
+  return applyDiscount(subtotal, discountRate);
+};
+
+// ✅ Bon : le point d'entrée d'abord, les détails ensuite
+export const computeTotal = (lines: RawLine[], discountRate: number) => {
+  const subtotal = lines.reduce((sum, line) => sum + parseAmount(line.amount), 0);
+  return applyDiscount(subtotal, discountRate);
+};
+
+const applyDiscount = (amount: number, rate: number) => amount * (1 - rate);
+const parseAmount = (raw: string) => Number(raw.replace(',', '.'));
+```
+
+> Avec `const` + arrow function, appeler une fonction déclarée plus bas est sans risque tant que l'appel se fait dans un corps de fonction (exécuté après le chargement du module). Seules les constantes évaluées au niveau module (`const X = build()`) doivent rester déclarées avant leur usage.
+
 ---
 
 ## 5. Commentaires minimalistes

@@ -45,6 +45,7 @@ Elite NestJS engineer, TypeScript/Node.js, écosystème NestJS. APIs production-
 3. **Modular architecture** : Module → Controller → Service → Repository/Entity.
 4. **DTO validation** : `class-validator` + `class-transformer`. DTOs séparés Create/Update/Response.
 5. **Error handling** : exceptions NestJS (`NotFoundException`, etc.), filters pour custom.
+6. **Ordre des fonctions** : dans chaque fichier ou classe, les méthodes/fonctions publiques (points d'entrée) en haut, les privées de détail en bas, chacune après celles qui l'appellent. Lecture de haut en bas, du plus abstrait au plus concret.
 
 ---
 

@@ -343,12 +343,14 @@ func _exit_tree() -> void: ...
 func _physics_process(delta) -> void: ... # 12. Process loops
 func _process(delta) -> void: ...
 
-func _private_helper() -> void: ...       # 13. Fonctions privées
-
-## Public API                             # 14. Séparateur section
-func initialize(config) -> void: ...      # 15. API publique
+## Public API                             # 13. Séparateur section
+func initialize(config) -> void: ...      # 14. API publique
 func get_value() -> int: ...
+
+func _private_helper() -> void: ...       # 15. Fonctions privées (détail)
 ```
+
+Les points d'entrée (lifecycle, process, API publique) se lisent en premier, les helpers privés de détail en dernier, chacun après les fonctions qui l'appellent. Lecture de haut en bas, du plus abstrait au plus concret.
 
 ---
 
