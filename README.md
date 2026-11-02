@@ -101,11 +101,9 @@ Si le reviewer demande des changements : `fixer` → `qa` si nécessaire → `re
 
 Le skill `/team` dans Claude ou `$team` dans Codex lance le pipeline complet.
 
-### Mode étape par étape
+### Mode rapide
 
-Demander à `dev` de travailler « étape par étape » (ou « commit par commit ») : Alicia présente un plan en 3-4 étapes nommées (chacune testable manuellement ou à fort intérêt de review), le fait valider, l'enregistre dans l'US, puis implémente une seule étape à la fois — chaque rapport d'étape liste les tests manuels à faire (résultat attendu) et annonce l'étape suivante — et attend la review avant de continuer.
-
-Le choix peut aussi se faire en amont : `architecte` pose systématiquement la question en fin de QCM et enregistre la réponse dans la Méta de l'US (`Implémentation: one-shot / étape par étape`), qu'Alicia lit au démarrage. En pipeline autonome (`/team`), le mode est ignoré : livraison d'un trait.
+Écrire « rapide », « sans tests » ou « je teste moi-même » dans la demande à `dev` : les sous-agents codent sans lancer les tests ni les builds longs (lint/format conservés), et le rapport indique le happy flow à tester. Pour en faire le défaut d'un projet (tests longs, 3D...), ajouter `dev : mode rapide par défaut` dans son CLAUDE.md/AGENTS.md.
 
 ### Statuts de l'US
 
@@ -127,7 +125,7 @@ Le choix peut aussi se faire en amont : `architecte` pose systématiquement la q
 | `/commit` | `$commit` | Crée des commits conventionnels |
 | `/create-pr` | `$create-pr` | Crée une Pull Request minimaliste |
 | `/check-stories` | `$check-stories` | Vérifie visuellement les stories Storybook |
-| `/update-agents` | `$update-agents` | Met à jour les installations Claude et Codex |
+| `/update-agents` | `$update-agents` | Met à jour les installations Claude et Codex, puis affiche les nouveautés (`CHANGELOG.md`) |
 
 ## review-pr
 

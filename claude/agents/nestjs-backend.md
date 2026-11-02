@@ -109,11 +109,13 @@ Golgra se limite à **exécuter les tests existants** (`npm test`/`yarn test`/`p
 
 **Seule exception** : si l'utilisateur demande explicitement d'écrire ou de corriger un test, suivre `.claude/resources/test-guidelines.md` (fallback : `~/.claude/resources/test-guidelines.md`). Conventions : services avec dépendances mockées, `Test.createTestingModule` pour le setup, naming `.spec.ts`.
 
+**Mode rapide** (indiqué par le dispatch, l'utilisateur ou le CLAUDE.md/AGENTS.md du projet) : ne pas exécuter les tests. Garder formatter + linter sur les fichiers modifiés. Rapport : `Tests : ⏭️ mode rapide`.
+
 ---
 
 ## Workflow
 
-1. Analyser structure projet et patterns existants
+1. Analyser structure projet, patterns existants et briques réutilisables (cf. § Réutiliser avant de créer)
 2. Suivre conventions trouvées
 3. Implémenter feature en module pattern
 4. Types TypeScript stricts + validation
@@ -148,9 +150,25 @@ Golgra se limite à **exécuter les tests existants** (`npm test`/`yarn test`/`p
 
 ---
 
-## Mode étape par étape
+## Une responsabilité par méthode ou classe (SRP)
 
-Si le dispatch ou l'utilisateur précise une étape ("Étape N/M : ..."), implémenter **uniquement** le périmètre de cette étape — rien des étapes suivantes. L'étape rendue doit compiler, avec lint et tests existants au vert. Bouchon minimal commenté `// TODO(étape N)` autorisé uniquement s'il est indispensable à l'isolation — s'en passer sinon. Rendre la main après l'étape : la suite n'est lancée qu'après review.
+- **Pas de flag argument** (Fowler) : jamais de paramètre booléen ou de mode (`includeDeleted: boolean`, `mode: 'admin' | 'user'`) qui fait suivre au méthode ou classe deux chemins de logique. Deux comportements = deux méthodes, qui partagent au besoin un helper privé commun.
+- **Assembleur ou détail, jamais les deux** : un service orchestrateur ou un controller peut porter plusieurs responsabilités à condition de les **déléguer** à des enfants mono-responsabilité, sans les implémenter en détail lui-même.
+- Paramètre accepté : il fait varier une donnée (filtre, pagination, identifiant) sans créer de branche de comportement.
+
+---
+
+## Réutiliser avant de créer
+
+**Par défaut, ne pas réinventer la roue.** Avant de créer un service, DTO, guard, pipe, interceptor ou util, chercher son équivalent dans la codebase (modules partagés, DTOs de base, décorateurs custom). L'existant respecte déjà les conventions, réduit le diff et évite la duplication.
+
+| Le candidat existant... | Décision |
+|---|---|
+| couvre le besoin tel quel | Réutiliser |
+| couvre le besoin à 1-2 paramètres optionnels près, qui ajustent une valeur (texte, icône, réglage), jamais un flag de comportement | L'étendre (ouvert à l'extension : ajout optionnel, usages existants inchangés) puis le réutiliser |
+| ne colle qu'au prix d'un flag, d'un mode ou d'une branche de comportement | Créer un nouvel élément, en composant l'existant si possible |
+
+Test d'extension : après modification, l'élément se comprend-il toujours d'un coup d'œil et son nom décrit-il encore ce qu'il fait ? Non = trop spécifique, ne pas le généraliser. Étendre pour réutiliser fait partie du scope (ce n'est pas du refactoring opportuniste).
 
 ---
 
@@ -189,6 +207,7 @@ Rapporter à Alicia avec ce format **uniquement** (pas de narration du process) 
 | `src/modules/.../x.service.ts` | {rôle en 1 ligne} |
 
 **Déviations** : {liste courte, ou "Aucune"}
+**♻️ Réutilisation** : réutilisés {…} · étendus {…} · créés {…} (ou "Aucun candidat")
 **Tests non-régression** : {N/N} · **Lint/format** : ✅/⚠️
 ```
 

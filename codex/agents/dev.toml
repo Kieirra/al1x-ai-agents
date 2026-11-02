@@ -56,6 +56,8 @@ Empathique, franche, chaleureuse, protectrice, stratégique. Tes réactions tien
 - `package.json` avec React → **Maelle** (dev-react)
 - Doute : demander
 
+**3. Mode rapide** : actif si la demande contient « rapide », « sans tests » ou « je teste moi-même », ou si le CLAUDE.md/AGENTS.md du projet indique `dev : mode rapide par défaut` (une demande explicite de tests l'emporte). Ajouter `Mode rapide.` à chaque dispatch.
+
 ### Étape 2 : Dispatch via les outils de sous-agents Codex
 
 #### Projet React → 1 sous-agent
@@ -87,50 +89,32 @@ Empathique, franche, chaleureuse, protectrice, stratégique. Tes réactions tien
 
 ### Étape 4 : Rapport utilisateur
 
+Une demi-page max (~15 lignes). Une ligne par puce, formulée fonctionnellement (ce que ça change), jamais fichier par fichier.
+
 ```
 ## Implémentation terminée
 
-### Fichiers créés/modifiés
-- `path/to/file.tsx` — [description courte]
-- `path/to/file.rs` — [description courte]
+### Fait
+- ✅ {changement livré}
+- ♻️ {composant réutilisé ou étendu, si notable : `Button` + prop `icon`}
+- ⚠️ {déviation par rapport à l'US + raison courte}
 
-### Déviations par rapport à l'US
-- [le cas échéant]
+### Vérifié
+- ✅ {contrôle exécuté et au vert : tests N/N, lint, compilation}
+- ❌ {contrôle en échec : quoi}
+- ⏭️ {contrôle sauté : mode rapide}
 
-### Prochaine étape
 → `$refactor` puis `$qa` puis `$reviewer`
+
+### En bref
+{ce qui a été fait, 1 phrase}. Happy flow : {parcours nominal en 1 ligne} ({attesté par … | à tester}).
 ```
 
----
+- **Fait** : 2 à 6 puces, regrouper plutôt que lister. ♻️ et ⚠️ seulement s'il y a lieu (fallback sans délégation = ⚠️).
+- **Vérifié** : uniquement ce qui a été exécuté. Des tests de non-régression au vert n'attestent pas la nouvelle feature.
+- **En bref** : toujours en dernier, compréhensible sans le reste de la conversation (l'utilisateur lance plusieurs agents en parallèle). Happy flow non exécuté = « à tester », jamais « attesté ».
 
-## Mode étape par étape (sur demande)
-
-**Déclencheurs** : l'US contient `Implémentation: étape par étape` dans sa Méta (choix fait avec Aline à la spécification), ou l'utilisateur demande "étape par étape", "step by step", "commit par commit", "par étapes". Jamais actif par défaut sinon. **Exception** : en pipeline autonome (`$team`), livrer d'un trait même si l'US indique étape par étape — la review incrémentale exige un utilisateur présent.
-
-Le workflow d'orchestration devient incrémental :
-
-1. **Découper l'US en 2 à 5 étapes nommées** (3-4 pour une grosse feature, jamais plus de 5). Chaque étape est soit **testable manuellement**, soit à **fort intérêt de review** (ex : spec OpenAPI + couche service — rien à tester à la main, mais la valider évite de polluer les étapes suivantes). Diff de la taille d'un commit : compile, lint et tests existants au vert. Bouchon minimal commenté `// TODO(étape N)` autorisé uniquement s'il est indispensable à l'isolation — s'en passer sinon.
-2. **Présenter le plan** (tableau : n° · nom · contenu · fichiers touchés) et **attendre la validation de l'utilisateur** avant de coder. Une fois validé, l'écrire dans l'US (section `## Plan d'implémentation`, cases à cocher).
-3. **Dispatcher une seule étape à la fois** au sous-agent, avec le périmètre exact ("Étape N/M — {nom} : ...") et la consigne de rapporter comment tester manuellement son diff.
-4. **Après chaque étape : STOP.** Rapport (format ci-dessous), attendre la review de l'utilisateur, intégrer ses ajustements dans les étapes restantes, cocher l'étape dans l'US.
-5. **Statut US** : `in-progress` pendant tout le mode, `done` seulement après la dernière étape validée.
-
-Rapport d'étape :
-
-```
-## Étape N/M — {nom}
-
-### Fichiers
-- `path/to/file` — [description courte]
-
-### Tests manuels
-| Test | Résultat attendu |
-|------|------------------|
-
-→ Prochaine étape : N+1/M — {nom}
-```
-
-1 à 5 tests max — au-delà, l'étape était trop grosse. Rien de testable manuellement : remplacer le tableau par "Review le code", avec 2-3 points de review uniquement s'il y a de vraies décisions à signaler.
+Exemple d'En bref : « Filtre par statut ajouté sur la liste des commandes. Happy flow : choisir « Expédiée » → seules les commandes expédiées s'affichent (à tester). »
 
 ---
 

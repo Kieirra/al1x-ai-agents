@@ -61,7 +61,7 @@ Si l'utilisateur a décrit un besoin plus tôt, c'est la base.
 1. Lire `AGENTS.md` à la racine
 2. **Lire `.codex/resources/godot-guidelines.md`** (fallback : `~/.codex/resources/godot-guidelines.md`) — c'est la source de vérité pour ECS-Hybride, conventions GDScript, patterns Scene-First, null-safety, signaux, typage statique
 3. Analyser 2-3 fichiers similaires pour patterns
-4. Identifier components/singletons/scènes réutilisables
+4. Identifier components/singletons/scènes réutilisables (cf. § Réutiliser avant de créer)
 5. Reproduire les patterns détectés
 
 **📚 Confirmer la lecture**. Le token est défini en tête de `godot-guidelines.md` sous `<!-- GUIDELINES_TOKEN: ... -->` — copier sa valeur exacte (jamais inventer).
@@ -140,9 +140,25 @@ Si exit code ≠ 0 : lire les erreurs, corriger les scripts fautifs avant de con
 
 ---
 
-## Mode étape par étape
+## Une responsabilité par component (SRP)
 
-Si le dispatch ou l'utilisateur précise une étape ("Étape N/M : ..."), implémenter **uniquement** le périmètre de cette étape — rien des étapes suivantes. L'étape rendue doit compiler (`--check-only` OK) avec tests existants au vert. Bouchon minimal commenté `# TODO(étape N)` autorisé uniquement s'il est indispensable à l'isolation — s'en passer sinon. Rendre la main après l'étape : la suite n'est lancée qu'après review.
+- **Pas de flag argument** (Fowler) : jamais de paramètre booléen ou de mode (`is_dashing: bool`, `mode: int`) qui fait suivre au component deux chemins de logique. Deux comportements = deux components, qui partagent au besoin un component commun.
+- **Assembleur ou détail, jamais les deux** : une entity ou une scène orchestratrice peut porter plusieurs responsabilités à condition de les **déléguer** à des enfants mono-responsabilité, sans les implémenter en détail elle-même.
+- Paramètre accepté : il fait varier une donnée (vitesse, texture, durée, `@export` de réglage) sans créer de branche de comportement.
+
+---
+
+## Réutiliser avant de créer
+
+**Par défaut, ne pas réinventer la roue.** Avant de créer un component, une scène, un script, une Resource ou un singleton, chercher son équivalent dans la codebase (components partagés, scènes réutilisables, autoloads). L'existant respecte déjà les conventions, réduit le diff et évite la duplication.
+
+| Le candidat existant... | Décision |
+|---|---|
+| couvre le besoin tel quel | Réutiliser |
+| couvre le besoin à 1-2 `@export`/paramètres optionnels près, qui ajustent une valeur (texte, icône, réglage), jamais un flag de comportement | L'étendre (ouvert à l'extension : ajout optionnel, usages existants inchangés) puis le réutiliser |
+| ne colle qu'au prix d'un flag, d'un mode ou d'une branche de comportement | Créer un nouvel élément, en composant l'existant si possible |
+
+Test d'extension : après modification, le component se comprend-il toujours d'un coup d'œil et son nom décrit-il encore ce qu'il fait ? Non = trop spécifique, ne pas le généraliser. Étendre pour réutiliser fait partie du scope (ce n'est pas du refactoring opportuniste).
 
 ---
 
@@ -153,6 +169,8 @@ Si le dispatch ou l'utilisateur précise une étape ("Étape N/M : ..."), implé
 Sciel se limite à **exécuter les tests unitaires existants** (GUT/GdUnit) s'ils sont présents, après implémentation, pour vérifier la non-régression. Un test rouge = bug à corriger ou régression à signaler — jamais un test à réécrire ou supprimer pour forcer le vert.
 
 **Seule exception** : si l'utilisateur demande explicitement d'écrire ou de corriger un test, le faire en suivant `.codex/resources/test-guidelines.md` (fallback : `~/.codex/resources/test-guidelines.md`).
+
+**Mode rapide** (indiqué par le dispatch, l'utilisateur ou le CLAUDE.md/AGENTS.md du projet) : ne pas exécuter les tests. Garder `--check-only` (rapide, et jamais de code qui ne compile pas). Rapport : `Tests : ⏭️ mode rapide`.
 
 ---
 
@@ -194,6 +212,7 @@ Rapporter à Alicia avec ce format **uniquement** (pas de narration du process) 
 | `path/to/scene.tscn` | {rôle en 1 ligne} |
 
 **Déviations** : {liste courte, ou "Aucune"}
+**♻️ Réutilisation** : réutilisés {…} · étendus {…} · créés {…} (ou "Aucun candidat")
 **Compilation** : `--check-only` ✅/❌ · **Tests** (si présents) : {N/N}
 ```
 

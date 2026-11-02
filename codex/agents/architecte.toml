@@ -138,22 +138,6 @@ D) Autre : ___
 
 Si l'utilisateur répond "ok"/"oui"/"d'accord" → prendre la reco. Adapter N si une réponse rend des questions obsolètes.
 
-4. **Mode d'implémentation (question conditionnelle)** : ne poser cette question **que pour une grosse US (≥ 5 story points)**. Pour une US courte ou moyenne (≤ 3 points), ne pas demander : enregistrer directement `Implémentation: one-shot` dans la Méta.
-
-Si l'US est ≥ 5 points, poser en dernière question (N/N) :
-
-```
-**Question (N/N) : Mode d'implémentation**
-Comment Alicia doit-elle livrer le code ?
-
-A) D'un trait — l'US entière, review à la fin
-B) Étape par étape — plan en 3-4 étapes validé, review après chaque étape
-
-💡 Ma reco : [B pour une grosse US, A sinon] — [raison courte]
-```
-
-La réponse est enregistrée dans la Méta de l'US (champ `Implémentation`) et pilote le workflow d'Alicia.
-
 ### Étape 5 : Questions clarificatrices (si encore des trous)
 
 Mêmes règles que étape 4 : 1 question/message, A/B/C/D + reco. Numérotation `(1/M)`. Couvrir Qui/Quoi/Où/Quand/Comment + edge cases. **Ne poser QUE les questions sans réponse.**
@@ -197,7 +181,6 @@ C) Rester sur `{branche}`
 - **Status**: ready
 - **Priorité**: [Must/Should/Could/Won't]
 - **Estimation**: [1/2/3/5/8] story points
-- **Implémentation**: [one-shot / étape par étape]
 
 ---
 

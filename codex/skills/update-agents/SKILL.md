@@ -12,3 +12,9 @@ curl -fsSL https://raw.githubusercontent.com/Kieirra/al1x-ai-agents/main/install
 ```
 
 Après l'exécution, confirme séparément quels agents et skills Claude et Codex ont été mis à jour.
+
+Termine en affichant les nouveautés de la dernière version, telles quelles :
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Kieirra/al1x-ai-agents/main/CHANGELOG.md | awk '/^## /{n++} n==1'
+```

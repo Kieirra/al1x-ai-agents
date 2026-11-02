@@ -16,6 +16,7 @@ codex/
 resources/      # Guidelines et templates communs
 CLAUDE.md       # Instructions Claude pour maintenir ce dépôt
 AGENTS.md       # Instructions Codex pour maintenir ce dépôt
+CHANGELOG.md    # Une entrée par commit (version des agents)
 install.sh      # Installateur Claude/Codex (macOS/Linux)
 install.ps1     # Installateur Claude/Codex (Windows PowerShell)
 ```
@@ -35,6 +36,7 @@ Lors de toute modification :
 4. Vérifier qu'aucun agent ou skill correspondant ne manque.
 5. Mettre à jour le README si le comportement public ou le catalogue change.
 6. Tester `install.sh` dans les modes `--claude`, `--codex` et `--all`, et répercuter tout changement de comportement dans `install.ps1` (miroir Windows).
+7. Ajouter l'entrée en tête de `CHANGELOG.md` (`## AAAA-MM-JJ · titre court` + une puce d'une ligne par changement visible pour l'utilisateur des agents ; le fichier est affiché tel quel par `/update-agents`). Si l'entrée du haut n'est pas encore commitée (`git diff CHANGELOG.md`), la compléter au lieu d'en créer une : un commit = une entrée = une version.
 
 Une modification n'est pas terminée tant que les deux versions ne sont pas synchronisées.
 

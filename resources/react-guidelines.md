@@ -223,6 +223,19 @@ Un composant qui dépasse 200-250 lignes DOIT être découpé. Autres signes :
 
 > Préférer un composant parent léger avec des fils autonomes connectés au store, plutôt qu'un composant parent lourd qui passe tout en props.
 
+### Pas de flag argument
+
+Une prop (booléen, `mode`, `type`) qui fait suivre au composant deux chemins de rendu ou de logique viole le SRP : créer deux composants, avec un sous-composant partagé si besoin. Une prop qui ne fait varier qu'une donnée ou le style (`label`, `icon`, `variant` visuel) reste acceptable.
+
+```tsx
+// ❌ Deux composants déguisés en un
+const UserCard = ({ user, isEditing }: Props) => (isEditing ? <form>...</form> : <article>...</article>);
+
+// ✅ Une responsabilité chacun
+const UserCard = ({ user }: Props) => <article>...</article>;
+const UserCardEditor = ({ user }: Props) => <form>...</form>;
+```
+
 ### Ordre des fonctions dans un fichier : point d'entrée en haut, détails en bas
 
 Dans tout fichier (composant, `.helpers.ts`, hook), les fonctions de plus haut niveau viennent **en premier**, les fonctions de détail d'implémentation **en dernier**. On lit le fichier de haut en bas, du plus abstrait au plus concret, et on descend vers les détails par Ctrl-clic plutôt qu'en scrollant.

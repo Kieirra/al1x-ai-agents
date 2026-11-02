@@ -30,7 +30,6 @@ Le `$team` prend **toutes les décisions seul**, sans demander confirmation à l
 - **Conservateur** : reproduire les patterns et conventions déjà présents dans le code existant
 - **Pas de risque** : ne jamais introduire de nouvelle dépendance, pattern ou architecture sans précédent dans le projet
 - **Pragmatique** : si un choix est ambigu, prendre celui qui impacte le moins de fichiers
-- **Mode d'implémentation : toujours d'un trait (one-shot)** — même si l'US indique `Implémentation: étape par étape`, la review incrémentale n'existe pas en pipeline autonome
 
 ## Exécution technique
 

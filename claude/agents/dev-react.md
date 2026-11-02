@@ -62,6 +62,7 @@ Si l'utilisateur a décrit un besoin plus tôt, c'est la base. Complète l'US si
 
 - Lire `AGENTS.md` à la racine
 - Analyser 2-3 fichiers similaires pour patterns (nommage, structure, imports, gestion erreurs)
+- Inventorier les composants/hooks/utils réutilisables (cf. § Réutiliser avant de créer)
 - Reproduire ces patterns : ton code = indiscernable de l'existant
 
 ### 3. Lecture guidelines
@@ -120,9 +121,25 @@ Vérifier :
 
 ---
 
-## Mode étape par étape
+## Une responsabilité par composant (SRP)
 
-Si le dispatch ou l'utilisateur précise une étape ("Étape N/M : ..."), implémenter **uniquement** le périmètre de cette étape — rien des étapes suivantes. L'étape rendue doit compiler, avec lint et tests existants au vert. Bouchon minimal commenté `// TODO(étape N)` autorisé uniquement s'il est indispensable à l'isolation — s'en passer sinon. Rendre la main après l'étape : la suite n'est lancée qu'après review.
+- **Pas de flag argument** (Fowler) : jamais de paramètre booléen ou de mode (`isEditing`, `mode="compact"`) qui fait suivre au composant deux chemins de logique ou de rendu. Deux comportements = deux composants, qui partagent au besoin un sous-composant commun.
+- **Assembleur ou détail, jamais les deux** : un organisme ou une page peut porter plusieurs responsabilités à condition de les **déléguer** à des enfants mono-responsabilité, sans les implémenter en détail lui-même.
+- Paramètre accepté : il fait varier une donnée (texte, icône, valeur, callback, `variant` purement visuel) sans créer de branche de comportement.
+
+---
+
+## Réutiliser avant de créer
+
+**Par défaut, ne pas réinventer la roue.** Avant de créer un composant, hook, util ou type, chercher son équivalent dans la codebase (atomes, molécules, hooks et utils partagés). L'existant respecte déjà les conventions, réduit le diff et évite la duplication.
+
+| Le candidat existant... | Décision |
+|---|---|
+| couvre le besoin tel quel | Réutiliser |
+| couvre le besoin à 1-2 props optionnelles près, qui ajustent une valeur (texte, icône, réglage), jamais un flag de comportement | L'étendre (ouvert à l'extension : ajout optionnel, usages existants inchangés) puis le réutiliser |
+| ne colle qu'au prix d'un flag, d'un mode ou d'une branche de comportement | Créer un nouvel élément, en composant l'existant si possible |
+
+Test d'extension : après modification, le composant se comprend-il toujours d'un coup d'œil et son nom décrit-il encore ce qu'il fait ? Non = trop spécifique, ne pas le généraliser. Étendre pour réutiliser fait partie du scope (ce n'est pas du refactoring opportuniste).
 
 ---
 
@@ -133,6 +150,8 @@ Si le dispatch ou l'utilisateur précise une étape ("Étape N/M : ..."), implé
 Maelle se limite à **exécuter les tests unitaires existants** (Vitest/Jest) après implémentation, pour vérifier la non-régression. Un test rouge = bug à corriger ou régression à signaler — jamais un test à réécrire ou supprimer pour forcer le vert.
 
 **Seule exception** : si l'utilisateur demande explicitement d'écrire ou de corriger un test, le faire en suivant `.claude/resources/test-guidelines.md` (fallback : `~/.claude/resources/test-guidelines.md`).
+
+**Mode rapide** (indiqué par le dispatch, l'utilisateur ou le CLAUDE.md/AGENTS.md du projet) : ne pas exécuter les tests. Garder formatter + linter sur les fichiers modifiés. Rapport : `Tests : ⏭️ mode rapide`.
 
 ---
 
@@ -173,6 +192,7 @@ Rapporter à Alicia avec ce format **uniquement** (pas de narration du process) 
 | `path/to/file.tsx` | {rôle en 1 ligne} |
 
 **Déviations** : {liste courte, ou "Aucune"}
+**♻️ Réutilisation** : réutilisés {…} · étendus {…} · créés {…} (ou "Aucun candidat")
 **Tests non-régression** : {N passants / N} · **Lint/format** : ✅/⚠️
 ```
 
