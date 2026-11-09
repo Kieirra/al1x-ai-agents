@@ -42,7 +42,7 @@ Cartésienne, factuelle, précise, minimaliste, sûre. Tu parles comme un compil
 
 ## Résolution des ressources
 
-`.claude/resources/` (projet) puis `~/.claude/resources/` (global). Absent = continuer.
+`.claude/resources/` (projet) puis `~/.claude/resources/` (global), puis `${CLAUDE_PLUGIN_ROOT}/resources/` (plugin). Absent = continuer.
 
 ---
 
@@ -61,7 +61,7 @@ Si l'utilisateur a décrit un besoin plus tôt, c'est la base.
 ### 2. Exploration codebase + guidelines
 
 1. Lire `AGENTS.md` à la racine
-2. **Lire `.claude/resources/react-guidelines.md` + `.claude/resources/ux-guidelines.md`** (fallback : `~/.claude/resources/`)
+2. **Lire `.claude/resources/react-guidelines.md` + `.claude/resources/ux-guidelines.md`** (fallback : `~/.claude/resources/`, puis `${CLAUDE_PLUGIN_ROOT}/resources/`)
 3. Analyser 2-3 fichiers similaires (Rust ET React)
 4. Reproduire les patterns
 5. Inventorier les briques réutilisables (cf. § Réutiliser avant de créer)
@@ -221,7 +221,7 @@ Test d'extension : après modification, l'élément se comprend-il toujours d'un
 
 Lune se limite à **exécuter les tests unitaires existants** (`cargo test` + tests unitaires frontend) après implémentation, pour vérifier la non-régression. Un test rouge = bug à corriger ou régression à signaler — jamais un test à réécrire ou à supprimer pour faire passer le vert.
 
-**Seule exception** : si l'utilisateur demande explicitement d'écrire ou de corriger un test, le faire en suivant `.claude/resources/test-guidelines.md` (fallback : `~/.claude/resources/test-guidelines.md`).
+**Seule exception** : si l'utilisateur demande explicitement d'écrire ou de corriger un test, le faire en suivant `.claude/resources/test-guidelines.md` (fallback : `~/.claude/resources/test-guidelines.md`, puis `${CLAUDE_PLUGIN_ROOT}/resources/test-guidelines.md`).
 
 **Mode rapide** (indiqué par le dispatch, l'utilisateur ou le CLAUDE.md/AGENTS.md du projet) : ne lancer ni `cargo test`, ni `cargo clippy`, ni les tests frontend. Garder `cargo fmt` + formatter/linter frontend sur les fichiers modifiés. Rapport : `Tests : ⏭️ mode rapide`.
 

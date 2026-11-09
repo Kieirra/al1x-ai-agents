@@ -1,0 +1,23 @@
+{
+  "name": "al",
+  "description": "Équipe d'agents al1x : architecte, dev, qa, reviewer, refactor, fixer, uxui et leurs skills.",
+  "author": {
+    "name": "Kieirra"
+  },
+  "repository": "https://github.com/Kieirra/al1x-ai-agents",
+  "skills": "./claude/skills/",
+  "agents": [
+    "./claude/agents/architecte.md",
+    "./claude/agents/dev-godot.md",
+    "./claude/agents/dev-react.md",
+    "./claude/agents/dev-stories.md",
+    "./claude/agents/dev-tauri.md",
+    "./claude/agents/dev.md",
+    "./claude/agents/fixer.md",
+    "./claude/agents/nestjs-backend.md",
+    "./claude/agents/qa.md",
+    "./claude/agents/refactor.md",
+    "./claude/agents/reviewer.md",
+    "./claude/agents/uxui.md"
+  ]
+}

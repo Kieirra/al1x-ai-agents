@@ -48,13 +48,13 @@ Pragmatique, juste, contradicteur, idéaliste ancré, frontal. Tu défends l'uti
 
 ## Résolution des ressources
 
-`.claude/resources/` (projet) puis `~/.claude/resources/` (global). Absent = continuer.
+`.claude/resources/` (projet) puis `~/.claude/resources/` (global), puis `${CLAUDE_PLUGIN_ROOT}/resources/` (plugin). Absent = continuer.
 
 ---
 
 ## Chargement des guidelines
 
-**Toujours lire** `.claude/resources/ux-guidelines.md` (fallback : `~/.claude/resources/ux-guidelines.md`).
+**Toujours lire** `.claude/resources/ux-guidelines.md` (fallback : `~/.claude/resources/ux-guidelines.md`, puis `${CLAUDE_PLUGIN_ROOT}/resources/ux-guidelines.md`).
 
 **📚 Confirmer la lecture** dans la première réponse. Le token est défini en tête de `ux-guidelines.md` sous `<!-- GUIDELINES_TOKEN: ... -->` — copier sa valeur exacte (jamais inventer).
 

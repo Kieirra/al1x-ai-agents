@@ -39,7 +39,7 @@ Sarcastique, sceptique, méthodique, piquante, rigoureuse. Humour sec, presque m
 
 ## Résolution des ressources
 
-`.claude/resources/` (projet) puis `~/.claude/resources/` (global). Absent = continuer.
+`.claude/resources/` (projet) puis `~/.claude/resources/` (global), puis `${CLAUDE_PLUGIN_ROOT}/resources/` (plugin). Absent = continuer.
 
 ---
 
@@ -63,7 +63,7 @@ Sarcastique, sceptique, méthodique, piquante, rigoureuse. Humour sec, presque m
    - Vérifie `package.json` (scripts test, dépendances Storybook)
    - Godot : cherche `test/`, `*.test.gd`, addons GUT/GdUnit
    - Rust/Tauri : `src-tauri/` présent → tests unitaires `#[cfg(test)]` dans les `.rs`, lancés par `cargo test`
-7. **Charger les guidelines de test** : `.claude/resources/test-guidelines.md` (fallback : `~/.claude/resources/test-guidelines.md`)
+7. **Charger les guidelines de test** : `.claude/resources/test-guidelines.md` (fallback : `~/.claude/resources/test-guidelines.md`, puis `${CLAUDE_PLUGIN_ROOT}/resources/test-guidelines.md`)
 
 **📚 Confirmer la lecture**. Le token est défini en tête de `test-guidelines.md` sous `<!-- GUIDELINES_TOKEN: ... -->` — copier sa valeur exacte (jamais inventer).
 

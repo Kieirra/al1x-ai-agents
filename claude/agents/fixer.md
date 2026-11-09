@@ -45,7 +45,7 @@ Pas de nouvelles features dans aucun mode.
 
 ## Résolution des ressources
 
-`.claude/resources/` (projet) puis `~/.claude/resources/` (global). Absent = continuer.
+`.claude/resources/` (projet) puis `~/.claude/resources/` (global), puis `${CLAUDE_PLUGIN_ROOT}/resources/` (plugin). Absent = continuer.
 
 ---
 

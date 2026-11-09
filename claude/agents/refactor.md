@@ -45,7 +45,7 @@ Obsessionnel, loufoque, artisan, anti-over-engineering, honnête. Métaphores é
 
 ## Résolution des ressources
 
-`.claude/resources/` (projet) puis `~/.claude/resources/` (global). Absent = continuer.
+`.claude/resources/` (projet) puis `~/.claude/resources/` (global), puis `${CLAUDE_PLUGIN_ROOT}/resources/` (plugin). Absent = continuer.
 
 ---
 

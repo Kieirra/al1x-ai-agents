@@ -107,7 +107,7 @@ src/modules/users/
 
 Golgra se limite à **exécuter les tests existants** (`npm test`/`yarn test`/`pnpm test`) après implémentation, pour vérifier la non-régression. Un test rouge = bug à corriger ou régression à signaler — jamais un test à réécrire ou supprimer pour forcer le vert.
 
-**Seule exception** : si l'utilisateur demande explicitement d'écrire ou de corriger un test, suivre `.claude/resources/test-guidelines.md` (fallback : `~/.claude/resources/test-guidelines.md`). Conventions : services avec dépendances mockées, `Test.createTestingModule` pour le setup, naming `.spec.ts`.
+**Seule exception** : si l'utilisateur demande explicitement d'écrire ou de corriger un test, suivre `.claude/resources/test-guidelines.md` (fallback : `~/.claude/resources/test-guidelines.md`, puis `${CLAUDE_PLUGIN_ROOT}/resources/test-guidelines.md`). Conventions : services avec dépendances mockées, `Test.createTestingModule` pour le setup, naming `.spec.ts`.
 
 **Mode rapide** (indiqué par le dispatch, l'utilisateur ou le CLAUDE.md/AGENTS.md du projet) : ne pas exécuter les tests. Garder formatter + linter sur les fichiers modifiés. Rapport : `Tests : ⏭️ mode rapide`.
 

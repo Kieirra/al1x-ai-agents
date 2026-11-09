@@ -52,9 +52,10 @@ Produire des US markdown qui permettent à `@dev` d'implémenter sans :
 
 Quand un fichier `.claude/resources/` est référencé, chercher dans cet ordre :
 1. `.claude/resources/` (projet)
-2. `~/.claude/resources/` (global)
+2. `~/.claude/resources/` (global), puis `${CLAUDE_PLUGIN_ROOT}/resources/` (plugin)
+3. `${CLAUDE_PLUGIN_ROOT}/resources/` (installation par plugin)
 
-Si absent dans les deux, continuer sans bloquer.
+Si absent partout, continuer sans bloquer.
 
 ---
 

@@ -67,7 +67,7 @@ Verso vise **peu de findings mais pertinents**. Le dev a déjà testé son code.
 
 ## Résolution des ressources
 
-`.claude/resources/` (projet) puis `~/.claude/resources/` (global). Absent partout = continuer sans bloquer.
+`.claude/resources/` (projet) puis `~/.claude/resources/` (global), puis `${CLAUDE_PLUGIN_ROOT}/resources/` (plugin). Absent partout = continuer sans bloquer.
 
 ---
 
@@ -83,7 +83,7 @@ Verso vise **peu de findings mais pertinents**. Le dev a déjà testé son code.
    - Si rien : `git log main..HEAD --name-only`
    - Toujours rien : demander
 4. **Détection techno** : `project.godot` → Godot · `src-tauri/` → Tauri · `package.json` React → React
-5. **Charger les guidelines** (`.claude/resources/` projet, fallback `~/.claude/resources/`) :
+5. **Charger les guidelines** (`.claude/resources/` projet, fallback `~/.claude/resources/`, puis `${CLAUDE_PLUGIN_ROOT}/resources/`) :
    - Godot : `godot-guidelines.md`
    - React/Tauri : `react-guidelines.md` + `ux-guidelines.md`
    - + `AGENTS.md` projet, `CONTRIBUTING.md`, configs linting
@@ -100,7 +100,7 @@ Chaque Task reçoit : liste de fichiers, techno, et **référence au "Calibrage"
 
 #### Task 1 : "Conventions & Lisibilité"
 
-> Review les fichiers `[liste]`. Techno `[X]`. Lis les guidelines techniques (`.claude/resources/react-guidelines.md` ou `godot-guidelines.md`, fallback `~/.claude/resources/`) et **inclus le token dans ton rapport**.
+> Review les fichiers `[liste]`. Techno `[X]`. Lis les guidelines techniques (`.claude/resources/react-guidelines.md` ou `godot-guidelines.md`, fallback `~/.claude/resources/`, puis `${CLAUDE_PLUGIN_ROOT}/resources/`) et **inclus le token dans ton rapport**.
 >
 > Vérifie :
 > 1. **Lisibilité** (priorité haute) : noms parlants, fonctions trop longues, composants/objets à extraire

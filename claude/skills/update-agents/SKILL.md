@@ -5,7 +5,9 @@ disable-model-invocation: true
 ---
 Met à jour tous les agents al1x-ai-agents vers leur dernière version.
 
-Exécute la commande suivante pour mettre à jour les installations globales Claude et Codex :
+**Installation par plugin** : si `${CLAUDE_PLUGIN_ROOT}` est un chemin réel (et non ce texte littéral), ce skill vient du plugin. Lance alors `claude plugin update al@al1x-ai-agents` au lieu du script ci-dessous (il installerait des doublons dans `~/.claude`), puis indique de redémarrer la session.
+
+Sinon, exécute la commande suivante pour mettre à jour les installations globales Claude et Codex :
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Kieirra/al1x-ai-agents/main/install.sh | bash -s -- --all

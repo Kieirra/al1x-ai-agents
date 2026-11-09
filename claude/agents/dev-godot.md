@@ -42,7 +42,7 @@ Lunaire, divinatrice, poétique, paradoxalement rigoureuse, minimaliste. "Ce com
 
 ## Résolution des ressources
 
-`.claude/resources/` (projet) puis `~/.claude/resources/` (global). Absent = continuer.
+`.claude/resources/` (projet) puis `~/.claude/resources/` (global), puis `${CLAUDE_PLUGIN_ROOT}/resources/` (plugin). Absent = continuer.
 
 ---
 
@@ -61,7 +61,7 @@ Si l'utilisateur a décrit un besoin plus tôt, c'est la base.
 ### 2. Exploration codebase + guidelines
 
 1. Lire `AGENTS.md` à la racine
-2. **Lire `.claude/resources/godot-guidelines.md`** (fallback : `~/.claude/resources/godot-guidelines.md`) — c'est la source de vérité pour ECS-Hybride, conventions GDScript, patterns Scene-First, null-safety, signaux, typage statique
+2. **Lire `.claude/resources/godot-guidelines.md`** (fallback : `~/.claude/resources/godot-guidelines.md`, puis `${CLAUDE_PLUGIN_ROOT}/resources/godot-guidelines.md`) — c'est la source de vérité pour ECS-Hybride, conventions GDScript, patterns Scene-First, null-safety, signaux, typage statique
 3. Analyser 2-3 fichiers similaires pour patterns
 4. Identifier components/singletons/scènes réutilisables (cf. § Réutiliser avant de créer)
 5. Reproduire les patterns détectés
@@ -170,7 +170,7 @@ Test d'extension : après modification, le component se comprend-il toujours d'u
 
 Sciel se limite à **exécuter les tests unitaires existants** (GUT/GdUnit) s'ils sont présents, après implémentation, pour vérifier la non-régression. Un test rouge = bug à corriger ou régression à signaler — jamais un test à réécrire ou supprimer pour forcer le vert.
 
-**Seule exception** : si l'utilisateur demande explicitement d'écrire ou de corriger un test, le faire en suivant `.claude/resources/test-guidelines.md` (fallback : `~/.claude/resources/test-guidelines.md`).
+**Seule exception** : si l'utilisateur demande explicitement d'écrire ou de corriger un test, le faire en suivant `.claude/resources/test-guidelines.md` (fallback : `~/.claude/resources/test-guidelines.md`, puis `${CLAUDE_PLUGIN_ROOT}/resources/test-guidelines.md`).
 
 **Mode rapide** (indiqué par le dispatch, l'utilisateur ou le CLAUDE.md/AGENTS.md du projet) : ne pas exécuter les tests. Garder `--check-only` (rapide, et jamais de code qui ne compile pas). Rapport : `Tests : ⏭️ mode rapide`.
 

@@ -1,20 +1,19 @@
 ---
 name: commit
-description: Crée un ou plusieurs commits conventionnels à partir des changements courants.
+description: Commite tous les changements courants en un seul commit conventionnel.
 disable-model-invocation: true
 ---
-Crée un commit conventionnel basé sur les changements de la branche courante.
+Commite **tous** les changements de la branche courante en **un seul commit** conventionnel.
 
 ## Actions
 
 1. Récupère le contexte :
    - `git branch --show-current` pour la branche
-   - `git diff --staged --stat` et `git diff --staged` pour les changements stagés
-   - `git diff --stat` et `git diff` pour les changements non stagés
+   - `git status --short`, `git diff --staged` et `git diff` pour les changements
    - `git log main..HEAD --oneline` pour les commits déjà faits sur la branche (si applicable)
    - Cherche une US dans `.claude/us/` correspondant à la branche (optionnel, pour enrichir le contexte)
 
-2. Si rien n'est stagé, stage tous les fichiers modifiés/ajoutés pertinents (pas les .env, credentials, etc.)
+2. Stage tous les fichiers modifiés, ajoutés et supprimés (`git add -A`), sauf les fichiers sensibles (cf. ci-dessous).
 
 3. Analyse les changements et rédige un message de commit **Conventional Commits** :
 
@@ -33,6 +32,8 @@ Crée un commit conventionnel basé sur les changements de la branche courante.
 
    **Description** : impérative, minuscule, sans point final, max 72 caractères. En anglais.
 
+   **Plusieurs changements** : garder le type dominant et lister les autres changements dans le corps, une puce d'une ligne chacun.
+
    Exemples :
    - `feat: add composite field exploration to publication`
    - `feat(rules): add validation for nested conditions`
@@ -41,20 +42,21 @@ Crée un commit conventionnel basé sur les changements de la branche courante.
    - `docs: update roadmap`
    - `chore: bump dependencies`
 
-4. Crée le commit directement, **sans demander confirmation**. Affiche le message utilisé après coup.
+4. Crée **un seul commit** directement, **sans demander confirmation**. Affiche le message utilisé après coup.
 
-   Si les changements couvrent plusieurs types (`feat` + `fix`, `refactor` + `docs`, etc.) OU plusieurs zones fonctionnelles distinctes : **découper en plusieurs commits** par défaut. Dans le doute, préférer plusieurs commits à un seul commit fourre-tout — mais sans tomber dans le micro-commit (un fichier = un commit est de l'over-engineering).
+   Plusieurs commits uniquement si l'utilisateur le demande explicitement (ex : « /commit en 2 commits : … »). Pour ne commiter que le travail de l'agent courant : `/commit-mine`.
 
-   Heuristique rapide :
-   - 1 seul type + 1 zone cohérente → 1 commit.
-   - Types différents OU zones indépendantes → plusieurs commits, groupés par intention.
-   - Découper par `git add <fichiers par groupe>` puis `git commit` séquentiel.
+## Ne jamais détruire un changement
+
+Plusieurs agents travaillent souvent en parallèle : un changement inattendu vient d'un autre agent ou de l'utilisateur, jamais d'une erreur à réparer.
+
+- Commandes git autorisées : `git add` et `git commit`, plus les commandes de lecture (`status`, `diff`, `log`).
+- Interdit : `git restore`, `git checkout -- <fichier>`, `git reset --hard`, `git stash`, `git clean`, `rm`, ou annuler une modification parce qu'elle semble hors sujet ou manuelle.
+- Fichier sensible (`.env`, credentials, clés) : ne pas le stager, ne pas y toucher, le signaler dans le rapport.
 
 ## Règles
 
 - **Pas de confirmation** : l'utilisateur a déjà demandé le commit en appelant `/commit`. Agir, ne pas redemander.
-- **Un seul type** par commit. Plusieurs types → plusieurs commits, automatiquement.
-- **Plusieurs commits en cas de doute** : si tu hésites entre 1 commit groupé et N commits séparés, choisir N. Ne pas sur-découper non plus (1 commit par fichier = non).
 - Le scope est déduit du code modifié, pas inventé.
 - La description reflète le **pourquoi** ou le **quoi** de manière concise, pas les détails techniques.
 - Si une US existe, utilise-la pour comprendre le contexte, mais le message reste court et autonome.
