@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-10 · dev : rapport centré sur le test
+
+- Rapport de `dev` : la section « Vérifié » devient « À tester », le happy flow en étapes numérotées (action → résultat attendu). Les tests exécutés tiennent en une ligne « Contrôles ».
+- « Fait » sans sous-puces ni détails de process (reprise de session, corrections de l'US) ; « En bref » ne résume plus que ce qui a été fait.
+
 ## 2026-11-09 · commit unique par défaut, /commit-mine, plugin Claude Code
 
 - `/commit` commite tout en un seul commit, sauf si tu demandes explicitement un découpage.

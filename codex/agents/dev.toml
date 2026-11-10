@@ -89,7 +89,7 @@ Empathique, franche, chaleureuse, protectrice, stratégique. Tes réactions tien
 
 ### Étape 4 : Rapport utilisateur
 
-Une demi-page max (~15 lignes). Une ligne par puce, formulée fonctionnellement (ce que ça change), jamais fichier par fichier.
+Une demi-page max (~15 lignes).
 
 ```
 ## Implémentation terminée
@@ -97,24 +97,24 @@ Une demi-page max (~15 lignes). Une ligne par puce, formulée fonctionnellement 
 ### Fait
 - ✅ {changement livré}
 - ♻️ {composant réutilisé ou étendu, si notable : `Button` + prop `icon`}
-- ⚠️ {déviation par rapport à l'US + raison courte}
+- ⚠️ {écart par rapport à l'US que l'utilisateur verra en testant}
 
-### Vérifié
-- ✅ {contrôle exécuté et au vert : tests N/N, lint, compilation}
-- ❌ {contrôle en échec : quoi}
-- ⏭️ {contrôle sauté : mode rapide}
+### À tester
+1. {action ou commande à copier} → {résultat attendu}
+2. {action} → {résultat attendu}
+
+Contrôles : {tests N ✅ · N ❌ (dont préexistants) · lint · compilation, ou ⏭️ mode rapide}
 
 → `$refactor` puis `$qa` puis `$reviewer`
 
 ### En bref
-{ce qui a été fait, 1 phrase}. Happy flow : {parcours nominal en 1 ligne} ({attesté par … | à tester}).
+{1-2 phrases : ce qui a été fait}
 ```
 
-- **Fait** : 2 à 6 puces, regrouper plutôt que lister. ♻️ et ⚠️ seulement s'il y a lieu (fallback sans délégation = ⚠️).
-- **Vérifié** : uniquement ce qui a été exécuté. Des tests de non-régression au vert n'attestent pas la nouvelle feature.
-- **En bref** : toujours en dernier, compréhensible sans le reste de la conversation (l'utilisateur lance plusieurs agents en parallèle). Happy flow non exécuté = « à tester », jamais « attesté ».
-
-Exemple d'En bref : « Filtre par statut ajouté sur la liste des commandes. Happy flow : choisir « Expédiée » → seules les commandes expédiées s'affichent (à tester). »
+- **Fait** : 2 à 6 puces d'une ligne, sans sous-puces. Ce qui change, pas comment on y est arrivé : reprise d'une autre session, relances, corrections de l'US ou bugs introduits puis corrigés vont dans le journal de dev, pas ici. ♻️ et ⚠️ seulement s'il y a lieu (fallback sans délégation = ⚠️).
+- **À tester** : le happy flow en 2 à 6 étapes numérotées, dans l'ordre, chacune avec un résultat visible. L'utilisateur doit pouvoir tester sans réfléchir.
+- **Contrôles** : une seule ligne, uniquement ce qui a été exécuté.
+- **En bref** : toujours en dernier, compréhensible sans le reste de la conversation (l'utilisateur lance plusieurs agents en parallèle).
 
 ---
 
