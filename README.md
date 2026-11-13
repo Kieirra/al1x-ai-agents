@@ -96,10 +96,19 @@ Dans Codex, remplacer `/` par `$`. En plugin Claude Code, préfixer par `al:`.
 | `/qa` | Clea | Tests et stories Storybook |
 | `/reviewer` | Verso | Review : conventions, bugs, sécurité |
 | `/uxui` | Renoir | Audits et wireframes UX/UI |
+| `/audio` | Sirene | Trouve, prépare et intègre les sons, gère les volumes |
 
 Les spécialistes (React, Tauri, Godot, NestJS, Storybook, corrections) sont appelés automatiquement par ces agents.
 
 Écrire « rapide » ou « sans tests » dans la demande à `/dev` pour qu'il code sans lancer les tests.
+
+### Audio (/audio)
+
+Prérequis : Python 3.9+ et ffmpeg dans le PATH.
+
+- Sirene télécharge seule depuis OpenGameArt (packs Kenney compris). Pour Pixabay, kenney.nl, Mixkit ou Sonniss, elle donne des liens de recherche : dépose les fichiers choisis dans `~/sfx-inbox/`.
+- Bibliothèque de sons locale : Sirene demande une seule fois et note la réponse dans `~/.claude/CLAUDE.md` (Codex : `~/.codex/AGENTS.md`), par exemple `audio : bibliothèque locale ~/sfx-library (Sonniss GDC)`.
+- Licences acceptées : sans crédit en priorité, CC BY sinon (crédit ajouté). NC, ND, SA et licences inconnues sont refusées. Chaque son intégré est tracé dans le fichier de crédits du projet.
 
 ### Autres commandes
 

@@ -1,6 +1,6 @@
 {
   "name": "al",
-  "description": "Équipe d'agents al1x : architecte, dev, qa, reviewer, refactor, fixer, uxui et leurs skills.",
+  "description": "Équipe d'agents al1x : architecte, dev, qa, reviewer, refactor, fixer, uxui, audio et leurs skills.",
   "author": {
     "name": "Kieirra"
   },
@@ -8,6 +8,7 @@
   "skills": "./claude/skills/",
   "agents": [
     "./claude/agents/architecte.md",
+    "./claude/agents/audio.md",
     "./claude/agents/dev-godot.md",
     "./claude/agents/dev-react.md",
     "./claude/agents/dev-stories.md",

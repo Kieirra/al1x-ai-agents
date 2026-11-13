@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-11-13 · audio : nouvel agent Sirene
+
+- Nouveau `/audio` (Sirene) : trouve, prépare et intègre les effets sonores et la musique d'un projet (Godot en priorité), et tient les crédits à jour.
+- Réponses courtes par défaut, propositions argumentées (2 à 3 directions) quand tu demandes un brainstorm.
+- Licences sans crédit en priorité, CC BY en secours, tout le reste refusé.
+- Téléchargement automatique depuis OpenGameArt (packs Kenney compris) ; liens de recherche Pixabay pré-remplis, à déposer dans `~/sfx-inbox/`.
+- Outil `sfx.py` (Python + ffmpeg) : mesures, images forme d'onde et spectrogramme, coupe, fondus, normalisation par catégorie, réencodage sans métadonnées.
+- Bibliothèque de sons locale demandée une seule fois, puis mémorisée dans ton CLAUDE.md/AGENTS.md global.
+- `/workflow` cite Sirene parmi les agents appelables à tout moment.
+
 ## 2026-11-10 · dev : rapport centré sur le test
 
 - Rapport de `dev` : la section « Vérifié » devient « À tester », le happy flow en étapes numérotées (action → résultat attendu). Les tests exécutés tiennent en une ligne « Contrôles ».

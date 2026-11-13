@@ -27,6 +27,7 @@ Le pipeline s'adapte à la technologie du projet :
 ### Agents standalone
 - `@uxui` (Renoir) : peut être appelé à tout moment pour un audit UX, brainstorm ou wireframe ASCII
 - `@refactor` (Esquie) : peut être appelé à tout moment pour analyser le code et identifier des opportunités de refactoring
+- `@audio` (Sirene) : peut être appelé à tout moment pour trouver, préparer et intégrer des sons
 
 ## Actions
 
