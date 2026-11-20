@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-20 · team : délégation sur deux niveaux
+
+- `/team` exécute les workflows d'Aline, Alicia, Esquie, Clea et Verso dans le thread principal : leurs propres sous-agents (`dev-react`, analyses et reviews parallèles, Monoco) sont de nouveau lancés, comme avec `/dev` ou `/reviewer`.
+- Esquie peut désormais lancer l'auto-fix et te poser ses questions de Phase 2 pendant le pipeline.
+
 ## 2026-11-13 · audio : nouvel agent Sirene
 
 - Nouveau `/audio` (Sirene) : trouve, prépare et intègre les effets sonores et la musique d'un projet (Godot en priorité), et tient les crédits à jour.

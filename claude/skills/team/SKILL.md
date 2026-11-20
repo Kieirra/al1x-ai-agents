@@ -33,14 +33,18 @@ Le `/team` prend **toutes les décisions seul**, sans demander confirmation à l
 
 ## Exécution technique
 
-### Comment lancer un agent
+### Comment exécuter une étape
 
-Utilise le **Agent tool** pour lancer l'agent personnalisé demandé. Délègue par son nom stable et transmets-lui tout le contexte utile :
+Les orchestrateurs `architecte`, `dev`, `refactor`, `qa` et `reviewer` ne sont **pas** lancés comme sous-agents : un sous-agent n'a pas l'Agent tool et perdrait sa propre délégation (`dev-react`, analyses et reviews parallèles, Monoco). Exécute leur workflow dans le thread principal, comme le font leurs skills :
 
-```
-Agent `architecte` avec le prompt et le contexte de la feature.
-Agent `dev` avec l'US validée et le contexte de branche.
-```
+1. Cherche la définition dans `.claude/agents/<nom>.md`, puis `~/.claude/agents/<nom>.md`, puis `${CLAUDE_PLUGIN_ROOT}/claude/agents/<nom>.md` (ressources plugin dans `${CLAUDE_PLUGIN_ROOT}/resources/`).
+2. Lis-la en entier au début de l'étape et applique ses instructions comme les tiennes, avec le contexte du pipeline (US, branche).
+3. Ses délégations partent en sous-agents via l'Agent tool, comme prévu dans sa définition.
+4. Si aucune définition n'est trouvée, arrête et demande de relancer `/update-agents`.
+
+Les règles de `/team` priment sur celles de l'agent : là où sa définition pose une question à l'utilisateur, décide toi-même selon la philosophie ci-dessus (seule exception : la Phase 2 d'Esquie).
+
+Seul `fixer` (Monoco) est lancé directement comme sous-agent via l'Agent tool, avec les findings à corriger.
 
 ### Comment tracker la progression
 
@@ -54,23 +58,23 @@ TaskCreate(subject="4. QA (Clea)", description="...")
 TaskCreate(subject="5. Review (Verso)", description="...")
 ```
 
-Marque chaque task `in_progress` avant de lancer l'agent correspondant, puis `completed` quand il termine.
+Marque chaque task `in_progress` au début de l'étape correspondante, puis `completed` quand elle se termine.
 
 ## Pipeline
 
 ### 1. Architecture — @architecte
 
-Lancer l'agent `architecte` avec le contexte fourni par l'utilisateur. Aline produit une US structurée.
+Exécuter le workflow `architecte` avec le contexte fourni par l'utilisateur. Aline produit une US structurée.
 
 **Décisions autonomes** : valider l'US telle que produite par Aline sans demander de feedback utilisateur.
 
 ### 2. Développement — @dev
 
-Lancer l'agent `dev` pour implémenter l'US. Alicia détecte la techno et dispatche au sub-agent approprié quand la plateforme l'autorise, sinon elle applique son fallback.
+Exécuter le workflow `dev` pour implémenter l'US. Alicia détecte la techno et dispatche au sous-agent approprié (`dev-react`, `dev-tauri`, `dev-godot`, `nestjs-backend`).
 
 ### 3. Refactoring — @refactor
 
-Lancer l'agent `refactor` en mode pipeline. Esquie analyse le code produit et applique le mode hybride :
+Exécuter le workflow `refactor` en mode pipeline. Esquie analyse le code produit et applique le mode hybride :
 - **Phase 1 (auto-fix)** : dead code, imports inutilisés, `useMemo`/`useCallback` inutiles (React), simplifications triviales — appliqués automatiquement via Monoco
 - **Phase 2 (interactive)** : DRY, nommage, extractions SRP, restructurations — présentés à l'utilisateur pour validation
 
@@ -78,19 +82,19 @@ Lancer l'agent `refactor` en mode pipeline. Esquie analyse le code produit et ap
 
 ### 4. Quality Assurance — @qa
 
-Lancer l'agent `qa` pour les tests et stories Storybook (React/Tauri uniquement, skip pour Godot).
+Exécuter le workflow `qa` pour les tests et stories Storybook (React/Tauri uniquement, skip pour Godot).
 
 ### 5. Code Review — @reviewer
 
-Lancer l'agent `reviewer` pour la revue de code.
+Exécuter le workflow `reviewer` pour la revue de code. Pas de présentation par lots ni de question : retenir les choix recommandés (⭐) et passer les findings retenus à la boucle de correction ci-dessous, qui remplace le lancement de Monoco par Verso.
 
 ### 6. Boucle de correction (si nécessaire)
 
 Si le reviewer détecte des problèmes :
 
-1. Lancer l'agent `fixer` avec les findings du reviewer
-2. Relancer l'agent `qa` si des fichiers ont été modifiés
-3. Relancer l'agent `reviewer` pour re-valider
+1. Lancer le sous-agent `fixer` avec les findings du reviewer
+2. Réexécuter le workflow `qa` si des fichiers ont été modifiés
+3. Réexécuter le workflow `reviewer` pour re-valider
 4. **Répéter** jusqu'à ce que le reviewer valide (max 3 boucles — si après 3 boucles ce n'est pas résolu, s'arrêter et rapporter le status à l'utilisateur)
 
 ### 7. Fin
