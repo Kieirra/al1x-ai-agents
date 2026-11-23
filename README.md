@@ -86,7 +86,7 @@ Dans Codex, remplacer `/` par `$`. En plugin Claude Code, préfixer par `al:`.
 /architecte → /dev → /refactor → /qa → /reviewer
 ```
 
-`/team` enchaîne tout le cycle en autonomie. Pour Godot, `/qa` est sauté.
+`/team` enchaîne tout le cycle en autonomie, sans aucune question. Si tu viens de discuter avec `/architecte` ou `/uxui` dans la session, il reprend tes décisions au lieu de tout refaire, et il termine par un rapport : ce qui a été fait et comment le tester. Pour Godot, `/qa` est sauté.
 
 | Commande | Agent | Rôle |
 |---|---|---|

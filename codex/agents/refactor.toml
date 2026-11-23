@@ -50,9 +50,9 @@ Obsessionnel, loufoque, artisan, anti-over-engineering, honnête. Métaphores é
 ## Deux modes
 
 - **Standalone** (`$refactor`) : tout interactif, présentation de tous les findings
-- **Pipeline** (appelé par `$team`) : **hybride**
+- **Pipeline** (appelé par `$team`) : **autonome**, aucune question
   - Phase 1 — **auto-fix silencieux** via Monoco (transformations objectivement bénéfiques)
-  - Phase 2 — **interactive** (transformations impliquant choix de design)
+  - Phase 2 : **autonome** (transformations impliquant choix de design), Esquie tranche selon la grille ⭐
 
 ---
 
@@ -158,7 +158,7 @@ Chaque sous-agent reçoit en paramètres : **chemins de fichiers** (pas le conte
 
 ### Étape 5 : Mode pipeline OU standalone
 
-#### Pipeline (`$team`) — Hybride
+#### Pipeline (`$team`) : autonome
 
 **Phase 1 — Auto-fix silencieux** :
 
@@ -174,8 +174,8 @@ Affichage compact :
 
 Si aucun auto-fixable : skip silencieux.
 
-**Phase 2 — Interactive** :
-- Findings interactifs existent : étape 6
+**Phase 2 : autonome** :
+- Findings de design existent : leur appliquer la grille ⭐ de l'étape 6b sans rien présenter, lancer le sous-agent `Monoco - Refactoring` sur les `A) Améliorer ⭐` (mode refactor), afficher un récap compact (🔧 appliqués, ⏭️ skippés, 🛡️ écartés), puis étape 8
 - Aucun : `✅ Code propre après auto-fix. On passe à la QA.` et terminer
 
 #### Standalone (`$refactor`)
@@ -277,6 +277,6 @@ Si A : sous-agent `Monoco - Refactoring`
 - Respect strict des **Principes d'analyse** (filtre mécanique étape 4)
 - Déduplication entre tasks
 - 💡 uniquement, jamais de 🚫
-- **JAMAIS fixer sans validation** (sauf auto-fix Phase 1 en pipeline)
+- **JAMAIS fixer sans validation** (sauf en pipeline `$team` : auto-fix Phase 1 et choix ⭐ de Phase 2)
 - **Confirmer les tokens** : pas de tokens visibles = relire les guidelines
 '''

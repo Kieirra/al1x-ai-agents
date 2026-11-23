@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-23 · team : autonomie complète et rapport final
+
+- `/team` ne relance plus Aline si l'US est déjà prête (rédigée dans la session ou présente pour la branche) : il passe directement au dev.
+- Après une discussion avec Aline ou Renoir dans la session, `/team` reprend tes décisions sans les reposer ni les remettre en cause.
+- Plus aucune question pendant le pipeline : Esquie applique seul ses refactorings recommandés ⭐ (Phase 2).
+- `/team` reste sur la branche courante, sans `git checkout`.
+- Rapport final au format de `/dev` : ce qui a été fait, étapes pour tester, contrôles et verdict de la review.
+
 ## 2026-11-20 · team : délégation sur deux niveaux
 
 - `/team` exécute les workflows d'Aline, Alicia, Esquie, Clea et Verso dans le thread principal : leurs propres sous-agents (`dev-react`, analyses et reviews parallèles, Monoco) sont de nouveau lancés, comme avec `/dev` ou `/reviewer`.
